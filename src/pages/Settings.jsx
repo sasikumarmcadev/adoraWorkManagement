@@ -1,262 +1,298 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useData } from '../context/DataContext'
 import { useAuth } from '../context/AuthContext'
-import { Modal, FormField, StatusSelect, CustomSelect } from '../components/ui/index'
+import { FormField, StatusSelect, CustomSelect } from '../components/ui/index'
 import { cn } from '../lib/utils'
-import { Plus, User, Lock, Shield, Trash2, Key, Users, Settings as SettingsIcon } from 'lucide-react'
+import { Plus, User, Lock, Trash2, Key, Users, Settings as SettingsIcon, Search, Shield, Filter, Eye, EyeOff, CheckCircle2, Ban, Layout } from 'lucide-react'
 
-const ACCESS_ROLES = ['Manager', 'Jeevan', 'Worker']
-const WORKER_ROLES = ['Content Specialist', 'Editor', 'Video Grapher', 'Meta Ads']
+const ACCESS_ROLES = ['Admin', 'Collections Officer', 'Manager']
 
 export default function Settings() {
   const { workers, addWorker, deleteWorker } = useData()
   const { isManager, isJeevan } = useAuth()
-  const [showModal, setShowModal] = useState(false)
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1200 : false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showPassword, setShowPassword] = useState({})
   const [form, setForm] = useState({})
-  
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1200)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  const [passForm, setPassForm] = useState({})
 
   const f = (k, v) => setForm(prev => ({ ...prev, [k]: v }))
+  const togglePass = (fld) => setShowPassword(prev => ({ ...prev, [fld]: !prev[fld] }))
 
-  const allAccounts = [
-    { id: 'u1', name: 'Adora Manager', role: 'Manager', username: 'manager', access: 'Manager', avatar: 'AM' },
-    { id: 'u2', name: 'Jeevan', role: 'Jeevan', username: 'jeevan', access: 'Jeevan', avatar: 'JV' },
-    ...(workers || []),
-  ]
+  const allAccounts = useMemo(() => [
+    { id: 'u1', name: 'Admin', username: 'admin@adora.com', role: 'Admin', status: 'Active', created: 'Jan 17, 2026', avatar: 'AD' },
+    { id: 'u2', name: 'Sasi Kumar', username: 'sasikumar.mca@gmail.com', role: 'Admin', status: 'Active', created: 'Feb 02, 2026', avatar: 'SK' },
+    ...(workers || []).map(w => ({
+      id: w.id,
+      name: w.name,
+      username: w.username || `${w.name.toLowerCase().replace(' ', '')}@adora.com`,
+      role: w.access || 'Worker',
+      status: 'Active',
+      created: 'Mar 28, 2026',
+      avatar: w.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+      isWorker: true
+    })),
+  ], [workers])
+
+  const filteredAccounts = allAccounts.filter(acc => 
+    acc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    acc.username.toLowerCase().includes(searchQuery.toLowerCase())
+  )
 
   const handleCreate = () => {
-    if (!form.name || !form.username || !form.password) return
+    if (!form.username || !form.role || !form.password) return
     addWorker({
-      name: form.name,
-      role: form.workerRole || 'Content Specialist',
+      name: form.username.split('@')[0],
       username: form.username,
       password: form.password,
-      access: form.access || 'Worker',
-      avatar: form.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+      access: form.role,
+      employeeID: `EMP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
     })
-    setShowModal(false)
     setForm({})
   }
 
-  const canEditSettings = isManager || isJeevan;
+  const canEditSettings = isManager || isJeevan
 
   if (!canEditSettings) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] gap-6 text-center px-6">
         <div className="w-20 h-20 rounded-3xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shadow-2xl">
-           <Shield size={40} className="text-red-400" />
+          <Shield size={40} className="text-red-400" />
         </div>
         <div className="space-y-2">
-           <h2 className="text-2xl font-bold text-white tracking-tighter">Access Restricted</h2>
-           <p className="text-sm text-muted font-bold opacity-60 max-w-[300px] leading-relaxed">
-             Only Administrative Personnel (Managers & Jeevan) can access system configuration.
-           </p>
+          <h2 className="text-2xl font-bold text-white tracking-tighter">Access Restricted</h2>
+          <p className="text-sm text-muted opacity-60 max-w-[300px] leading-relaxed">
+            Only Administrative Personnel can access system configuration.
+          </p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="w-full flex-1 min-h-screen bg-background flex flex-col">
-      {/* Header Area */}
-      <div className="bg-background border-b border-border shadow-2xl relative overflow-hidden py-6 sm:py-10">
-        <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
-            <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
-                System <span className="text-primary/50">Settings</span>
-              </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none">
-                Access Infrastructure • Permission Audit Protocols
-              </p>
-            </div>
-            <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest uppercase">Verified Accounts</p>
-              <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums">
-                {allAccounts.length.toString().padStart(2, '0')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="w-full flex-1 min-h-screen bg-black text-white p-4 sm:p-8 lg:p-12 overflow-y-auto custom-scrollbar">
+      <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in duration-700">
+        
+        {/* Header */}
+        <header className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+          <p className="text-sm text-muted opacity-60">Manage your system configuration, user accounts, and system preferences</p>
+        </header>
 
-      <div className="flex-1 flex flex-col bg-panel">
-        <div className="p-4 sm:p-8 space-y-12 max-w-[1400px] mx-auto w-full">
-          
-          {/* Permission Architecture */}
-          <section className="space-y-6">
-             <div className="flex items-center gap-3">
-                <Key size={18} className="text-primary/50" />
-                <h2 className="text-sm font-bold text-white tracking-[0.2em] uppercase opacity-40">Permission Architecture</h2>
-             </div>
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                <AccessCard role="Manager" detail="Full system oversight. Critical CRUD operations enabled. Financial audit visibility." color="primary" icon="👑" />
-                <AccessCard role="Jeevan" detail="Administrative oversight. Registry modification enabled. Deletion protocols restricted." color="blue" icon="🔑" />
-                <AccessCard role="Worker" detail="Siloed operational access. Role-specific dashboard visibility. Limited audit trails." color="green" icon="👷" />
-             </div>
+        <div className="space-y-12">
+          {/* Change Password Section */}
+          <section className="bg-[#0f0f0f] border border-white/5 rounded-2xl overflow-hidden p-8 space-y-8 relative">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <h2 className="text-base font-bold text-white">Change Your Password</h2>
+                <p className="text-[11px] text-muted opacity-60">Update your login password for enhanced security</p>
+              </div>
+              <Lock size={18} className="text-primary/40" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <PassInput label="Current Password" value={passForm.current} onChange={v => setPassForm(p => ({...p, current: v}))} />
+              <PassInput label="New Password" value={passForm.new} onChange={v => setPassForm(p => ({...p, new: v}))} />
+              <PassInput label="Confirm Password" value={passForm.confirm} onChange={v => setPassForm(p => ({...p, confirm: v}))} />
+            </div>
+
+            <div className="bg-black/40 border border-white/5 rounded-xl p-4">
+              <p className="text-[10px] font-bold text-muted mb-2 tracking-widest opacity-40">Password Requirements:</p>
+              <div className="flex flex-wrap gap-x-8 gap-y-2">
+                <div className="flex items-center gap-2 text-[10px] text-muted/60"><div className="w-1 h-1 rounded-full bg-white/20" /> At least 8 characters</div>
+                <div className="flex items-center gap-2 text-[10px] text-muted/60"><div className="w-1 h-1 rounded-full bg-white/20" /> Passwords must match</div>
+              </div>
+            </div>
+
+            <button className="flex items-center gap-2 px-6 py-2.5 bg-primary/20 border border-primary/20 text-primary rounded-xl text-xs font-bold hover:bg-primary hover:text-black transition-all">
+              <Lock size={14} />
+              Change Password
+            </button>
           </section>
 
-          {/* User Directory */}
-          <section className="space-y-6">
-             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                   <Users size={18} className="text-primary/50" />
-                   <h2 className="text-sm font-bold text-white tracking-[0.2em] uppercase opacity-40">User Account Directory</h2>
+          {/* Add New Account Section */}
+          <section className="bg-[#0f0f0f] border border-white/5 rounded-2xl overflow-hidden p-8 space-y-8">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <h2 className="text-base font-bold text-white">Add New Account</h2>
+                <p className="text-[11px] text-muted opacity-60">Create new user accounts with specific roles and permissions</p>
+              </div>
+              <User size={18} className="text-primary/40" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
+              <InlineInput label="Username" placeholder="Enter username" icon={User} value={form.username} onChange={v => f('username', v)} />
+              <InlineInput label="Email Address" placeholder="Enter email address" icon={Search} value={form.email} onChange={v => f('email', v)} />
+              <div className="space-y-2">
+                <p className="text-[10px] font-bold text-muted ml-0.5">Role</p>
+                <div className="relative">
+                  <Shield size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted/40" />
+                  <select 
+                    className="w-full h-11 bg-black rounded-xl border border-white/10 pl-11 pr-4 text-xs font-bold text-white outline-none focus:border-primary/40 transition-all appearance-none"
+                    value={form.role || ''}
+                    onChange={e => f('role', e.target.value)}
+                  >
+                    <option value="" disabled>Select Role</option>
+                    {ACCESS_ROLES.map(r => <option key={r} value={r} className="bg-black">{r}</option>)}
+                  </select>
                 </div>
-                <button 
-                  onClick={() => { setForm({}); setShowModal(true) }}
-                  className="w-full sm:w-auto flex items-center justify-center gap-3 px-6 py-3 bg-white text-black font-bold text-[12px] rounded-full hover:bg-primary transition-all active:scale-95 shadow-2xl shadow-primary/20"
-                >
-                   <Plus size={16} strokeWidth={3} />
-                   <span>Initialize New Account</span>
-                </button>
-             </div>
+              </div>
+              <PassInput label="Password" value={form.password} onChange={v => f('password', v)} isInverse />
+            </div>
 
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                {allAccounts.map(acc => (
-                  <div key={acc.id} className="group bg-sidebar/30 border border-white/5 rounded-3xl p-6 transition-all hover:bg-sidebar/50 hover:shadow-2xl hover:shadow-primary/5 active:scale-[0.98] relative overflow-hidden ring-1 ring-white/5">
-                     <div className="flex items-start justify-between relative z-10">
-                        <div className="flex items-center gap-4">
-                           <div className={cn(
-                             "w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold shadow-2xl border border-white/5 transition-transform group-hover:scale-110",
-                             acc.access === 'Manager' ? "bg-primary text-black" :
-                             acc.access === 'Jeevan' ? "bg-blue-500 text-white" :
-                             "bg-white/5 text-muted"
-                           )}>
-                              {acc.avatar}
-                           </div>
-                           <div className="space-y-1">
-                              <p className="text-sm font-bold text-white tracking-tight leading-none truncate max-w-[150px]">{acc.name}</p>
-                              <p className="text-[10px] text-muted font-bold opacity-40 uppercase tracking-widest leading-none mt-1">@{acc.username}</p>
-                           </div>
-                        </div>
-                        <span className={cn(
-                          "text-[9px] font-bold px-2 py-0.5 rounded-lg border uppercase tracking-widest",
-                          acc.access === 'Manager' ? "bg-primary/10 text-primary border-primary/20" :
-                          acc.access === 'Jeevan' ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
-                          "bg-white/5 text-muted/60 border-white/10"
-                        )}>
-                          {acc.access}
-                        </span>
-                     </div>
-                     
-                     <div className="mt-6 pt-6 border-t border-white/5 flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-2">
-                           <div className="w-1.5 h-1.5 rounded-full bg-white/20" />
-                           <span className="text-[10px] font-bold text-muted/60 uppercase tracking-widest">{acc.role}</span>
-                        </div>
-                        {acc.access === 'Worker' && (
-                          <button 
-                            onClick={() => deleteWorker(acc.id)}
-                            className="p-2 text-muted/20 hover:text-red-500 hover:bg-red-500/5 rounded-xl transition-all active:scale-90"
-                          >
-                             <Trash2 size={16} />
-                          </button>
-                        )}
-                     </div>
-                     
-                     <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+            <button 
+              onClick={handleCreate}
+              className="flex items-center gap-2 px-8 py-2.5 bg-white/5 border border-white/10 text-muted hover:text-white hover:bg-white/10 rounded-xl text-xs font-bold transition-all"
+            >
+              <Plus size={14} />
+              Add Account
+            </button>
+          </section>
+
+          {/* Account Management Section */}
+          <section className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <header className="space-y-1">
+                 <h2 className="text-lg font-bold">Account Management</h2>
+                 <p className="text-xs text-muted opacity-40">{filteredAccounts.length} of {allAccounts.length} account(s)</p>
+              </header>
+              <div className="flex items-center gap-3">
+                 <div className="relative items-center flex">
+                    <Search className="absolute left-4 text-muted/40" size={14} />
+                    <input 
+                      type="text" 
+                      placeholder="Search accounts..." 
+                      className="h-10 w-full sm:w-64 bg-black border border-white/10 rounded-xl pl-12 pr-4 text-xs font-medium outline-none focus:border-primary/40"
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                    />
+                 </div>
+                 <button className="h-10 px-4 bg-white/5 border border-white/10 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-white/10 transition-all">
+                    <span>All Accounts</span>
+                    <Filter size={14} className="text-muted/40" />
+                 </button>
+              </div>
+            </div>
+
+            <div className="bg-[#0f0f0f] border border-white/5 rounded-2xl overflow-hidden">
+               <div className="overflow-x-auto">
+                 <table className="w-full text-left">
+                    <thead className="text-[10px] font-bold text-muted tracking-widest border-b border-white/5">
+                      <tr>
+                        <th className="px-8 py-4">User</th>
+                        <th className="px-8 py-4">Role</th>
+                        <th className="px-8 py-4">Status</th>
+                        <th className="px-8 py-4">Created</th>
+                        <th className="px-8 py-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {filteredAccounts.map(acc => (
+                        <tr key={acc.id} className="hover:bg-white/[0.01] transition-colors group">
+                           <td className="px-8 py-5">
+                             <div className="flex items-center gap-4">
+                               <div className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-bold text-white group-hover:border-primary/40 transition-all">
+                                 {acc.avatar}
+                               </div>
+                               <div className="space-y-0.5">
+                                 <p className="text-sm font-bold text-white tracking-tight leading-none">{acc.name}</p>
+                                 <p className="text-[10px] text-muted opacity-60 leading-none mt-1">{acc.username}</p>
+                               </div>
+                             </div>
+                           </td>
+                           <td className="px-8 py-5">
+                             <span className={cn(
+                               "text-[9px] font-bold px-2 py-0.5 rounded-lg border tracking-widest",
+                               acc.role === 'Admin' ? "bg-primary/10 text-primary border-primary/20" :
+                               acc.role === 'Manager' ? "bg-blue-500/10 text-blue-400 border-blue-500/20" :
+                               "bg-white/5 text-muted/60 border-white/10"
+                             )}>
+                               {acc.role}
+                             </span>
+                           </td>
+                           <td className="px-8 py-5">
+                             <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-400">
+                               <CheckCircle2 size={12} />
+                               <span>{acc.status}</span>
+                             </div>
+                           </td>
+                           <td className="px-8 py-5 text-xs text-muted font-medium">{acc.created}</td>
+                           <td className="px-8 py-5 text-right">
+                             <div className="flex items-center justify-end gap-5">
+                                <button className="flex items-center gap-1.5 text-[10px] font-bold text-primary hover:opacity-80 transition-all">
+                                   <Ban size={12} />
+                                   Block
+                                </button>
+                                {acc.isWorker && (
+                                  <button onClick={() => deleteWorker(acc.id)} className="flex items-center gap-1.5 text-[10px] font-bold text-red-400 hover:opacity-80 transition-all">
+                                    <Trash2 size={12} />
+                                    Delete
+                                  </button>
+                                )}
+                             </div>
+                           </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                 </table>
+               </div>
+               <div className="px-8 py-4 border-t border-white/5 flex items-center justify-center">
+                  <div className="flex items-center gap-2 text-[9px] font-bold text-muted/40 tracking-widest">
+                    <Shield size={10} />
+                    Blocked accounts cannot log in to the system
                   </div>
-                ))}
-             </div>
+               </div>
+            </div>
           </section>
         </div>
       </div>
-
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Initialize New Account" size="md">
-        <div className="space-y-6 my-6 px-1">
-           <FormField label="Full Name Identity">
-              <input 
-                className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" 
-                value={form.name || ''} 
-                onChange={e => f('name', e.target.value)} 
-                placeholder="Ex: Riya Kumar" 
-              />
-           </FormField>
-
-           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <FormField label="System Alias">
-                <input 
-                  className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" 
-                  value={form.username || ''} 
-                  onChange={e => f('username', e.target.value)} 
-                  placeholder="Ex: riya_hq" 
-                />
-              </FormField>
-              <FormField label="Access Key">
-                <input 
-                  className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" 
-                  type="password" 
-                  value={form.password || ''} 
-                  onChange={e => f('password', e.target.value)} 
-                  placeholder="••••••••" 
-                />
-              </FormField>
-           </div>
-
-           <FormField label="Authorization Tier">
-              <StatusSelect 
-                value={form.access || 'Worker'} 
-                options={ACCESS_ROLES} 
-                onChange={val => f('access', val)}
-                isFilter
-              />
-           </FormField>
-
-           {(form.access === 'Worker' || !form.access) && (
-              <FormField label="Operational Designation">
-                <CustomSelect 
-                  value={form.workerRole || 'Content Specialist'} 
-                  options={WORKER_ROLES} 
-                  onChange={val => f('workerRole', val)}
-                  isFilter
-                />
-              </FormField>
-           )}
-
-           <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-6 border-t border-white/5">
-              <button 
-                className="flex-1 h-14 rounded-xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all outline-none" 
-                onClick={() => setShowModal(false)}
-              >
-                Discard
-              </button>
-              <button 
-                className="flex-1 h-14 rounded-xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" 
-                onClick={handleCreate}
-              >
-                Confirm Account Activation
-              </button>
-           </div>
-        </div>
-      </Modal>
     </div>
   )
 }
 
-function AccessCard({ role, detail, color, icon }) {
-   const variants = {
-     primary: "border-primary/20 bg-primary/5 text-primary",
-     blue: "border-blue-500/20 bg-blue-500/5 text-blue-400",
-     green: "border-green-500/20 bg-green-500/5 text-green-400"
-   }
-   return (
-     <div className="bg-sidebar/30 border border-white/5 rounded-3xl p-6 space-y-4">
-        <div className="flex items-center justify-between">
-           <span className="text-2xl grayscale group-hover:grayscale-0 transition-all">{icon}</span>
-           <span className={cn("text-[9px] font-bold px-2 py-0.5 rounded-lg border uppercase tracking-widest", variants[color])}>
-             {role} Tier
-           </span>
-        </div>
-        <div className="space-y-1">
-           <p className="text-sm font-bold text-white tracking-tight">{role} Protocol</p>
-           <p className="text-[11px] text-muted font-bold leading-relaxed opacity-40">{detail}</p>
-        </div>
-     </div>
-   )
+function PassInput({ label, value, onChange, isInverse }) {
+  const [show, setShow] = useState(false)
+  return (
+    <div className="space-y-2">
+      <p className="text-[10px] font-bold text-muted ml-0.5">{label}</p>
+      <div className="relative">
+        <Lock size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted/40" />
+        <input 
+          type={show ? 'text' : 'password'}
+          className={cn(
+            "w-full h-11 rounded-xl border border-white/10 pl-11 pr-12 text-xs font-bold text-white outline-none focus:border-primary/40 transition-all",
+            isInverse ? "bg-black" : "bg-white/5"
+          )}
+          placeholder="••••••••"
+          value={value || ''}
+          onChange={e => onChange(e.target.value)}
+        />
+        <button 
+          onClick={() => setShow(!show)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted/20 hover:text-muted transition-colors"
+        >
+          {show ? <EyeOff size={14} /> : <Eye size={14} />}
+        </button>
+      </div>
+    </div>
+  )
 }
+
+function InlineInput({ label, placeholder, icon: Icon, value, onChange }) {
+  return (
+    <div className="space-y-2">
+      <p className="text-[10px] font-bold text-muted ml-0.5">{label}</p>
+      <div className="relative">
+        <Icon size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted/40" />
+        <input 
+          type="text"
+          className="w-full h-11 bg-black rounded-xl border border-white/10 pl-11 pr-4 text-xs font-bold text-white outline-none focus:border-primary/40 transition-all"
+          placeholder={placeholder}
+          value={value || ''}
+          onChange={e => onChange(e.target.value)}
+        />
+      </div>
+    </div>
+  )
+}
+
+

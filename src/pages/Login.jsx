@@ -69,7 +69,6 @@ const Login = () => {
                 Work <br />
                 <span className="text-white/20">Management.</span>
               </h1>
-              <p className="text-[10px] font-black  tracking-[0.5em] text-white/30">System Portal V2.5</p>
             </div>
 
             <div className="space-y-2">
@@ -97,12 +96,12 @@ const Login = () => {
 
             <div className="mb-8 text-center lg:text-left">
 
-              <h3 className="text-3xl sm:text-4xl font-black tracking-tighter leading-none lg:tracking-[0.2em]">Sign In</h3>
+              <h3 className="text-3xl sm:text-4xl font-black tracking-tighter leading-none lg:tracking-[0.1em]">Sign In</h3>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-3">
-                <label className="text-[10px]  font-black tracking-[0.2em] text-white/40 ml-1">Identity UID</label>
+                <label className="text-[10px]  font-black tracking-[0.2em] text-white/40 ml-1">UserID</label>
                 <div className="relative group/input">
                   <User size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-white/10 group-focus-within/input:text-white transition-colors" />
                   <input
@@ -118,7 +117,7 @@ const Login = () => {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between ml-1">
-                  <label className="text-[10px]  font-black tracking-[0.2em] text-white/40">Security Key</label>
+                  <label className="text-[10px]  font-black tracking-[0.2em] text-white/40">Password</label>
                 </div>
                 <div className="relative group/input">
                   <Lock size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-white/10 group-focus-within/input:text-white transition-colors" />

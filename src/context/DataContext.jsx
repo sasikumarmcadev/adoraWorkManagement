@@ -7,6 +7,20 @@ import {
 const DataContext = createContext(null)
 
 export function DataProvider({ children }) {
+  const generateClientID = (currentClients) => {
+    const existing = (currentClients || clients || []).filter(c => c.clientID?.startsWith('ADMC'))
+    const nums = existing.map(c => parseInt(c.clientID.replace('ADMC', ''))).filter(n => !isNaN(n))
+    const next = nums.length > 0 ? Math.max(...nums) + 1 : 1
+    return `ADMC${String(next).padStart(3, '0')}`
+  }
+
+  const generateEmployeeID = (email, password) => {
+    if (!email || !password) return `ADM-TEMP-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
+    const prefix = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 4)
+    const suffix = password.toString().replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-4)
+    return `ADM-${prefix}${suffix}`
+  }
+
   const [clients, setClients] = useState(CLIENTS)
   const [enquiries, setEnquiries] = useState(ENQUIRIES)
   const [tasks, setTasks] = useState(TASKS)
@@ -16,11 +30,8 @@ export function DataProvider({ children }) {
   const [hiring, setHiring] = useState(HIRING)
   const [incentives, setIncentives] = useState(INCENTIVES)
   const [sopLibrary, setSopLibrary] = useState(SOP_LIBRARY)
-  const [workers, setWorkers] = useState(USERS.filter(u => u.access === 'Worker').map((w, idx, arr) => {
-    const roleMap = { 'Editor': 'ED', 'Content Specialist': 'CS', 'Video Grapher': 'VG', 'Meta Ads': 'MA', 'Software Developer': 'DEV' }
-    const prefix = roleMap[w.role] || 'EM'
-    const sameRoleIdx = arr.slice(0, idx + 1).filter(p => p.role === w.role).length
-    return { ...w, employeeID: w.employeeID || `ADM${prefix}${String(sameRoleIdx).padStart(3, '0')}` }
+  const [workers, setWorkers] = useState(USERS.filter(u => u.access === 'Worker').map((w) => {
+    return { ...w, employeeID: w.employeeID || generateEmployeeID(w.username, w.password) }
   }))
   const [activityLog, setActivityLog] = useState(ACTIVITY_LOG)
   const [hideHeader, setHideHeader] = useState(false)
@@ -36,20 +47,6 @@ export function DataProvider({ children }) {
     setActivityLog(prev => [entry, ...prev])
   }, [])
 
-  const generateClientID = (currentClients) => {
-    const existing = (currentClients || clients || []).filter(c => c.clientID?.startsWith('ADMC'))
-    const nums = existing.map(c => parseInt(c.clientID.replace('ADMC', ''))).filter(n => !isNaN(n))
-    const next = nums.length > 0 ? Math.max(...nums) + 1 : 1
-    return `ADMC${String(next).padStart(3, '0')}`
-  }
-
-  const generateEmployeeID = (role, current) => {
-    const roleMap = { 'Editor': 'ED', 'Content Specialist': 'CS', 'Video Grapher': 'VG', 'Meta Ads': 'MA', 'Software Developer': 'DEV' }
-    const prefix = roleMap[role] || 'EM'
-    const sameRoleCount = (current || []).filter(w => w.role === role).length + 1
-    return `ADM${prefix}${String(sameRoleCount).padStart(3, '0')}`
-  }
-
   // CLIENTS
   const addClient = (client) => {
     const newClient = { ...client, id: `c${Date.now()}`, clientID: client.clientID || generateClientID() }
@@ -64,7 +61,7 @@ export function DataProvider({ children }) {
     setEnquiries(prev => {
       const updated = prev.map(e => e.id === id ? { ...e, ...data } : e)
       const current = updated.find(e => e.id === id)
-      
+
       // Auto-Onboard: Move to clients if status is 'Onboard'
       if (current && current.status === 'Onboard') {
         setClients(prevClients => {
@@ -126,7 +123,7 @@ export function DataProvider({ children }) {
 
   // WORKERS (user accounts)
   const addWorker = (w) => setWorkers(prev => {
-    const empID = generateEmployeeID(w.role, prev)
+    const empID = generateEmployeeID(w.username, w.password)
     return [...prev, { ...w, id: `w${Date.now()}`, employeeID: empID }]
   })
   const updateWorker = (id, data) => setWorkers(prev => prev.map(w => w.id === id ? { ...w, ...data } : w))

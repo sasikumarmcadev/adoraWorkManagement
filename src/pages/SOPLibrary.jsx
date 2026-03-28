@@ -1,136 +1,250 @@
-import { useState } from 'react'
-import { useData } from '../context/DataContext'
-import { useAuth } from '../context/AuthContext'
-import { PageHeader, EmptyState, Modal, FormField, StatusSelect, CustomSelect } from '../components/ui/index'
-import { Plus, BookOpen, Link, File, Edit2, Trash2, ExternalLink } from 'lucide-react'
+import React, { useState } from 'react';
+import { useData } from '../context/DataContext';
+import { Plus, Edit2, Trash2, X } from 'lucide-react';
+import { Modal, FormField } from '../components/ui/index';
 
-const CATEGORIES = ['All', 'Content', 'Editing', 'Video', 'Operations', 'HR', 'Finance']
+/**
+ * SOPCard Component
+ * Displays individual SOP items in a grid
+ */
+const SOPCard = ({ sop, onClick, onEdit, onDelete }) => {
+  return (
+    <div
+      onClick={() => onClick(sop)}
+      className="group relative bg-[#0a0a0a] border border-[#27272a] p-6 rounded-2xl hover:border-white/20 transition-all duration-300 cursor-pointer flex flex-col h-full"
+    >
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="text-lg font-bold text-white line-clamp-1">{sop.title}</h3>
+        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            onClick={(e) => { e.stopPropagation(); onEdit(sop); }}
+            className="p-2 text-muted hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+          >
+            <Edit2 size={16} />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(sop.id); }}
+            className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-lg transition-colors"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+      <p className="text-muted text-sm leading-relaxed line-clamp-3">
+        {sop.description}
+      </p>
+      <div className="mt-auto pt-4 flex items-center text-white text-xs font-bold opacity-40 group-hover:opacity-100 transition-opacity">
+        View Details →
+      </div>
+    </div>
+  );
+};
 
-export default function SOPLibrary() {
-  const { sopLibrary, addSop, updateSop, deleteSop } = useData()
-  const { isManager, canDelete } = useAuth()
-  const [category, setCategory] = useState('All')
-  const [showModal, setShowModal] = useState(false)
-  const [editItem, setEditItem] = useState(null)
-  const [form, setForm] = useState({})
-  const f = (k, v) => setForm(prev => ({ ...prev, [k]: v }))
+/**
+ * AddSOPModal Component
+ * Popup for adding or editing SOPs
+ */
+const AddSOPModal = ({ isOpen, onClose, onSave, editData }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
-  const filtered = sopLibrary.filter(s => category === 'All' || s.category === category)
+  // Update form when editing
+  React.useEffect(() => {
+    if (editData) {
+      setTitle(editData.title || '');
+      setDescription(editData.description || '');
+    } else {
+      setTitle('');
+      setDescription('');
+    }
+  }, [editData, isOpen]);
 
-  const openAdd = () => { setEditItem(null); setForm({ category: 'Content' }); setShowModal(true) }
-  const openEdit = (s) => { setEditItem(s); setForm({ ...s }); setShowModal(true) }
-  const save = () => {
-    const data = { ...form, createdBy: 'Manager', createdAt: editItem?.createdAt || new Date().toISOString().split('T')[0] }
-    if (editItem) updateSop(editItem.id, data)
-    else addSop(data)
-    setShowModal(false)
-  }
+  if (!isOpen) return null;
+
+  const handleSave = () => {
+    if (!title.trim() || !description.trim()) return;
+    onSave({ title, description });
+    setTitle('');
+    setDescription('');
+  };
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="SOP Library"
-        subtitle="Standard Operating Procedures and knowledge base"
-        actions={
-          isManager && (
-            <button className="btn-primary" onClick={openAdd}>
-              <Plus size={16} /> Add SOP
-            </button>
-          )
-        }
-      />
+    <Modal isOpen={isOpen} onClose={onClose} title={editData ? 'Edit SOP' : 'Add New SOP'} size="md">
+      <div className="space-y-6 mt-2">
+        <FormField label="Protocol Title">
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. Content Creation Standards"
+            className="input"
+          />
+        </FormField>
 
-      {/* Category pills */}
-      <div className="flex gap-2 flex-wrap">
-        {CATEGORIES.map(c => (
+        <FormField label="Operational Description">
+          <textarea
+            rows={8}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Provide detailed instructions and workflow protocols..."
+            className="input resize-none py-3"
+          />
+        </FormField>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 border-t border-white/5 pt-6">
           <button
-            key={c}
-            onClick={() => setCategory(c)}
-            className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all ${category === c ? 'bg-brand-500 text-white' : 'btn-secondary'}`}
+            onClick={onClose}
+            className="btn-secondary w-full sm:w-auto order-1 sm:order-none"
           >
-            {c}
+            Cancel
           </button>
-        ))}
+          <button
+            onClick={handleSave}
+            className="btn-primary w-full sm:w-auto"
+          >
+            {editData ? 'Update Protocol' : 'Deploy Protocol'}
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+/**
+ * DetailViewModal Component
+ * Simple view for full description
+ */
+const DetailViewModal = ({ sop, onClose }) => {
+  if (!sop) return null;
+
+  return (
+    <Modal isOpen={!!sop} onClose={onClose} title={sop.title} size="lg">
+      <div className="space-y-6">
+        <div className="min-h-[40vh] max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+          <p className="text-muted leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
+            {sop.description}
+          </p>
+        </div>
+        <div className="flex justify-end pt-6 border-t border-white/5">
+          <button
+            onClick={onClose}
+            className="btn-primary px-10"
+          >
+            Acknowledge Protocol
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+/**
+ * Main SOPLibraryPage
+ */
+export default function SOPLibrary() {
+  const { sopLibrary, addSop, updateSop, deleteSop } = useData();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedSop, setSelectedSop] = useState(null);
+  const [editingSop, setEditingSop] = useState(null);
+
+  const handleSave = (data) => {
+    if (editingSop) {
+      updateSop(editingSop.id, data);
+    } else {
+      addSop(data);
+    }
+    setIsAddModalOpen(false);
+    setEditingSop(null);
+  };
+
+  const openEdit = (sop) => {
+    setEditingSop(sop);
+    setIsAddModalOpen(true);
+  };
+
+  return (
+    <div className="w-full flex-1 min-h-screen bg-background flex flex-col">
+      {/* Header Area */}
+      <div className="bg-background border-b border-border shadow-2xl relative overflow-hidden py-6 sm:py-10">
+        <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+            <div className="text-center sm:text-left">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+                SOP <span className="text-primary/50 text-base sm:text-lg">Library</span>
+              </h1>
+              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none tracking-widest">
+                Workflow Protocols • Professional Operational Logic
+              </p>
+            </div>
+            <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
+              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Registered Protocols</p>
+              <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums leading-none">
+                {sopLibrary.length.toString().padStart(2, '0')}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* SOP Cards */}
-      {filtered.length === 0 ? (
-        <EmptyState
-          title="No SOPs yet"
-          description={isManager ? "Create your first SOP to build your knowledge base." : "No SOPs available in this category."}
-          icon={BookOpen}
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map(sop => (
-            <div key={sop.id} className="card-hover group">
-              <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl bg-brand-500/10 flex items-center justify-center">
-                  <BookOpen size={18} className="text-brand-500" />
-                </div>
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {isManager && <button className="btn-ghost p-1.5" onClick={() => openEdit(sop)}><Edit2 size={14} /></button>}
-                  {canDelete && <button className="btn-ghost p-1.5 hover:text-red-400" onClick={() => deleteSop(sop.id)}><Trash2 size={14} /></button>}
-                </div>
-              </div>
-
-              <div className="mb-1">
-                <span className="badge bg-brand-100 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300 text-xs">{sop.category}</span>
-              </div>
-
-              <h3 className="font-semibold mt-2" style={{ color: 'var(--text-primary)' }}>{sop.title}</h3>
-              <p className="text-sm mt-1.5 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{sop.description}</p>
-
-              <div className="flex items-center gap-3 mt-4 pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
-                {sop.link && (
-                  <a
-                    href={sop.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs text-brand-500 hover:text-brand-400 transition-colors"
-                    onClick={e => e.stopPropagation()}
-                  >
-                    <ExternalLink size={13} /> Open Link
-                  </a>
-                )}
-                {sop.file && (
-                  <span className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--text-muted)' }}>
-                    <File size={13} /> File attached
-                  </span>
-                )}
-                <span className="text-xs ml-auto" style={{ color: 'var(--text-muted)' }}>By {sop.createdBy}</span>
-              </div>
+      <div className="flex-1 flex flex-col bg-panel">
+        <div className="p-4 sm:p-8 lg:p-12 max-w-7xl mx-auto w-full">
+          {/* Functional Bar Area */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
+            <div>
+              <h2 className="text-sm font-bold text-white tracking-[0.2em] opacity-40">System Protocol Registry</h2>
             </div>
-          ))}
-        </div>
-      )}
+            <button
+              onClick={() => { setEditingSop(null); setIsAddModalOpen(true); }}
+              className="flex items-center justify-center gap-2 px-8 py-3 bg-white text-black font-bold rounded-2xl shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0 shadow-primary/20"
+            >
+              <Plus size={20} />
+              <span>Add Protocol</span>
+            </button>
+          </div>
 
-      {/* Add/Edit Modal */}
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={editItem ? 'Edit SOP' : 'Create SOP Box'}>
-        <div className="space-y-4">
-          <FormField label="Title">
-            <input className="input" value={form.title || ''} onChange={e => f('title', e.target.value)} placeholder="SOP title" />
-          </FormField>
-          <FormField label="Category">
-            <StatusSelect 
-              value={form.category || 'Content'} 
-              options={CATEGORIES.filter(c => c !== 'All')} 
-              onChange={val => f('category', val)}
-              isFilter
-            />
-          </FormField>
-          <FormField label="Description">
-            <textarea className="input" rows={4} value={form.description || ''} onChange={e => f('description', e.target.value)} placeholder="Describe this SOP..." />
-          </FormField>
-          <FormField label="Link (optional)">
-            <input className="input" value={form.link || ''} onChange={e => f('link', e.target.value)} placeholder="https://docs.google.com/..." />
-          </FormField>
+          {/* content Section */}
+          {sopLibrary.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-40 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] border border-white/5 flex items-center justify-center mb-6">
+                <Plus size={40} className="text-white/10" />
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">No SOP Added</h2>
+              <p className="text-muted mb-8 max-w-xs mx-auto">Build your library by adding your first standard operating procedure.</p>
+              <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="px-8 py-3.5 bg-white text-black font-bold rounded-2xl transition-all active:scale-95"
+              >
+                + Add SOP
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {sopLibrary.map((sop) => (
+                <SOPCard
+                  key={sop.id}
+                  sop={sop}
+                  onClick={setSelectedSop}
+                  onEdit={openEdit}
+                  onDelete={deleteSop}
+                />
+              ))}
+            </div>
+          )}
         </div>
-        <div className="flex gap-2 justify-end mt-5">
-          <button className="btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-          <button className="btn-primary" onClick={save}>{editItem ? 'Update' : 'Create'}</button>
-        </div>
-      </Modal>
+      </div>
+
+      {/* Modals */}
+      <AddSOPModal
+        isOpen={isAddModalOpen}
+        onClose={() => { setIsAddModalOpen(false); setEditingSop(null); }}
+        onSave={handleSave}
+        editData={editingSop}
+      />
+
+      <DetailViewModal
+        sop={selectedSop}
+        onClose={() => setSelectedSop(null)}
+      />
     </div>
-  )
+  );
 }
