@@ -8,20 +8,38 @@ const DataContext = createContext(null)
 
 export function DataProvider({ children }) {
   const generateClientID = (currentClients) => {
-    const existing = (currentClients || clients || []).filter(c => c.clientID?.startsWith('ADMC'))
-    const nums = existing.map(c => parseInt(c.clientID.replace('ADMC', ''))).filter(n => !isNaN(n))
+    const existing = (currentClients || clients || []).filter(c => c.clientID?.startsWith('ADMCL'))
+    const nums = existing.map(c => parseInt(c.clientID.replace('ADMCL', ''))).filter(n => !isNaN(n))
     const next = nums.length > 0 ? Math.max(...nums) + 1 : 1
-    return `ADMC${String(next).padStart(3, '0')}`
+    return `ADMCL${String(next).padStart(3, '0')}`
   }
 
-  const generateEmployeeID = (email, password) => {
-    if (!email || !password) return `ADM-TEMP-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
-    const prefix = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 4)
-    const suffix = password.toString().replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(-4)
-    return `ADM-${prefix}${suffix}`
+  const generateEmployeeID = (role, currentWorkers) => {
+    const rolePrefixes = {
+      'Editor': 'ADMED',
+      'Content Specialist': 'ADMCS',
+      'Video Grapher': 'ADMVG',
+      'Meta Ads': 'ADMMA',
+      'Software Developer': 'ADMDEV',
+      'Manager': 'ADMMG',
+      'Admin': 'ADMAD'
+    }
+    const prefix = rolePrefixes[role] || 'ADMWK'
+    const list = currentWorkers || workers || []
+    const existing = list.filter(w => w.employeeID?.startsWith(prefix))
+    const nums = existing.map(w => parseInt(w.employeeID.replace(prefix, ''))).filter(n => !isNaN(n))
+    const nextNum = nums.length > 0 ? Math.max(...nums) + 1 : 1
+    return `${prefix}${String(nextNum).padStart(3, '0')}`
   }
 
-  const [clients, setClients] = useState(CLIENTS)
+  const [clients, setClients] = useState(() => {
+    const processed = []
+    CLIENTS.forEach(c => {
+      const id = generateClientID(processed)
+      processed.push({ ...c, clientID: c.clientID || id })
+    })
+    return processed
+  })
   const [enquiries, setEnquiries] = useState(ENQUIRIES)
   const [tasks, setTasks] = useState(TASKS)
   const [payments, setPayments] = useState(PAYMENTS)
@@ -30,9 +48,15 @@ export function DataProvider({ children }) {
   const [hiring, setHiring] = useState(HIRING)
   const [incentives, setIncentives] = useState(INCENTIVES)
   const [sopLibrary, setSopLibrary] = useState(SOP_LIBRARY)
-  const [workers, setWorkers] = useState(USERS.filter(u => u.access === 'Worker').map((w) => {
-    return { ...w, employeeID: w.employeeID || generateEmployeeID(w.username, w.password) }
-  }))
+  const [workers, setWorkers] = useState(() => {
+    const initialWorkers = USERS.filter(u => u.access === 'Worker')
+    const processed = []
+    initialWorkers.forEach(w => {
+      const empID = generateEmployeeID(w.role, processed)
+      processed.push({ ...w, employeeID: w.employeeID || empID })
+    })
+    return processed
+  })
   const [activityLog, setActivityLog] = useState(ACTIVITY_LOG)
   const [hideHeader, setHideHeader] = useState(false)
   const [desktopCollapsed, setDesktopCollapsed] = useState(false)
@@ -123,7 +147,8 @@ export function DataProvider({ children }) {
 
   // WORKERS (user accounts)
   const addWorker = (w) => setWorkers(prev => {
-    const empID = generateEmployeeID(w.username, w.password)
+    const roleForID = w.role || w.access
+    const empID = generateEmployeeID(roleForID, prev)
     return [...prev, { ...w, id: `w${Date.now()}`, employeeID: empID }]
   })
   const updateWorker = (id, data) => setWorkers(prev => prev.map(w => w.id === id ? { ...w, ...data } : w))

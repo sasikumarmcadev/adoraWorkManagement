@@ -280,7 +280,8 @@ export default function ClientsDetails() {
               <thead className="text-[11px] text-muted font-bold bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors">
                 <tr>
                    <th className="w-[80px] px-6 py-4 border-r border-border leading-none text-center">Brand Logo</th>
-                   <th className="w-[300px] px-8 py-4 border-r border-border leading-none">Client Name</th>
+                   <th className="w-[120px] px-8 py-4 border-r border-border leading-none">Client ID</th>
+                   <th className="w-[280px] px-8 py-4 border-r border-border leading-none">Client Name</th>
                    <th className="w-[200px] px-8 py-4 border-r border-border leading-none">Contact</th>
                    <th className="w-[120px] px-8 py-4 border-r border-border text-center leading-none">Activity</th>
                    <th className="w-[180px] px-8 py-4 border-r border-border text-center leading-none">Payment Status</th>
@@ -296,9 +297,13 @@ export default function ClientsDetails() {
                        </div>
                     </td>
                     <td className="px-8 py-3 border-r border-border">
+                       <span className="text-[11px] text-muted font-bold tracking-wider bg-white/5 px-2.5 py-1 rounded-md border border-white/5 uppercase">
+                         {c.clientID || 'PENDING'}
+                       </span>
+                    </td>
+                    <td className="px-8 py-3 border-r border-border">
                        <div className="flex flex-col gap-1">
                           <span className="text-white font-bold text-sm tracking-tight truncate">{c.name}</span>
-                          <span className="text-[9px] text-muted font-bold opacity-40">ID: {c.clientID || 'PENDING'}</span>
                        </div>
                     </td>
                     <td className="px-8 py-3 border-r border-border">

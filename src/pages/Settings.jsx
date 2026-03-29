@@ -5,7 +5,7 @@ import { FormField, StatusSelect, CustomSelect } from '../components/ui/index'
 import { cn } from '../lib/utils'
 import { Plus, User, Lock, Trash2, Key, Users, Settings as SettingsIcon, Search, Shield, Filter, Eye, EyeOff, CheckCircle2, Ban, Layout } from 'lucide-react'
 
-const ACCESS_ROLES = ['Admin', 'Collections Officer', 'Manager']
+const ACCESS_ROLES = ['Admin', 'Manager', 'Editor', 'Content Specialist', 'Video Grapher', 'Meta Ads', 'Software Developer']
 
 export default function Settings() {
   const { workers, addWorker, deleteWorker } = useData()
@@ -19,33 +19,40 @@ export default function Settings() {
   const togglePass = (fld) => setShowPassword(prev => ({ ...prev, [fld]: !prev[fld] }))
 
   const allAccounts = useMemo(() => [
-    { id: 'u1', name: 'Admin', username: 'admin@adora.com', role: 'Admin', status: 'Active', created: 'Jan 17, 2026', avatar: 'AD' },
-    { id: 'u2', name: 'Sasi Kumar', username: 'sasikumar.mca@gmail.com', role: 'Admin', status: 'Active', created: 'Feb 02, 2026', avatar: 'SK' },
+    { id: 'u1', name: 'Admin', username: 'admin@adora.com', role: 'Admin', status: 'Active', created: 'Jan 17, 2026', avatar: 'AD', employeeID: 'ADMAD001' },
+    { id: 'u2', name: 'Sasi Kumar', username: 'sasikumar.mca@gmail.com', role: 'Admin', status: 'Active', created: 'Feb 02, 2026', avatar: 'SK', employeeID: 'ADMAD002' },
     ...(workers || []).map(w => ({
       id: w.id,
       name: w.name,
       username: w.username || `${w.name.toLowerCase().replace(' ', '')}@adora.com`,
-      role: w.access || 'Worker',
+      role: w.role || w.access || 'Worker',
       status: 'Active',
       created: 'Mar 28, 2026',
       avatar: w.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
-      isWorker: true
+      isWorker: true,
+      employeeID: w.employeeID
     })),
   ], [workers])
 
   const filteredAccounts = allAccounts.filter(acc => 
     acc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    acc.username.toLowerCase().includes(searchQuery.toLowerCase())
+    acc.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    acc.employeeID?.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const handleCreate = () => {
     if (!form.username || !form.role || !form.password) return
+    
+    // Determine if it's a professional worker role or an administrative role
+    const workerRoles = ['Editor', 'Content Specialist', 'Video Grapher', 'Meta Ads', 'Software Developer']
+    const isWorkerRole = workerRoles.includes(form.role)
+    
     addWorker({
       name: form.username.split('@')[0],
       username: form.username,
       password: form.password,
-      access: form.role,
-      employeeID: `EMP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`
+      role: isWorkerRole ? form.role : form.role,
+      access: isWorkerRole ? 'Worker' : form.role
     })
     setForm({})
   }
@@ -179,6 +186,7 @@ export default function Settings() {
                     <thead className="text-[10px] font-bold text-muted tracking-widest border-b border-white/5">
                       <tr>
                         <th className="px-8 py-4">User</th>
+                        <th className="px-8 py-4">ID</th>
                         <th className="px-8 py-4">Role</th>
                         <th className="px-8 py-4">Status</th>
                         <th className="px-8 py-4">Created</th>
@@ -198,6 +206,11 @@ export default function Settings() {
                                  <p className="text-[10px] text-muted opacity-60 leading-none mt-1">{acc.username}</p>
                                </div>
                              </div>
+                           </td>
+                           <td className="px-8 py-5">
+                             <span className="text-[10px] font-bold text-muted/60 bg-white/5 px-2 py-0.5 rounded-lg border border-white/5 uppercase tracking-tighter">
+                               {acc.employeeID || 'N/A'}
+                             </span>
                            </td>
                            <td className="px-8 py-5">
                              <span className={cn(
