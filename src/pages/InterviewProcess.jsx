@@ -8,30 +8,6 @@ import { FormField, Modal, EmptyState, SearchBar } from '../components/ui/index'
 const STATUSES = ['Applied', 'Interview', 'Selected', 'Rejected']
 const ROLES = ['Content Specialist', 'Editor', 'Video Grapher', 'Meta Ads', 'Software Developer']
 
-const LinkifyText = ({ text }) => {
-  if (!text) return null
-  const urlRegex = /(https?:\/\/[^\s]+)/g
-  const parts = text.split(urlRegex)
-  
-  return parts.map((part, i) => {
-    if (part.match(urlRegex)) {
-      return (
-        <a 
-          key={i} 
-          href={part} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="text-primary hover:underline underline-offset-4 decoration-primary/40"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {part}
-        </a>
-      )
-    }
-    return part
-  })
-}
-
 export default function InterviewProcess() {
   const { hiring, addHiring, updateHiring, deleteHiring } = useData()
   const { isManager, isJeevan } = useAuth()
@@ -148,7 +124,6 @@ export default function InterviewProcess() {
                   <th className="w-[150px] px-8 py-4 border-r border-border leading-none text-left">Phone No</th>
                   <th className="w-[180px] px-8 py-4 border-r border-border leading-none text-left">Location</th>
                   <th className="w-[160px] px-8 py-4 border-r border-border leading-none text-left">Role Applied</th>
-                  <th className="w-[200px] px-8 py-4 border-r border-border leading-none text-left">Internal Notes</th>
                   <th className="w-[130px] px-8 py-4 border-r border-border leading-none text-left">Status</th>
                   <th className="w-[100px] px-8 py-4 text-right leading-none">Actions</th>
                 </tr>
@@ -187,11 +162,7 @@ export default function InterviewProcess() {
                         {h.role}
                       </span>
                     </td>
-                    <td className="px-8 py-3 border-r border-border text-left">
-                       <p className="text-[11px] text-muted/60 font-bold leading-relaxed line-clamp-2 max-w-[240px] break-words overflow-hidden" title={h.notes}>
-                         {h.notes ? <LinkifyText text={h.notes} /> : 'No notes available...'}
-                       </p>
-                    </td>
+
                     <td className="px-8 py-3 border-r border-border text-left">
                        <div className="flex items-center gap-3 justify-start">
                         <div className={cn(
@@ -273,17 +244,7 @@ export default function InterviewProcess() {
                       </p>
                     </div>
 
-                    {h.notes && (
-                      <div className="mt-3 p-3 bg-white/[0.01] border border-white/5 rounded-xl">
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <Activity size={10} className="text-primary/40" />
-                          <p className="text-[9px] text-muted font-bold uppercase tracking-widest opacity-40">Candidate Notes</p>
-                        </div>
-                        <div className="text-[10px] text-white/60 font-medium leading-relaxed line-clamp-3 italic break-words overflow-hidden p-0 m-0">
-                           <LinkifyText text={h.notes} />
-                        </div>
-                      </div>
-                    )}
+
                   </div>
                 ))
               ) : (
@@ -368,14 +329,7 @@ export default function InterviewProcess() {
             </FormField>
           </div>
 
-          <FormField label="Internal Notes & Feedback">
-            <textarea 
-              className="bg-sidebar border border-white/10 w-full min-h-[120px] p-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner resize-none" 
-              value={form.notes || ''} 
-              onChange={e => setForm({...form, notes: e.target.value})} 
-              placeholder="Candidate feedback, interview highlights, or special considerations..." 
-            />
-          </FormField>
+
           
           <div className="flex flex-col sm:flex-row gap-3 pt-6 mt-6 border-t border-white/5">
             <button className="flex-1 h-14 rounded-xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Cancel</button>
