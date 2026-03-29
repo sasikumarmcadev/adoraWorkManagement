@@ -66,11 +66,11 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Navigate to="/" replace />} />
-      
+
       <Route element={<Layout />}>
         {/* According to Requirements, Default page should show this component */}
         <Route path="/" element={<EmptyStateDashboard />} />
-        
+
         {/* Team Board */}
         <Route path="/team-board/content-specialist" element={<ContentSpecialistPage />} />
         <Route path="/team-board/editor" element={<EditorPage />} />

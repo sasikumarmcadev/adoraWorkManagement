@@ -8,6 +8,30 @@ import { FormField, Modal, EmptyState, SearchBar } from '../components/ui/index'
 const STATUSES = ['Applied', 'Interview', 'Selected', 'Rejected']
 const ROLES = ['Content Specialist', 'Editor', 'Video Grapher', 'Meta Ads', 'Software Developer']
 
+const LinkifyText = ({ text }) => {
+  if (!text) return null
+  const urlRegex = /(https?:\/\/[^\s]+)/g
+  const parts = text.split(urlRegex)
+  
+  return parts.map((part, i) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a 
+          key={i} 
+          href={part} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="text-primary hover:underline underline-offset-4 decoration-primary/40"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {part}
+        </a>
+      )
+    }
+    return part
+  })
+}
+
 export default function InterviewProcess() {
   const { hiring, addHiring, updateHiring, deleteHiring } = useData()
   const { isManager, isJeevan } = useAuth()
@@ -119,37 +143,38 @@ export default function InterviewProcess() {
             <table className="w-full min-w-[1000px] text-sm text-left border-separate border-spacing-0 table-fixed overflow-visible">
               <thead className="text-[11px] text-muted font-bold bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors">
                 <tr>
-                  <th className="w-[150px] px-8 py-4 border-r border-border leading-none">Date</th>
-                  <th className="w-[220px] px-8 py-4 border-r border-border leading-none">Candidate Name</th>
-                  <th className="w-[180px] px-8 py-4 border-r border-border leading-none">Phone No</th>
-                  <th className="w-[200px] px-8 py-4 border-r border-border leading-none">Location</th>
-                  <th className="w-[180px] px-8 py-4 border-r border-border leading-none">Role Applied</th>
-                  <th className="w-[150px] px-8 py-4 border-r border-border leading-none">Status</th>
-                  <th className="w-[120px] px-8 py-4 text-right leading-none">Actions</th>
+                  <th className="w-[120px] px-8 py-4 border-r border-border leading-none text-left">Date</th>
+                  <th className="w-[180px] px-8 py-4 border-r border-border leading-none text-left">Candidate Name</th>
+                  <th className="w-[150px] px-8 py-4 border-r border-border leading-none text-left">Phone No</th>
+                  <th className="w-[180px] px-8 py-4 border-r border-border leading-none text-left">Location</th>
+                  <th className="w-[160px] px-8 py-4 border-r border-border leading-none text-left">Role Applied</th>
+                  <th className="w-[200px] px-8 py-4 border-r border-border leading-none text-left">Internal Notes</th>
+                  <th className="w-[130px] px-8 py-4 border-r border-border leading-none text-left">Status</th>
+                  <th className="w-[100px] px-8 py-4 text-right leading-none">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {filteredHiring.map(h => (
                   <tr key={h.id} className="hover:bg-sidebar transition-colors group">
-                    <td className="px-8 py-3 border-r border-border">
-                      <div className="flex items-center gap-3">
+                    <td className="px-8 py-3 border-r border-border text-left">
+                      <div className="flex items-center gap-3 justify-start">
                         <Calendar size={14} className="text-primary/60" />
                         <span className="text-white/70 font-bold tabular-nums text-[13px]">{formatDate(h.date)}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-3 border-r border-border overflow-hidden">
-                      <div className="flex items-center gap-3">
+                    <td className="px-8 py-3 border-r border-border text-left overflow-hidden">
+                      <div className="flex items-center gap-3 justify-start">
                         <span className="text-white font-bold tracking-tight truncate" title={h.candidateName}>{h.candidateName}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-3 border-r border-border">
-                      <div className="flex items-center gap-3">
+                    <td className="px-8 py-3 border-r border-border text-left">
+                      <div className="flex items-center gap-3 justify-start">
                         <Phone size={14} className="text-muted/40" />
                         <span className="text-white/80 font-bold text-[13px] tabular-nums">{h.phone}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-3 border-r border-border">
-                      <div className="flex items-center gap-3">
+                    <td className="px-8 py-3 border-r border-border text-left">
+                      <div className="flex items-center gap-3 justify-start">
                         <MapPin size={14} className="text-muted/40" />
                         <div className="flex flex-col">
                           <span className="text-white/80 font-bold text-[12px] truncate">{h.city || '—'}</span>
@@ -157,13 +182,18 @@ export default function InterviewProcess() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-3 border-r border-border">
+                    <td className="px-8 py-3 border-r border-border text-left">
                       <span className="text-[10px] font-bold text-white/70 tracking-tight">
                         {h.role}
                       </span>
                     </td>
-                    <td className="px-8 py-3 border-r border-border">
-                       <div className="flex items-center gap-3">
+                    <td className="px-8 py-3 border-r border-border text-left">
+                       <p className="text-[11px] text-muted/60 font-bold leading-relaxed line-clamp-2 max-w-[240px] break-words overflow-hidden" title={h.notes}>
+                         {h.notes ? <LinkifyText text={h.notes} /> : 'No notes available...'}
+                       </p>
+                    </td>
+                    <td className="px-8 py-3 border-r border-border text-left">
+                       <div className="flex items-center gap-3 justify-start">
                         <div className={cn(
                           "w-2 h-2 rounded-full",
                           h.status === 'Selected' ? "bg-green-500 shadow-sm shadow-green-500/50" :
@@ -242,6 +272,18 @@ export default function InterviewProcess() {
                         {h.city || '—'}, <span className="opacity-50">{h.state || '—'}</span>
                       </p>
                     </div>
+
+                    {h.notes && (
+                      <div className="mt-3 p-3 bg-white/[0.01] border border-white/5 rounded-xl">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <Activity size={10} className="text-primary/40" />
+                          <p className="text-[9px] text-muted font-bold uppercase tracking-widest opacity-40">Candidate Notes</p>
+                        </div>
+                        <div className="text-[10px] text-white/60 font-medium leading-relaxed line-clamp-3 italic break-words overflow-hidden p-0 m-0">
+                           <LinkifyText text={h.notes} />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))
               ) : (
@@ -325,6 +367,15 @@ export default function InterviewProcess() {
                 />
             </FormField>
           </div>
+
+          <FormField label="Internal Notes & Feedback">
+            <textarea 
+              className="bg-sidebar border border-white/10 w-full min-h-[120px] p-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner resize-none" 
+              value={form.notes || ''} 
+              onChange={e => setForm({...form, notes: e.target.value})} 
+              placeholder="Candidate feedback, interview highlights, or special considerations..." 
+            />
+          </FormField>
           
           <div className="flex flex-col sm:flex-row gap-3 pt-6 mt-6 border-t border-white/5">
             <button className="flex-1 h-14 rounded-xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Cancel</button>
