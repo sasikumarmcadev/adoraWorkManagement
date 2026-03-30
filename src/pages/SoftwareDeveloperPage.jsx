@@ -279,19 +279,19 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
       <div className="px-4 py-3 bg-[#050505] border-b border-white/5 overflow-x-auto scrollbar-none">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 min-w-[400px]">
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted uppercase font-bold tracking-tighter">Total</p>
+            <p className="text-[10px] text-muted font-bold tracking-tighter">Total</p>
             <p className="text-sm font-bold text-white leading-none mt-1">{stats.total}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-emerald-500/60 uppercase font-bold tracking-tighter">Completed</p>
+            <p className="text-[10px] text-emerald-500/60 font-bold tracking-tighter">Completed</p>
             <p className="text-sm font-bold text-emerald-400 leading-none mt-1">{stats.done}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-blue-500/60 uppercase font-bold tracking-tighter">In Progress</p>
+            <p className="text-[10px] text-blue-500/60 font-bold tracking-tighter">In Progress</p>
             <p className="text-sm font-bold text-blue-400 leading-none mt-1">{stats.progress}</p>
           </div>
           <div className="bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
-            <p className="text-[10px] text-emerald-400/60 uppercase font-bold tracking-tighter">Work Done</p>
+            <p className="text-[10px] text-emerald-400/60 font-bold tracking-tighter">Work Done</p>
             <p className="text-sm font-bold text-emerald-400 leading-none mt-1">{stats.workDone}</p>
           </div>
         </div>
@@ -322,8 +322,14 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
           </div>
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
-          <button className="btn-primary py-1.5 px-3 text-xs sm:text-sm" onClick={onAdd}>
-            <Plus size={12} className="sm:w-[14px] sm:h-[14px]" /> Add Project
+          <button
+            onClick={onAdd}
+            className="group flex items-center justify-center gap-3 pl-1.5 pr-6 py-1.5 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all"
+          >
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
+              <Plus size={18} />
+            </div>
+            <span className="text-[12px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Project</span>
           </button>
           <div className="relative">
             <StatusSelect
@@ -409,7 +415,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
           </div>
         ) : (
           <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="text-xs text-muted uppercase bg-sidebar border-b border-border">
+            <thead className="text-xs text-muted font-bold bg-sidebar border-b border-border">
               <tr>
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Client Name</th>
@@ -595,7 +601,7 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
           </FormField>
           {form.selectedClient && (
             <div className="mt-2 flex flex-wrap gap-2">
-              <span className="text-[10px] text-muted uppercase font-bold w-full mb-1">Targeting Asset for:</span>
+              <span className="text-[10px] text-muted font-bold w-full mb-1">Targeting Asset for:</span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold">
                 {form.selectedClient.name}
               </span>
@@ -636,7 +642,7 @@ function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
           <div key={date} className="space-y-3">
             <div className="flex items-center gap-3 sticky top-0 bg-[#0a0a0a] py-2 z-10">
               <div className="h-px flex-1 bg-border/50" />
-              <span className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">{formatDate(date)}</span>
+              <span className="text-[11px] font-black text-primary tracking-[0.2em]">{formatDate(date)}</span>
               <div className="h-px flex-1 bg-border/50" />
             </div>
             <div className="grid grid-cols-1 gap-2">
@@ -645,12 +651,12 @@ function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-[10px] font-bold text-white bg-white/5 px-2 py-0.5 rounded border border-white/10">{t.clientName}</span>
-                      {t.contentCheck && <span className="text-[8px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20 uppercase">Work Done</span>}
+                      {t.contentCheck && <span className="text-[8px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20">Work Done</span>}
                     </div>
                     <p className="text-xs text-muted truncate">{t.task}</p>
                   </div>
                   <span className={cn(
-                    "text-[8px] font-black uppercase px-2 py-1 rounded border",
+                    "text-[8px] font-black px-2 py-1 rounded border",
                     t.status === 'Done' ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" :
                     t.status === 'In Progress' ? "text-blue-400 bg-blue-400/10 border-blue-400/20" :
                     "text-white/40 bg-white/5 border-white/10"
@@ -764,7 +770,7 @@ function CalendarView({ tasks, deleteTask }) {
           box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
         .fc-col-header-cell { background-color: #111111 !important; border-bottom: 2px solid var(--border) !important; }
-        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; text-transform: uppercase; padding: 0.6rem !important; display: block !important; }
+        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; padding: 0.6rem !important; display: block !important; }
         .fc-daygrid-day-number { color: var(--text-primary) !important; font-size: 0.7rem; padding: 0.3rem !important; }
         .fc-toolbar-title { color: var(--text-primary) !important; font-size: 0.9rem !important; font-weight: 700 !important; }
         
@@ -824,7 +830,7 @@ function CalendarView({ tasks, deleteTask }) {
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                 <div className="flex flex-col items-end gap-1.5">
-                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-[#222] text-primary self-end">{t.status}</span>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded bg-[#222] text-primary self-end">{t.status}</span>
                   <div className="flex gap-1">
                     {t.contentCheck && <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">WORK DONE</span>}
                   </div>
@@ -846,16 +852,19 @@ function CalendarView({ tasks, deleteTask }) {
 
 function SoftwareDeveloperListView({ tasks, onSelect }) {
   const { workers } = useData()
-  const softwareDevelopers = useMemo(() => {
+  const [searchDev, setSearchDev] = useState('')
+
+  const developers = useMemo(() => {
     const names = Array.from(new Set(workers.filter(w => w.role === 'Software Developer').map(w => w.name)))
-    return names.sort((a, b) => {
+    const filtered = names.filter(name => name.toLowerCase().includes(searchDev.toLowerCase()))
+    return filtered.sort((a, b) => {
       const wA = workers.find(w => w.name === a)
       const wB = workers.find(w => w.name === b)
       if (wA?.isTeamLead && !wB?.isTeamLead) return -1
       if (!wA?.isTeamLead && wB?.isTeamLead) return 1
       return a.localeCompare(b)
     })
-  }, [workers])
+  }, [workers, searchDev])
 
   return (
     <div className="flex-1 p-4 sm:p-8 overflow-y-auto">
@@ -866,13 +875,17 @@ function SoftwareDeveloperListView({ tasks, onSelect }) {
             <p className="text-xs sm:text-sm text-muted mt-1">Select a developer to view their roadmap and projects</p>
           </div>
           <div className="bg-primary/10 border border-primary/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md">
-            <span className="text-primary font-bold text-sm sm:text-base">{softwareDevelopers.length}</span>
+            <span className="text-primary font-bold text-sm sm:text-base">{developers.length}</span>
             <span className="text-muted text-[10px] sm:text-xs ml-2 tracking-wider">Active Developers</span>
           </div>
         </div>
 
+        <div className="mb-6">
+          <SearchBar value={searchDev} onChange={setSearchDev} placeholder="Search developers by name..." />
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {softwareDevelopers.map(name => {
+          {developers.map(name => {
             const developerTasks = tasks.filter(t => t.workerName === name && t.workerRole === 'Software Developer')
             const stats = {
               total: developerTasks.length,
@@ -929,6 +942,12 @@ function SoftwareDeveloperListView({ tasks, onSelect }) {
             )
           })}
         </div>
+
+        {developers.length === 0 && (
+          <div className="text-center py-12 text-muted">
+            No developers found matching your search
+          </div>
+        )}
       </div>
     </div>
   )
@@ -1046,12 +1065,12 @@ export default function SoftwareDeveloperPage() {
           <div className="p-6 sm:p-10 lg:p-20 flex justify-center bg-background">
             <button
               onClick={() => setSelectedDeveloper(null)}
-              className="group flex items-center gap-2 sm:gap-4 pl-1.5 pr-4 sm:pr-8 py-1.5 bg-black/40 hover:bg-black/60 backdrop-blur-xl border border-white/10 rounded-full transition-all"
+              className="group flex items-center gap-2 sm:gap-4 pl-1.5 pr-4 sm:pr-8 py-1.5 bg-black/40 hover:bg-black/60 backdrop-blur-xl border border-white/10 rounded-full transition-all active:scale-95"
             >
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-primary transition-colors">
                 <ArrowLeft size={14} className="sm:w-[18px] sm:h-[18px] text-black" />
               </div>
-              <span className="text-[10px] sm:text-xs font-bold text-white tracking-tight opacity-80 group-hover:opacity-100 transition-opacity">Back</span>
+              <span className="text-[11px] sm:text-[13px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity">Return to Workspace</span>
             </button>
           </div>
         </div>

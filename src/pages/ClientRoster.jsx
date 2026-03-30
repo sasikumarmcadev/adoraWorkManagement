@@ -20,20 +20,22 @@ function DashboardOverview({ clients, payments }) {
       <div className="max-w-[1600px] mx-auto px-6 py-6 sm:py-10 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">Client Roster Analytics</h1>
-            <p className="text-sm text-muted font-medium mt-1 flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              Client Roster <span className="text-primary/50">Analytics</span>
+            </h1>
+            <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none tracking-widest flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Strategic portfolio monitoring in real-time
             </p>
           </div>
           <div className="flex items-center gap-8">
-            <div className="text-right">
-              <p className="text-[10px] text-muted font-bold">Total Portfolio</p>
-              <p className="text-2xl font-bold text-primary">{formatCurrency(totalRevenue)}</p>
+            <div className="flex flex-col items-center sm:items-end gap-1">
+               <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Total Portfolio</p>
+               <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums text-primary">{formatCurrency(totalRevenue)}</p>
             </div>
-            <div className="text-right">
-              <p className="text-[10px] text-muted font-bold">Active Assets</p>
-              <p className="text-2xl font-bold text-white">{activeClients}</p>
+            <div className="flex flex-col items-center sm:items-end gap-1">
+               <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Active Assets</p>
+               <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums">{activeClients.toString().padStart(2, '0')}</p>
             </div>
           </div>
         </div>

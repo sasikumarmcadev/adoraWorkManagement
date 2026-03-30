@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { DataProvider } from './context/DataContext'
+import { Lock } from 'lucide-react'
 
 // Layout & Core
 import Layout from './components/layout/Layout'
@@ -33,6 +34,7 @@ import InterviewProcess from './pages/InterviewProcess'
 import Incentives from './pages/Incentives'
 import SOPLibrary from './pages/SOPLibrary'
 import Settings from './pages/Settings'
+import WorkProgress from './pages/WorkProgress'
 
 import './index.css'
 
@@ -42,7 +44,9 @@ function ProtectedRoute({ children, allowedRoles }) {
   if (allowedRoles && !allowedRoles.includes(user.access)) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="text-5xl">🔒</div>
+        <div className="text-primary opacity-30">
+          <Lock size={64} />
+        </div>
         <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Access Restricted</h2>
         <p style={{ color: 'var(--text-muted)' }}>You don't have permission to view this page.</p>
       </div>
@@ -69,7 +73,7 @@ function AppRoutes() {
 
       <Route element={<Layout />}>
         {/* According to Requirements, Default page should show this component */}
-        <Route path="/" element={<EmptyStateDashboard />} />
+        <Route path="/" element={<WorkProgress />} />
 
         {/* Team Board */}
         <Route path="/team-board/content-specialist" element={<ContentSpecialistPage />} />
@@ -81,7 +85,7 @@ function AppRoutes() {
         {/* Dashboard */}
         <Route path="/dashboard/workers" element={<Workers />} />
         <Route path="/dashboard/revenue" element={<Revenue />} />
-        <Route path="/dashboard/work-progress" element={<EmptyStateDashboard />} />
+        <Route path="/dashboard/work-progress" element={<WorkProgress />} />
 
         {/* Clients */}
         <Route path="/clients/details" element={<ClientsDetails />} />

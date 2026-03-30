@@ -99,17 +99,9 @@ const AddIncentiveModal = ({ isOpen, onClose, onSave, editData }) => {
           />
         </FormField>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-end mt-10 border-t border-white/5 pt-8">
-          <button
-            onClick={onClose}
-            className="h-14 px-8 rounded-2xl text-[12px] text-muted hover:text-white hover:bg-white/5 transition-all outline-none order-1 sm:order-none"
-          >
-            Abort
-          </button>
-          <button
-            onClick={handleSave}
-            className="h-14 px-10 rounded-2xl text-[12px] bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none active:scale-95"
-          >
+        <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-4 border-t border-white/5">
+          <button className="flex-1 h-14 rounded-2xl text-[12px] text-muted hover:text-white hover:bg-white/5 transition-all" onClick={onClose}>Discard</button>
+          <button className="flex-1 h-14 rounded-2xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20" onClick={handleSave}>
             {editData ? 'Update Protocol' : 'Deploy Protocol'}
           </button>
         </div>
@@ -135,9 +127,9 @@ const DetailViewModal = ({ data, onClose }) => {
         <div className="flex items-center justify-end border-t border-white/5 pt-6">
           <button
             onClick={onClose}
-            className="px-10 h-14 bg-white text-black rounded-2xl text-[12px] transition-all active:scale-95 shadow-xl shadow-primary/20"
+            className="w-full sm:w-auto px-10 h-14 bg-primary text-black rounded-2xl text-[12px] font-bold transition-all hover:scale-[1.02] shadow-xl shadow-primary/20"
           >
-            Acknowledge Standards
+            Acknowledge Protocols
           </button>
         </div>
       </div>
@@ -185,16 +177,16 @@ export default function Incentives() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl text-white tracking-tighter truncate">
-                Incentive <span className="text-muted/40 text-base sm:text-lg">Library</span>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+                Incentive <span className="text-primary/50">Library</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted mt-1 opacity-60 leading-none tracking-widest">
+              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none tracking-widest">
                 Structural Efficiency Library • Dynamic Yield Systems
               </p>
             </div>
             <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-               <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest leading-none">Defined Protocols</p>
-               <p className="text-2xl sm:text-4xl text-white tracking-tighter tabular-nums leading-none">
+               <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Defined Protocols</p>
+               <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums leading-none">
                  {(incentiveProtocols?.length || 0).toString().padStart(2, '0')}
                </p>
             </div>
@@ -212,10 +204,12 @@ export default function Incentives() {
             {canManage && (
               <button
                 onClick={() => { setEditingProtocol(null); setIsAddModalOpen(true); }}
-                className="flex items-center justify-center gap-2 px-10 h-14 bg-white text-black rounded-2xl shadow-xl transition-all hover:translate-y-[-2px] active:translate-y-0 active:scale-95"
+                className="group flex items-center justify-center gap-3 pl-1.5 pr-6 py-1.5 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all"
               >
-                <Plus size={20} />
-                <span className="text-[13px]">Add Protocol</span>
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
+                  <Plus size={18} />
+                </div>
+                <span className="text-[12px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Incentives</span>
               </button>
             )}
           </div>
@@ -231,9 +225,9 @@ export default function Incentives() {
               {canManage && (
                 <button
                   onClick={() => setIsAddModalOpen(true)}
-                  className="px-10 h-14 bg-white text-black rounded-2xl transition-all active:scale-95"
+                  className="px-12 h-14 bg-primary text-black rounded-2xl font-bold transition-all hover:scale-[1.05] shadow-2xl shadow-primary/30"
                 >
-                  + Add Protocol
+                  Create First Protocol
                 </button>
               )}
             </div>

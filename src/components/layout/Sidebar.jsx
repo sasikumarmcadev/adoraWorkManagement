@@ -106,8 +106,8 @@ const SOPIcon = ({ size = 18, className }) => (
 
 export default function Sidebar({ mobileOpen, setMobileOpen, collapsed, setCollapsed }) {
   const [openGroups, setOpenGroups] = useState({
-    'Team Board': true,
-    'Dashboard': false,
+    'Dashboard': true,
+    'Team Board': false,
     'Clients': false,
     'Expenditure': false,
     'Hiring': false
@@ -162,6 +162,12 @@ export default function Sidebar({ mobileOpen, setMobileOpen, collapsed, setColla
         {/* Scrollable nav */}
         <nav className="flex-1 overflow-y-auto py-6 custom-scrollbar space-y-2">
 
+          <SidebarGroup title="Dashboard" icon={DashboardIcon} isOpen={openGroups['Dashboard']} onToggle={() => toggleGroup('Dashboard')} collapsed={collapsed && !mobileOpen}>
+            
+            <SidebarItem path="/dashboard/revenue" label="Revenue" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
+            <SidebarItem path="/dashboard/work-progress" label="Work Progress" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
+          </SidebarGroup>
+
           <SidebarGroup title="Team Board" icon={Users} isOpen={openGroups['Team Board']} onToggle={() => toggleGroup('Team Board')} collapsed={collapsed && !mobileOpen}>
             <SidebarItem path="/team-board/content-specialist" label="Content Specialist" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
             <SidebarItem path="/team-board/editor" label="Editor" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
@@ -170,16 +176,10 @@ export default function Sidebar({ mobileOpen, setMobileOpen, collapsed, setColla
             <SidebarItem path="/team-board/software-developer" label="Software Developer" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
           </SidebarGroup>
 
-          <SidebarGroup title="Dashboard" icon={DashboardIcon} isOpen={openGroups['Dashboard']} onToggle={() => toggleGroup('Dashboard')} collapsed={collapsed && !mobileOpen}>
-            <SidebarItem path="/dashboard/workers" label="Employees" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
-            <SidebarItem path="/dashboard/revenue" label="Revenue" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
-            <SidebarItem path="/dashboard/work-progress" label="Work Progress" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
-          </SidebarGroup>
-
           <SidebarGroup title="Clients" icon={ClientsIcon} isOpen={openGroups['Clients']} onToggle={() => toggleGroup('Clients')} collapsed={collapsed && !mobileOpen}>
+            <SidebarItem path="/clients/enquiries" label="Enquiries" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
             <SidebarItem path="/clients/details" label="Clients Details" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
             <SidebarItem path="/clients/works" label="Works" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
-            <SidebarItem path="/clients/enquiries" label="Enquiries" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
             <SidebarItem path="/clients/payment" label="Payment" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
           </SidebarGroup>
 

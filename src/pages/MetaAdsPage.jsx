@@ -319,23 +319,23 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
       <div className="px-4 py-3 bg-[#050505] border-b border-white/5 overflow-x-auto scrollbar-none">
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 min-w-[400px]">
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted uppercase font-bold tracking-tighter">Total</p>
+            <p className="text-[10px] text-muted font-bold tracking-tighter">Total</p>
             <p className="text-sm font-bold text-white leading-none mt-1">{stats.total}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-emerald-500/60 uppercase font-bold tracking-tighter">Completed</p>
+            <p className="text-[10px] text-emerald-500/60 font-bold tracking-tighter">Completed</p>
             <p className="text-sm font-bold text-emerald-400 leading-none mt-1">{stats.done}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-blue-500/60 uppercase font-bold tracking-tighter">In Progress</p>
+            <p className="text-[10px] text-blue-500/60 font-bold tracking-tighter">In Progress</p>
             <p className="text-sm font-bold text-blue-400 leading-none mt-1">{stats.progress}</p>
           </div>
           <div className="bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
-            <p className="text-[10px] text-emerald-400/60 uppercase font-bold tracking-tighter">Work Done</p>
+            <p className="text-[10px] text-emerald-400/60 font-bold tracking-tighter">Work Done</p>
             <p className="text-sm font-bold text-emerald-400 leading-none mt-1">{stats.workDone}</p>
           </div>
           <div className="bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
-            <p className="text-[10px] text-blue-400/60 uppercase font-bold tracking-tighter">Incentives</p>
+            <p className="text-[10px] text-blue-400/60 font-bold tracking-tighter">Incentives</p>
             <p className="text-sm font-bold text-blue-400 leading-none mt-1">{stats.incentive}</p>
           </div>
         </div>
@@ -367,8 +367,14 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
           </div>
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
-          <button className="btn-primary py-1.5 px-3 text-xs sm:text-sm" onClick={onAdd}>
-            <Plus size={12} className="sm:w-[14px] sm:h-[14px]" /> Add Task
+          <button
+            onClick={onAdd}
+            className="group flex-1 md:flex-none flex items-center justify-center gap-3 pl-1.5 pr-6 py-1.5 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all"
+          >
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
+              <Plus size={18} />
+            </div>
+            <span className="text-[12px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Task</span>
           </button>
           <div className="relative">
             <StatusSelect
@@ -458,7 +464,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
           </div>
         ) : (
           <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="text-xs text-muted bg-sidebar border-b border-border">
+            <thead className="text-xs text-muted font-bold bg-sidebar border-b border-border">
               <tr>
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Client Name</th>
@@ -910,16 +916,19 @@ function CalendarView({ tasks, deleteTask }) {
 }
 
 function MetaAdsListView({ tasks, workers, onSelect }) {
+  const [searchAds, setSearchAds] = useState('')
+
   const specialists = useMemo(() => {
     const names = Array.from(new Set(workers.filter(w => w.role === 'Meta Ads').map(w => w.name)))
-    return names.sort((a, b) => {
+    const filtered = names.filter(name => name.toLowerCase().includes(searchAds.toLowerCase()))
+    return filtered.sort((a, b) => {
       const wA = workers.find(w => w.name === a)
       const wB = workers.find(w => w.name === b)
       if (wA?.isTeamLead && !wB?.isTeamLead) return -1
       if (!wA?.isTeamLead && wB?.isTeamLead) return 1
       return a.localeCompare(b)
     })
-  }, [workers])
+  }, [workers, searchAds])
 
   return (
     <div className="flex-1 p-4 sm:p-8 overflow-y-auto">
@@ -933,6 +942,10 @@ function MetaAdsListView({ tasks, workers, onSelect }) {
             <span className="text-primary font-bold text-sm sm:text-base">{specialists.length}</span>
             <span className="text-muted text-[10px] sm:text-xs ml-2 tracking-wider">Active Specialists</span>
           </div>
+        </div>
+
+        <div className="mb-6">
+          <SearchBar value={searchAds} onChange={setSearchAds} placeholder="Search specialists by name..." />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -993,6 +1006,12 @@ function MetaAdsListView({ tasks, workers, onSelect }) {
             )
           })}
         </div>
+
+        {specialists.length === 0 && (
+          <div className="text-center py-12 text-muted">
+            No specialists found matching your search
+          </div>
+        )}
       </div>
     </div>
   )

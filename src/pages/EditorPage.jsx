@@ -402,23 +402,23 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
       <div className="p-3 sm:p-4 border-b border-border flex flex-col gap-3 bg-sidebar">
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted">Total</p>
+            <p className="text-[10px] text-muted font-bold">Total</p>
             <p className="text-sm font-bold text-white">{stats.total}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted">Completed</p>
+            <p className="text-[10px] text-muted font-bold">Completed</p>
             <p className="text-sm font-bold text-emerald-400">{stats.completed}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted">In Progress</p>
+            <p className="text-[10px] text-muted font-bold">In Progress</p>
             <p className="text-sm font-bold text-blue-400">{stats.inProgress}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5 hidden sm:block">
-            <p className="text-[10px] text-muted">Work Done</p>
+            <p className="text-[10px] text-muted font-bold">Work Done</p>
             <p className="text-sm font-bold text-emerald-400">{stats.workDone}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5 hidden sm:block">
-            <p className="text-[10px] text-muted">Incentives</p>
+            <p className="text-[10px] text-muted font-bold">Incentives</p>
             <p className="text-sm font-bold text-blue-400">{stats.incentives}</p>
           </div>
         </div>
@@ -437,8 +437,14 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
               <option value="WorkDone">Work Done</option>
               <option value="Incentive">Incentive</option>
             </select>
-            <button className="btn-primary py-1.5 px-2 sm:px-3 text-xs sm:text-sm" onClick={onAdd}>
-              <Plus size={12} className="sm:w-[14px] sm:h-[14px]" /> Add Task
+            <button
+              onClick={onAdd}
+              className="group flex-1 md:flex-none flex items-center justify-center gap-3 pl-1.5 pr-6 py-1.5 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all"
+            >
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
+                <Plus size={18} />
+              </div>
+              <span className="text-[12px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Task</span>
             </button>
             <select
               value={statusFilter === 'All' ? 'All Status' : statusFilter}
@@ -465,7 +471,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
 
       <div className="flex-1 overflow-x-auto overflow-y-auto max-h-[400px] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <table className="w-full text-sm text-left whitespace-nowrap">
-          <thead className="text-xs text-muted bg-sidebar border-b border-border sticky top-0 z-10">
+          <thead className="text-xs text-muted font-bold bg-sidebar border-b border-border sticky top-0 z-10">
             <tr>
               <th className="px-4 py-3 font-medium">Date</th>
               <th className="px-4 py-3 font-medium">Client Name</th>

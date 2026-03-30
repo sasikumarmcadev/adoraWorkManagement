@@ -287,7 +287,7 @@ export default function MetaAdsInfo() {
           </div>
           <div className="w-full mt-6 space-y-4">
              <div className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-xl">
-                <span className="text-[10px] text-muted font-bold uppercase tracking-widest">Employee ID</span>
+                <span className="text-[10px] text-muted font-bold  tracking-widest">Employee ID</span>
                 <span className="text-xs text-white font-bold bg-white/5 px-3 py-1 rounded-lg">{previewData?.employeeID || 'AE-GEN-001'}</span>
              </div>
              <button 

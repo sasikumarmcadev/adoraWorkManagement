@@ -1,19 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useData } from '../context/DataContext'
 import { useAuth } from '../context/AuthContext'
+import { useSearchParams } from 'react-router-dom'
 import { Modal, FormField, SearchBar, StatusSelect, EmptyState } from '../components/ui/index'
 import { formatDate, cn } from '../lib/utils'
-import { Plus, Edit2, Trash2, Search, Calendar, Phone, Briefcase, MapPin, Activity, Target, User, Globe } from 'lucide-react'
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
+import { Plus, Edit2, Trash2, Calendar, Phone, Target } from 'lucide-react'
 
 const ENQUIRY_STATUSES = ['Enquiries', 'Profile Check', 'Waiting for Response', 'Not Interested', 'Onboard']
-const STATUS_COLORS_MAP = {
-  'Enquiries': '#7a7a7a',
-  'Profile Check': '#3b82f6',
-  'Waiting for Response': '#f59e0b',
-  'Not Interested': '#ef4444',
-  'Onboard': '#fbbf24'
-}
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -29,8 +22,20 @@ const getStatusColor = (status) => {
 export default function EnquiriesDashboard() {
   const { enquiries, addEnquiry, updateEnquiry, deleteEnquiry } = useData()
   const { isManager, isJeevan, canDelete } = useAuth()
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState('All')
+  const [searchParams, setSearchParams] = useSearchParams()
+  
+  const search = searchParams.get('q') || ''
+  const statusFilter = searchParams.get('status') || 'All'
+
+  const updateFilters = (updates) => {
+    const nextParams = new URLSearchParams(searchParams)
+    Object.entries(updates).forEach(([key, value]) => {
+      if (!value || value === 'All' || value === 'All Status') nextParams.delete(key)
+      else nextParams.set(key, value)
+    })
+    setSearchParams(nextParams, { replace: true })
+  }
+
   const [showModal, setShowModal] = useState(false)
   const [editItem, setEditItem] = useState(null)
   const [form, setForm] = useState({})
@@ -69,6 +74,8 @@ export default function EnquiriesDashboard() {
     if (window.confirm('Are you sure to remove this record?')) deleteEnquiry(id)
   }
 
+  const f = (k, v) => setForm(p => ({ ...p, [k]: v }))
+
   return (
     <div className="w-full flex-1 min-h-screen bg-background flex flex-col">
       {/* Header Area */}
@@ -76,16 +83,17 @@ export default function EnquiriesDashboard() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white truncate tracking-tighter">
                 Enquiries <span className="text-primary/50">Details</span>
               </h1>
-            
             </div>
-            <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest">Live Enquiries</p>
-              <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums">
-                {(enquiries?.length || 0).toString().padStart(2, '0')}
-              </p>
+            <div className="flex flex-row items-center gap-10">
+               <div className="flex flex-col items-center sm:items-end gap-1">
+                  <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-bold leading-none">Live Enquiries</p>
+                  <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums text-primary">
+                    {(enquiries?.length || 0).toString().padStart(2, '0')}
+                  </p>
+               </div>
             </div>
           </div>
         </div>
@@ -95,14 +103,14 @@ export default function EnquiriesDashboard() {
         {/* Functional Bar */}
         <div className="p-4 sm:p-6 border-b border-border flex flex-col sm:flex-row items-center justify-between gap-4 bg-sidebar/50 backdrop-blur-3xl sticky top-0 z-20">
           <div className="w-full sm:max-w-xs group transition-all duration-500 focus-within:max-w-md">
-            <SearchBar value={search} onChange={setSearch} placeholder="Search Pipeline..." />
+            <SearchBar value={search} onChange={val => updateFilters({ q: val })} placeholder="Search Pipeline..." />
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <div className="w-full sm:w-48">
               <StatusSelect 
                 value={statusFilter === 'All' ? 'All Status' : statusFilter} 
                 options={['All Status', ...ENQUIRY_STATUSES]} 
-                onChange={val => setStatusFilter(val === 'All Status' ? 'All' : val)}
+                onChange={val => updateFilters({ status: val === 'All Status' ? 'All' : val })}
                 isFilter
               />
             </div>
@@ -128,7 +136,7 @@ export default function EnquiriesDashboard() {
             <>
               {!isMobile ? (
                 <table className="w-full min-w-[1000px] text-sm text-left border-separate border-spacing-0 table-fixed overflow-visible">
-                  <thead className="text-[11px] text-muted font-bold bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors">
+                  <thead className="text-[11px] text-muted bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors">
                     <tr>
                        <th className="w-[150px] px-8 py-4 border-r border-border leading-none">Entry Date</th>
                        <th className="w-[300px] px-8 py-4 border-r border-border leading-none">Client Identification</th>
@@ -143,18 +151,14 @@ export default function EnquiriesDashboard() {
                         <td className="px-8 py-3 border-r border-border">
                            <div className="flex items-center gap-3">
                               <Calendar size={13} className="text-primary/40" />
-                              <span className="text-[12px] text-white/50 font-bold tabular-nums tracking-tight">
+                              <span className="text-[12px] text-white/50 tabular-nums tracking-tight">
                                  {formatDate(e.date)}
                               </span>
                            </div>
                         </td>
                         <td className="px-8 py-3 border-r border-border overflow-hidden">
                            <div className="flex flex-col gap-1">
-                              <span className="text-white font-bold text-sm tracking-tight truncate" title={e.clientName}>{e.clientName}</span>
-                              <div className="flex items-center gap-2 opacity-40">
-                              
-                               
-                              </div>
+                              <span className="text-white text-[13px] tracking-tight truncate" title={e.clientName}>{e.clientName}</span>
                            </div>
                         </td>
                         <td className="px-8 py-3 border-r border-border">
@@ -162,7 +166,7 @@ export default function EnquiriesDashboard() {
                               <div className="w-7 h-7 rounded-lg bg-surface-800 flex items-center justify-center border border-white/5">
                                  <Phone size={12} className="text-muted/40" />
                               </div>
-                              <span className="text-white/70 font-bold text-[13px] tabular-nums tracking-tight">{e.phone || '—'}</span>
+                              <span className="text-white/70 text-[13px] tabular-nums tracking-tight">{e.phone || '—'}</span>
                            </div>
                         </td>
                         <td className="px-8 py-3 border-r border-border text-center">
@@ -188,13 +192,13 @@ export default function EnquiriesDashboard() {
               ) : (
                 <div className="p-4 grid grid-cols-1 gap-4">
                    {filteredData.map(e => (
-                     <div key={e.id} className="group bg-sidebar/30 hover:bg-sidebar/50 border border-white/5 rounded-2xl p-6 space-y-5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 active:scale-[0.99] relative overflow-hidden ring-1 ring-white/5">
+                     <div key={e.id} className="group bg-sidebar/30 border border-white/5 rounded-2xl p-6 space-y-5 transition-all duration-500 relative overflow-hidden ring-1 ring-white/5">
                         <div className="flex items-start justify-between gap-4">
                            <div className="flex items-center gap-4">
                               <div className="space-y-1">
-                                 <p className="text-white font-bold text-base tracking-tight leading-tight line-clamp-1">{e.clientName}</p>
+                                 <p className="text-white text-sm tracking-tight leading-tight line-clamp-1">{e.clientName}</p>
                                  <div className="flex items-center gap-2">
-                                    <span className="text-[9px] text-primary font-bold bg-primary/10 px-2 py-0.5 rounded border border-primary/20 tracking-tighter tabular-nums">{formatDate(e.date)}</span>
+                                    <span className="text-[9px] text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 tracking-tighter tabular-nums">{formatDate(e.date)}</span>
                                  </div>
                               </div>
                            </div>
@@ -206,14 +210,14 @@ export default function EnquiriesDashboard() {
 
                         <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
                            <div className="space-y-1.5">
-                              <p className="text-[8px] text-muted font-bold opacity-40 tracking-widest leading-none">COMMUNICATION</p>
-                              <div className="flex items-center gap-2 text-white font-bold text-[12px] tabular-nums truncate">
+                              <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Communication</p>
+                              <div className="flex items-center gap-2 text-white text-[12px] tabular-nums truncate">
                                  <Phone size={12} className="text-primary/40 shrink-0" />
                                  <span>{e.phone || 'N/A'}</span>
                               </div>
                            </div>
                            <div className="space-y-1.5 text-right">
-                              <p className="text-[8px] text-muted font-bold opacity-40 tracking-widest leading-none">STATUS</p>
+                              <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Status</p>
                               <div className="w-full max-w-[120px] ml-auto">
                                  <StatusSelect
                                     value={e.status}
@@ -238,13 +242,13 @@ export default function EnquiriesDashboard() {
         <div className="space-y-6 my-6 px-1">
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField label="Entry Date Context">
-                 <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner tabular-nums" type="date" value={form.date || ''} onChange={e => f('date', e.target.value)} />
+                 <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs text-white outline-none focus:border-primary/40 transition-all shadow-inner tabular-nums" type="date" value={form.date || ''} onChange={e => f('date', e.target.value)} />
               </FormField>
               <FormField label="Identity Identification">
-                 <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.clientName || ''} onChange={e => f('clientName', e.target.value)} placeholder="Business / Contact name" />
+                 <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.clientName || ''} onChange={e => f('clientName', e.target.value)} placeholder="Business / Contact name" />
               </FormField>
               <FormField label="Relay Communication">
-                 <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner tabular-nums" value={form.phone || ''} onChange={e => f('phone', e.target.value)} placeholder="+91 XXXXX XXXXX" />
+                 <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs text-white outline-none focus:border-primary/40 transition-all shadow-inner tabular-nums" value={form.phone || ''} onChange={e => f('phone', e.target.value)} placeholder="+91 XXXXX XXXXX" />
               </FormField>
               <FormField label="Dynamic Classification">
                  <StatusSelect 
@@ -257,7 +261,7 @@ export default function EnquiriesDashboard() {
            </div>
            
            <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-6 border-t border-white/5">
-              <button className="flex-1 h-14 rounded-xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Discard</button>
+              <button className="flex-1 h-14 rounded-xl text-[12px] text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Discard</button>
               <button className="flex-1 h-14 rounded-xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>
                  {editItem ? 'Confirm Refinement' : 'Confirm Registration'}
               </button>

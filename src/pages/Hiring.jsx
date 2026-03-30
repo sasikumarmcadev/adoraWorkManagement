@@ -61,12 +61,12 @@ export default function Hiring() {
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
                 Talent <span className="text-primary/50">Pipeline</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none uppercase tracking-widest">
+              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none tracking-widest">
                 Personnel Acquisition • Internal Workforce Expansion
               </p>
             </div>
             <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest uppercase">Active Applicants</p>
+              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Active Applicants</p>
               <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums">
                 {(hiring?.length || 0).toString().padStart(2, '0')}
               </p>
@@ -116,7 +116,7 @@ export default function Hiring() {
             <div className="bg-sidebar/30 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-3xl">
                <table className="w-full text-left border-separate border-spacing-0">
                   <thead>
-                     <tr className="text-[10px] text-muted font-bold uppercase tracking-widest bg-white/[0.02]">
+                     <tr className="text-[10px] text-muted font-normal tracking-widest bg-white/[0.02]">
                         <th className="px-6 py-4 opacity-40">Candidate</th>
                         <th className="px-6 py-4 opacity-40">Information</th>
                         <th className="px-6 py-4 opacity-40">Designation</th>
@@ -155,7 +155,7 @@ export default function Hiring() {
                            </td>
                            <td className="px-6 py-4">
                               <span className={cn(
-                                "text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-widest",
+                                "text-[9px] font-normal px-2 py-0.5 rounded border tracking-widest",
                                 h.status === 'Applied' ? "bg-blue-400/10 text-blue-400 border-blue-400/20" :
                                 h.status === 'Interview' ? "bg-amber-400/10 text-amber-400 border-amber-400/20" :
                                 h.status === 'Selected' ? "bg-green-400/10 text-green-400 border-green-400/20" :
@@ -184,7 +184,7 @@ export default function Hiring() {
                            </div>
                            <div>
                               <p className="text-base font-bold text-white tracking-tight leading-none">{h.candidateName}</p>
-                              <p className="text-[10px] text-muted font-bold opacity-30 mt-2 uppercase tracking-widest">{h.role}</p>
+                              <p className="text-[10px] text-muted font-normal opacity-30 mt-2 tracking-widest">{h.role}</p>
                            </div>
                         </div>
                         <span className={cn(
@@ -201,7 +201,7 @@ export default function Hiring() {
                            <span className="text-[11px] font-bold text-white/60 truncate">{h.city}</span>
                         </div>
                         <div className="bg-white/5 rounded-2xl p-4 flex items-center justify-end gap-3 text-right">
-                           <span className="text-[11px] font-bold text-white/40 uppercase tracking-widest tabular-nums">{formatDate(h.date)}</span>
+                           <span className="text-[11px] font-normal text-white/40 tracking-widest tabular-nums">{formatDate(h.date)}</span>
                            <Calendar size={14} className="text-primary/40" />
                         </div>
                      </div>
@@ -256,7 +256,7 @@ export default function Hiring() {
                   isFilter
                 />
               </FormField>
-              <FormField label="Initiation Date"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-[11px] font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner uppercase" type="date" value={form.date || ''} onChange={e => f('date', e.target.value)} /></FormField>
+              <FormField label="Initiation Date"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-[11px] font-normal text-white outline-none focus:border-primary/40 transition-all shadow-inner" type="date" value={form.date || ''} onChange={e => f('date', e.target.value)} /></FormField>
            </div>
            
            <FormField label="Internal Protocol Notes">
@@ -282,7 +282,7 @@ export default function Hiring() {
                 <h3 className="text-xl font-bold text-white tracking-tighter">{detailItem.candidateName}</h3>
                 <div className="flex items-center gap-2 mt-2">
                    <div className="w-2 h-2 rounded-full bg-primary shadow-sm shadow-primary" />
-                   <p className="text-[10px] text-muted font-bold uppercase tracking-widest opacity-60">{detailItem.role} Candidate</p>
+                   <p className="text-[10px] text-muted font-normal tracking-widest opacity-60">{detailItem.role} Candidate</p>
                 </div>
               </div>
             </div>
@@ -295,14 +295,14 @@ export default function Hiring() {
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-[10px] text-muted font-bold uppercase tracking-[0.2em] opacity-40">Assessment Trajectory</h4>
+              <h4 className="text-[10px] text-muted font-normal tracking-[0.2em] opacity-40">Assessment Trajectory</h4>
               <div className="flex gap-4">
                 {[1,2,3].map(round => (
                   <div key={round} className={cn(
                     "flex-1 p-4 rounded-2xl border transition-all flex flex-col items-center justify-center gap-3",
                     round <= detailItem.rounds ? "bg-primary/10 border-primary/20 text-primary shadow-lg shadow-primary/5" : "bg-white/5 border-white/10 text-muted opacity-30 border-dashed"
                   )}>
-                    <span className="text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">Round {round}</span>
+                    <span className="text-[10px] font-normal tracking-widest whitespace-nowrap">Round {round}</span>
                     {round <= detailItem.rounds ? <CheckCircle2 size={24} /> : <div className="w-6 h-6 rounded-full border border-current opacity-20" />}
                   </div>
                 ))}
@@ -311,7 +311,7 @@ export default function Hiring() {
 
             {detailItem.notes && (
               <div className="space-y-4 pt-8 border-t border-white/5">
-                <h4 className="text-[10px] text-muted font-bold uppercase tracking-[0.2em] opacity-40">Observation Logs</h4>
+                <h4 className="text-[10px] text-muted font-normal tracking-[0.2em] opacity-40">Observation Logs</h4>
                 <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 relative overflow-hidden group">
                    <p className="text-[13px] text-white/70 font-medium leading-relaxed italic">"{detailItem.notes}"</p>
                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
@@ -347,8 +347,8 @@ function PipelineCard({ label, count, icon: Icon, color, bg, active, onClick }) 
            </div>
            {active && <div className="w-2 h-2 rounded-full bg-primary shadow-sm shadow-primary" />}
         </div>
-        <p className="text-3xl font-bold text-white tabular-nums tracking-tighter">{count.toString().padStart(2, '0')}</p>
-        <p className="text-[10px] text-muted font-bold uppercase tracking-widest opacity-40 mt-1">{label}</p>
+        <p className="text-3xl font-normal text-white tabular-nums tracking-tighter">{count.toString().padStart(2, '0')}</p>
+        <p className="text-[10px] text-muted font-normal tracking-widest opacity-40 mt-1">{label}</p>
         <div className="absolute -bottom-6 -right-6 w-20 h-20 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
      </div>
    )
@@ -361,7 +361,7 @@ function DetailBox({ label, value, icon: Icon }) {
            <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-primary/40 group-hover:text-primary transition-colors">
               <Icon size={14} />
            </div>
-           <p className="text-[10px] text-muted font-bold uppercase tracking-[0.2em] opacity-40">{label}</p>
+           <p className="text-[10px] text-muted font-normal tracking-[0.2em] opacity-40">{label}</p>
         </div>
         <p className="text-[14px] font-bold text-white tracking-tight">{value}</p>
      </div>

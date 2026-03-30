@@ -364,7 +364,7 @@ export default function InterviewProcess() {
           <div className="space-y-3">
              <div className="flex items-center gap-3 text-muted/40 mb-2">
                 <FileText size={16} />
-                <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Global Evaluation Criteria</span>
+                <span className="text-[10px] font-bold tracking-widest leading-none">Global Evaluation Criteria</span>
              </div>
              <textarea 
                className="w-full h-80 bg-sidebar border border-white/10 rounded-2xl p-6 text-[13px] text-white/80 font-bold outline-none focus:border-primary/40 transition-all shadow-inner resize-none leading-relaxed placeholder:text-muted/20"
@@ -372,7 +372,7 @@ export default function InterviewProcess() {
                value={boardNotes}
                onChange={e => setBoardNotes(e.target.value)}
              />
-             <p className="text-[10px] text-muted font-bold opacity-30 px-2 italic font-mono">Changes stay persistent across local board sessions.</p>
+             <p className="text-[10px] text-muted font-bold opacity-30 px-2 font-mono">Changes stay persistent across local board sessions.</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-4 mt-6 border-t border-white/5">

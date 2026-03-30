@@ -83,18 +83,29 @@ export default function TeamBoard({ forcedTab = 'content-specialist' }) {
 
   // LIST VIEW
   return (
-    <div className="w-full flex flex-col overflow-y-auto p-8">
-      <div className="max-w-6xl mx-auto w-full">
-        <div className="flex items-center justify-between mb-8 border-b border-border pb-4">
-          <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">{roleLabel} Management</h1>
-            <p className="text-muted text-sm mt-1">Select a member to view their personal performance dashboard</p>
-          </div>
-          <div className="bg-primary/10 border border-primary/20 px-4 py-2 rounded-md">
-            <span className="text-primary font-bold">{roleWorkers.length}</span>
-            <span className="text-muted text-xs ml-2 font-semibold">Active Members</span>
+    <div className="w-full flex-1 flex flex-col overflow-y-auto">
+      <div className="bg-background border-b border-border shadow-2xl relative overflow-hidden py-6 sm:py-10">
+        <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+            <div className="text-center sm:text-left">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+                {roleLabel} <span className="text-primary/50">Management</span>
+              </h1>
+              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none tracking-widest">
+                Personnel Operations • Individual Performance Dashboard
+              </p>
+            </div>
+            <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
+               <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Active Members</p>
+               <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums leading-none">
+                 {(roleWorkers?.length || 0).toString().padStart(2, '0')}
+               </p>
+            </div>
           </div>
         </div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto w-full p-8">
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {roleWorkers.map(w => {

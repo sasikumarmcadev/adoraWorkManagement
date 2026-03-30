@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useData } from '../context/DataContext'
 import { useAuth } from '../context/AuthContext'
+import { useSearchParams } from 'react-router-dom'
 import { 
   EmptyState, Modal, FormField, StatusSelect, SearchBar
 } from '../components/ui/index'
 import { cn, formatDate } from '../lib/utils'
 import { 
-  Plus, Edit2, Trash2, Search, Filter, User, CreditCard, 
-  CheckCircle2, AlertCircle, Clock, Layout, Phone, MapPin, Camera, Upload, ImagePlus, X, Target, Briefcase, Activity
+  Plus, Edit2, Trash2, Calendar, Phone, Camera, X, Target
 } from 'lucide-react'
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip
@@ -70,7 +70,7 @@ function ClientAvatar({ name, logo, size = "md" }) {
   return (
     <div className={cn(
       sizeClasses[size], 
-      "bg-surface-800 border border-white/5 flex items-center justify-center font-bold text-primary flex-shrink-0 shadow-inner group-hover:scale-110 transition-transform"
+      "bg-surface-800 border border-white/5 flex items-center justify-center font-normal text-primary flex-shrink-0 shadow-inner group-hover:scale-110 transition-transform"
     )}>
       {name?.charAt(0)}
     </div>
@@ -90,7 +90,7 @@ function DashboardOverview({ clients }) {
     if (active && payload && payload.length) {
       return (
         <div className="bg-black/90 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-lg shadow-2xl">
-          <p className="text-[10px] font-bold text-white flex items-center gap-2">
+          <p className="text-[10px] text-white flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: payload[0].payload.color || payload[0].fill }} />
             {`${payload[0].name} : ${payload[0].value}`}
           </p>
@@ -122,8 +122,8 @@ function DashboardOverview({ clients }) {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-1">
-              <span className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tighter">{total}</span>
-              <span className="text-[8px] sm:text-[10px] text-muted font-bold mt-1 opacity-50">Partners</span>
+              <span className="text-3xl sm:text-4xl font-bold text-white leading-none tracking-tighter">{total.toString().padStart(2, '0')}</span>
+              <span className="text-[8px] sm:text-[10px] text-muted font-bold mt-1 opacity-60 uppercase tracking-widest">Partners</span>
             </div>
           </div>
 
@@ -133,11 +133,11 @@ function DashboardOverview({ clients }) {
 
               return (
                 <div key={status} className="flex flex-col group cursor-default min-w-[80px]">
-                  <p className="text-[9px] sm:text-[11px] text-muted font-bold mb-1 sm:mb-2 group-hover:text-white transition-colors opacity-60 leading-none">{status}</p>
+                  <p className="text-[9px] sm:text-[11px] text-muted font-bold mb-1 sm:mb-2 group-hover:text-white transition-colors opacity-60 leading-none tracking-widest capitalize">{status.toLowerCase()}</p>
                   <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
                     <div className="h-4 sm:h-5 w-1 rounded-full group-hover:h-8 transition-all" style={{ background: count > 0 ? STATUS_COLORS_MAP[status] : 'rgba(255,255,255,0.05)' }} />
-                    <p className={`text-xl sm:text-2xl font-bold group-hover:scale-110 transition-transform tabular-nums ${count > 0 ? 'text-white font-black' : 'text-white/10'}`}>
-                      {count}
+                    <p className={`text-2xl sm:text-4xl font-bold group-hover:scale-110 transition-transform tabular-nums tracking-tighter ${count > 0 ? 'text-white' : 'text-primary/20'}`}>
+                      {count.toString().padStart(2, '0')}
                     </p>
                   </div>
                 </div>
@@ -151,12 +151,23 @@ function DashboardOverview({ clients }) {
 }
 
 export default function ClientsDetails() {
-  const { clients, addClient, updateClient, deleteClient, tasks } = useData()
+  const { clients, addClient, updateClient, deleteClient } = useData()
   const { isManager, isJeevan } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
   
-  const [search, setSearch] = useState('')
-  const [activeFilter, setActiveFilter] = useState('All')
-  const [paymentFilter, setPaymentFilter] = useState('All')
+  const search = searchParams.get('q') || ''
+  const activeFilter = searchParams.get('active') || 'All'
+  const paymentFilter = searchParams.get('payment') || 'All'
+
+  const updateFilters = (updates) => {
+    const nextParams = new URLSearchParams(searchParams)
+    Object.entries(updates).forEach(([key, value]) => {
+      if (!value || value === 'All' || value === 'All Activity' || value === 'All Payments') nextParams.delete(key)
+      else nextParams.set(key, value)
+    })
+    setSearchParams(nextParams, { replace: true })
+  }
+
   const [showModal, setShowModal] = useState(false)
   const [editItem, setEditItem] = useState(null)
   const [form, setForm] = useState({})
@@ -250,15 +261,15 @@ export default function ClientsDetails() {
       <div className="flex-1 flex flex-col bg-panel">
         {/* Functional Bar */}
         <div className="p-4 sm:p-6 border-b border-border flex flex-col sm:flex-row items-center justify-between gap-4 bg-sidebar/50 backdrop-blur-3xl sticky top-0 z-20">
-          <div className="w-full sm:max-w-xs group transition-all duration-500 focus-within:max-w-md">
-            <SearchBar value={search} onChange={setSearch} placeholder="Search Portfolio..." />
+          <div className="w-full sm:max-w-xs transition-all duration-500">
+            <SearchBar value={search} onChange={val => updateFilters({ q: val })} placeholder="Search Portfolio..." />
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
             <div className="w-40 shrink-0">
                <StatusSelect 
                  value={activeFilter === 'All' ? 'All Activity' : activeFilter} 
                  options={['All Activity', ...ACTIVE_STATUSES]} 
-                 onChange={val => setActiveFilter(val === 'All Activity' ? 'All' : val)} 
+                 onChange={val => updateFilters({ active: val === 'All Activity' ? 'All' : val })} 
                  isFilter
                />
             </div>
@@ -266,7 +277,7 @@ export default function ClientsDetails() {
                <StatusSelect 
                  value={paymentFilter === 'All' ? 'All Payments' : paymentFilter} 
                  options={['All Payments', ...PAYMENT_STATUSES]} 
-                 onChange={val => setPaymentFilter(val === 'All Payments' ? 'All' : val)} 
+                 onChange={val => updateFilters({ payment: val === 'All Payments' ? 'All' : val })} 
                  isFilter
                />
             </div>
@@ -277,7 +288,7 @@ export default function ClientsDetails() {
         <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/5 bg-panel/30">
           {!isMobile && filteredClients.length > 0 ? (
             <table className="w-full min-w-[1100px] text-sm text-left border-separate border-spacing-0 table-fixed overflow-visible">
-              <thead className="text-[11px] text-muted font-bold bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors">
+              <thead className="text-[11px] text-muted bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors">
                 <tr>
                    <th className="w-[80px] px-6 py-4 border-r border-border leading-none text-center">Brand Logo</th>
                    <th className="w-[120px] px-8 py-4 border-r border-border leading-none">Client ID</th>
@@ -297,13 +308,13 @@ export default function ClientsDetails() {
                        </div>
                     </td>
                     <td className="px-8 py-3 border-r border-border">
-                       <span className="text-[11px] text-muted font-bold tracking-wider bg-white/5 px-2.5 py-1 rounded-md border border-white/5 uppercase">
+                       <span className="text-[11px] text-white/40 tracking-tight bg-white/5 px-2.5 py-1 rounded-md border border-white/5 uppercase">
                          {c.clientID || 'PENDING'}
                        </span>
                     </td>
                     <td className="px-8 py-3 border-r border-border">
                        <div className="flex flex-col gap-1">
-                          <span className="text-white font-bold text-sm tracking-tight truncate">{c.name}</span>
+                          <span className="text-white text-[13px] tracking-tight truncate">{c.name}</span>
                        </div>
                     </td>
                     <td className="px-8 py-3 border-r border-border">
@@ -311,7 +322,7 @@ export default function ClientsDetails() {
                           <div className="w-7 h-7 rounded-lg bg-surface-800 flex items-center justify-center border border-white/5">
                              <Phone size={12} className="text-muted/40" />
                           </div>
-                          <span className="text-white/70 font-bold text-[13px] tabular-nums tracking-tight">{c.contact || '—'}</span>
+                          <span className="text-white/70 text-[12px] tabular-nums tracking-tight">{c.contact || '—'}</span>
                        </div>
                     </td>
                     <td className="px-8 py-3 border-r border-border text-center">
@@ -345,13 +356,13 @@ export default function ClientsDetails() {
           ) : (
             <div className="p-4 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
                {filteredClients.map(c => (
-                 <div key={c.id} className="group bg-sidebar/30 hover:bg-sidebar/50 border border-white/5 rounded-2xl p-6 space-y-5 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/5 active:scale-[0.99] relative overflow-hidden ring-1 ring-white/5">
+                 <div key={c.id} className="group bg-sidebar/30 border border-white/5 rounded-2xl p-6 space-y-5 transition-all duration-500 relative overflow-hidden ring-1 ring-white/5">
                     <div className="flex items-start justify-between gap-4">
                        <div className="flex items-center gap-4">
                           <ClientAvatar name={c.name} logo={c.logo} />
                           <div className="space-y-0.5">
-                             <p className="text-white font-bold text-base tracking-tight leading-tight line-clamp-1">{c.name}</p>
-                             <p className="text-[9px] text-muted font-bold opacity-40">ID: {c.clientID || 'PENDING'}</p>
+                             <p className="text-white text-sm tracking-tight leading-tight line-clamp-1">{c.name}</p>
+                             <p className="text-[9px] text-muted opacity-40 uppercase tracking-tight">ID: {c.clientID || 'PENDING'}</p>
                           </div>
                        </div>
                        <div className="flex gap-2">
@@ -361,14 +372,14 @@ export default function ClientsDetails() {
 
                     <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
                        <div className="space-y-1.5">
-                          <p className="text-[8px] text-muted font-bold opacity-40 leading-none">Contact</p>
-                          <div className="flex items-center gap-2 text-white font-bold text-[12px] tabular-nums truncate">
+                          <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Contact</p>
+                          <div className="flex items-center gap-2 text-white text-[12px] tabular-nums truncate">
                              <Phone size={12} className="text-primary/40 shrink-0" />
                              <span>{c.contact || 'N/A'}</span>
                           </div>
                        </div>
                        <div className="space-y-1.5 text-right">
-                          <p className="text-[8px] text-muted font-bold opacity-40 leading-none">Activity</p>
+                          <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Activity</p>
                           <div className="flex justify-end">
                              <ActivityToggle 
                                value={c.activeStatus || 'Active'} 
@@ -379,7 +390,7 @@ export default function ClientsDetails() {
                     </div>
 
                     <div className="pt-4 border-t border-white/5">
-                       <p className="text-[8px] text-muted font-bold opacity-40 leading-none mb-3">Payment Status</p>
+                       <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none mb-3">Payment Status</p>
                        <StatusSelect 
                           value={c.paymentStatus} 
                           options={PAYMENT_STATUSES}
@@ -394,8 +405,8 @@ export default function ClientsDetails() {
                     <div className="w-20 h-20 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-6 shadow-2xl">
                        <Target size={32} className="text-muted opacity-20" />
                     </div>
-                    <h3 className="text-white font-bold text-lg tracking-tighter">Database Clear</h3>
-                    <p className="text-xs text-muted font-bold mt-2 opacity-50 max-w-[240px] leading-relaxed">No strategic client partnerships identified in the current intelligence feed.</p>
+                    <h3 className="text-white text-lg tracking-tighter">Database Clear</h3>
+                    <p className="text-xs text-muted mt-2 opacity-50 max-w-[240px] leading-relaxed">No strategic client partnerships identified in the current intelligence feed.</p>
                  </div>
                )}
             </div>
@@ -414,7 +425,7 @@ export default function ClientsDetails() {
                     ) : (
                        <div className="flex flex-col items-center gap-2 text-muted">
                           <Camera size={24} className="opacity-40" />
-                          <span className="text-[9px] font-bold">Brand Logo</span>
+                          <span className="text-[9px] uppercase tracking-widest">Brand Logo</span>
                        </div>
                     )}
                  </div>
@@ -433,15 +444,15 @@ export default function ClientsDetails() {
            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
                  <FormField label="Brand/Entity Name">
-                    <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-2xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.name || ''} onChange={e => f('name', e.target.value)} placeholder="Full legal/business title" />
+                    <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-2xl text-xs text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.name || ''} onChange={e => f('name', e.target.value)} placeholder="Full legal/business title" />
                  </FormField>
                  <FormField label="Manual Identity (Optional)">
-                     <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-2xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner tabular-nums" value={form.clientID || ''} onChange={e => f('clientID', e.target.value)} placeholder="Auto-generated (e.g. ADMC001)" />
+                     <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-2xl text-xs text-white outline-none focus:border-primary/40 transition-all shadow-inner tabular-nums" value={form.clientID || ''} onChange={e => f('clientID', e.target.value)} placeholder="Auto-generated (e.g. ADMC001)" />
                  </FormField>
               </div>
               <div className="space-y-6">
                  <FormField label="Relay Communication">
-                    <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-2xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner tabular-nums" value={form.contact || ''} onChange={e => f('contact', e.target.value)} placeholder="+91 XXXXX XXXXX" />
+                    <input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-2xl text-xs text-white outline-none focus:border-primary/40 transition-all shadow-inner tabular-nums" value={form.contact || ''} onChange={e => f('contact', e.target.value)} placeholder="+91 XXXXX XXXXX" />
                  </FormField>
                  <div className="grid grid-cols-2 gap-4">
                     <FormField label="Activity Preset">
@@ -465,7 +476,7 @@ export default function ClientsDetails() {
            </div>
            
            <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-6 border-t border-white/5">
-              <button className="flex-1 h-14 rounded-2xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Discard</button>
+              <button className="flex-1 h-14 rounded-2xl text-[12px] text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Discard</button>
               <button className="flex-1 h-14 rounded-2xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>
                  {editItem ? 'Confirm Refinement' : 'Confirm Registration'}
               </button>

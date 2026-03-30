@@ -12,11 +12,9 @@ import { Modal, FormField, SearchBar, StatusSelect, CustomSelect } from '../comp
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 
 // --- STATUS COLORS & CONFIG ---
-const PAYMENT_STATUSES = ['Advance', 'Partial', 'Completed', 'Pending']
+const PAYMENT_STATUSES = ['Completed', 'Pending']
 
 const STATUS_COLORS_MAP = {
-  'Advance': '#3b82f6',
-  'Partial': '#f59e0b',
   'Completed': '#10b981',
   'Pending': '#ef4444'
 }
@@ -24,8 +22,6 @@ const STATUS_COLORS_MAP = {
 const getStatusStyle = (status) => {
   switch (status) {
     case 'Completed': return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20'
-    case 'Advance': return 'text-blue-400 bg-blue-400/10 border-blue-400/20'
-    case 'Partial': return 'text-amber-400 bg-amber-400/10 border-amber-400/20'
     case 'Pending': return 'text-red-400 bg-red-400/10 border-red-400/20'
     default: return 'text-muted bg-white/5 border-white/10'
   }
@@ -51,7 +47,7 @@ function DashboardOverview({ title, payments, filteredPayments, clientName, cycl
   const statusAmounts = [
     { 
       name: 'Paid', 
-      value: dataCtx.filter(p => ['Completed', 'Advance', 'Partial', 'Paid'].includes(p.status)).reduce((sum, p) => sum + Number(p.amount || 0), 0),
+      value: dataCtx.filter(p => p.status === 'Completed').reduce((sum, p) => sum + Number(p.amount || 0), 0),
       color: '#10b981'
     },
     { 
@@ -66,7 +62,7 @@ function DashboardOverview({ title, payments, filteredPayments, clientName, cycl
     if (active && payload && payload.length) {
       return (
         <div className="bg-black/90 border border-white/10 px-3 py-1.5 rounded-lg shadow-2xl">
-          <p className="text-[12px] font-bold text-white flex items-center gap-2">
+          <p className="text-[12px] font-normal text-white flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: payload[0].payload.color || payload[0].fill }} />
             {`${payload[0].name} : ₹${Number(payload[0].value).toLocaleString('en-IN')}`}
           </p>
@@ -107,11 +103,11 @@ function DashboardOverview({ title, payments, filteredPayments, clientName, cycl
 
           <div className="flex-1 min-w-0 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-10 w-full lg:w-auto">
             <div className="text-center lg:text-left transition-all">
-              <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tighter truncate">
-                {clientName !== 'All' ? clientName : 'Fiscal'} Intelligence
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+                Fiscal <span className="text-primary/50">Intelligence</span>
               </h1>
-              <p className="text-[11px] sm:text-[12px] text-muted font-bold mt-2 opacity-60 leading-none">
-                {cycleLabel} • Real-time Net Metrics
+              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-2 opacity-60 leading-none">
+                {cycleLabel} • {clientName !== 'All' ? clientName : 'Real-time Net Metrics'}
               </p>
             </div>
 
@@ -129,10 +125,10 @@ function DashboardOverview({ title, payments, filteredPayments, clientName, cycl
 
                 return (
                   <div key={stat.label} className="flex flex-col group cursor-default items-center lg:items-start">
-                    <p className="text-[10px] sm:text-[11px] text-muted font-bold mb-2 opacity-60 transition-colors group-hover:text-primary">{stat.label}</p>
+                    <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none mb-2">{stat.label}</p>
                     <div className="flex items-center gap-3">
                       <div className="h-4 sm:h-5 w-1 rounded-full bg-white/5 transition-all group-hover:h-7" style={{ background: amount > 0 ? stat.color : '' }} />
-                      <p className={`text-lg sm:text-2xl font-bold tabular-nums tracking-tighter ${amount > 0 ? 'text-white' : 'text-primary/20'}`}>
+                      <p className={`text-2xl sm:text-4xl font-bold tabular-nums tracking-tighter ${amount > 0 ? 'text-white' : 'text-primary/20'}`}>
                         ₹{amount > 1000000 ? (amount / 100000).toFixed(1) + 'L' : Number(amount).toLocaleString('en-IN')}
                       </p>
                     </div>

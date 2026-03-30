@@ -120,14 +120,14 @@ function DashboardOverview({ title, tasks, onExpandSidebar, isSidebarCollapsed, 
             </div>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-1">
               <span className="text-2xl sm:text-3xl font-black text-white leading-none tracking-tighter">{total}</span>
-              <span className="text-[7px] sm:text-[8px] text-muted font-bold mt-1 opacity-50 uppercase tracking-widest">Assets</span>
+              <span className="text-[7px] sm:text-[8px] text-muted font-bold mt-1 opacity-50 tracking-widest">Assets</span>
             </div>
           </div>
 
           <div className="flex-1 min-w-0 w-full text-center lg:text-left">
             <div className="mb-6 lg:mb-8 flex flex-col items-center lg:items-start text-center lg:text-left transition-all">
               <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white tracking-tight truncate w-full px-2 lg:px-0">{title}</h1>
-              <p className="text-[9px] sm:text-xs text-muted font-medium mt-1 opacity-60 uppercase tracking-widest font-mono">Strategic Intelligence Suite</p>
+              <p className="text-[9px] sm:text-xs text-muted font-medium mt-1 opacity-60 tracking-widest font-mono">Strategic Intelligence Suite</p>
             </div>
 
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-y-6 sm:gap-x-10 lg:gap-16 w-full mt-4 sm:mt-10">
@@ -135,7 +135,7 @@ function DashboardOverview({ title, tasks, onExpandSidebar, isSidebarCollapsed, 
                 const count = tasks.filter(t => t.status === status).length
                 return (
                   <div key={status} className="flex flex-col group cursor-default min-w-[30%] sm:min-w-[80px]">
-                    <p className="text-[9px] sm:text-[10px] text-muted font-bold mb-1 sm:mb-2 opacity-50 group-hover:text-white transition-colors uppercase tracking-[0.05em]">{status}</p>
+                    <p className="text-[9px] sm:text-[10px] text-muted font-bold mb-1 sm:mb-2 opacity-50 group-hover:text-white transition-colors tracking-[0.05em]">{status}</p>
                     <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
                       <div className="h-4 sm:h-5 w-[2px] rounded-full group-hover:h-8 group-hover:bg-primary transition-all" style={{ background: count > 0 ? STATUS_COLORS_MAP[status] : 'rgba(255,255,255,0.05)' }} />
                       <p className={`text-lg sm:text-2xl font-black tabular-nums transition-transform ${count > 0 ? 'text-white' : 'text-white/10'}`}>
@@ -210,7 +210,7 @@ function MultiWorkerSelect({ currentWorkers = '', allWorkers, onUpdate, rowIndex
         left: coords.left
       }}
     >
-      <p className="text-[9px] font-bold text-muted uppercase tracking-widest p-2 opacity-40 border-b border-white/5 mb-1.5">Assigned Personnel</p>
+      <p className="text-[9px] font-bold text-muted tracking-widest p-2 opacity-40 border-b border-white/5 mb-1.5">Assigned Personnel</p>
       <div className="max-h-48 overflow-y-auto space-y-0.5 scrollbar-thin scrollbar-thumb-white/10">
         {allWorkers.map(w => {
           const isActive = workerList.includes(w.name)
@@ -301,14 +301,14 @@ function TaskDetailModal({ task, isOpen, onClose }) {
                 <CheckCircle2 size={24} className={task.contentCheck ? "text-emerald-400" : "text-white/10"} />
              </div>
              <div>
-                <p className="text-[10px] font-bold text-muted uppercase tracking-widest opacity-40 mb-1">Content Verification</p>
-                <p className={cn("text-xs font-black uppercase tracking-tight", task.contentCheck ? "text-emerald-400" : "text-muted")}>
+                <p className="text-[10px] font-bold text-muted tracking-widest opacity-40 mb-1">Content Verification</p>
+                <p className={cn("text-xs font-black tracking-tight", task.contentCheck ? "text-emerald-400" : "text-muted")}>
                   {task.contentCheck ? 'Verified & Validated' : 'Awaiting Inspection'}
                 </p>
              </div>
           </div>
           <div className="text-right">
-             <p className="text-[10px] font-bold text-muted uppercase tracking-widest opacity-40 mb-1">Asset ID</p>
+             <p className="text-[10px] font-bold text-muted tracking-widest opacity-40 mb-1">Asset ID</p>
              <p className="text-xs font-mono text-white/40">#{task.id?.slice(-8) || 'AUTO-GEN'}</p>
           </div>
         </div>
@@ -316,13 +316,13 @@ function TaskDetailModal({ task, isOpen, onClose }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
           {fields.map((field) => (
             <div key={field.label} className="space-y-1.5">
-              <p className="text-[9px] font-bold text-muted uppercase tracking-widest opacity-40">{field.label}</p>
+              <p className="text-[9px] font-bold text-muted tracking-widest opacity-40">{field.label}</p>
               {field.type === 'status' ? (
-                <div className={cn("inline-flex px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border", getStatusColor(task.status))}>
+                <div className={cn("inline-flex px-3 py-1 rounded-full text-[10px] font-black tracking-widest border", getStatusColor(task.status))}>
                   {task.status}
                 </div>
               ) : field.type === 'approval' ? (
-                <div className={cn("inline-flex px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border", getApprovalColor(task.clientApproval || 'Approval'))}>
+                <div className={cn("inline-flex px-3 py-1 rounded-full text-[10px] font-black tracking-widest border", getApprovalColor(task.clientApproval || 'Approval'))}>
                   {task.clientApproval || 'Approval'}
                 </div>
               ) : (
@@ -335,7 +335,7 @@ function TaskDetailModal({ task, isOpen, onClose }) {
         <div className="pt-8 flex justify-end">
            <button 
              onClick={onClose}
-             className="px-8 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[10px] font-black text-white uppercase tracking-widest transition-all active:scale-95"
+             className="px-8 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[10px] font-black text-white tracking-widest transition-all active:scale-95"
            >
              Close Intel
            </button>
@@ -413,7 +413,7 @@ function TaskTable({ tasks, workers = [], onAdd, onUpdateTask, deleteTask, searc
                     <div className="min-w-0 cursor-pointer group" onClick={() => onViewDetail(task)}>
                       <h3 className="text-sm font-bold text-white tracking-tight leading-tight mb-1 group-hover:text-primary transition-colors">{task.task}</h3>
                       <div className="flex items-center gap-2">
-                        <span className="text-[9px] text-muted font-bold opacity-40 uppercase tracking-wider">{formatDate(task.takenDate)}</span>
+                        <span className="text-[9px] text-muted font-bold opacity-40 tracking-wider">{formatDate(task.takenDate)}</span>
                         <span className="w-1 h-1 rounded-full bg-white/10" />
                         <span className="text-[9px] text-primary font-bold opacity-60">{task.category || 'General'}</span>
                       </div>
@@ -667,7 +667,6 @@ function CalendarView({ tasks, onViewDetail, deleteTask, isSmallScreen }) {
           overflow: hidden; 
           text-overflow: ellipsis; 
           font-weight: 800 !important;
-          text-transform: uppercase !important;
           letter-spacing: 0.02em !important;
           border-width: 1px !important;
           margin: 1px 2px !important;
@@ -679,7 +678,7 @@ function CalendarView({ tasks, onViewDetail, deleteTask, isSmallScreen }) {
           box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
         .fc-col-header-cell { background-color: #111111 !important; border-bottom: 2px solid var(--border) !important; }
-        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; text-transform: uppercase; padding: 0.6rem !important; display: block !important; }
+        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; padding: 0.6rem !important; display: block !important; }
         .fc-daygrid-day-number { color: var(--text-primary) !important; font-size: 0.7rem; padding: 0.3rem !important; }
         .fc-toolbar-title { color: var(--text-primary) !important; font-size: 0.9rem !important; font-weight: 700 !important; }
         
@@ -756,36 +755,13 @@ function CalendarView({ tasks, onViewDetail, deleteTask, isSmallScreen }) {
               </div>
               <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2 shrink-0">
                 <div className={cn(
-                  "px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest text-center border",
+                  "px-3 py-1 rounded-lg text-[9px] font-black tracking-widest text-center border",
                   t.status === 'Done' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
                     t.status === 'In Progress' ? "bg-blue-500/10 text-blue-500 border-blue-500/20" :
                       "bg-white/5 text-muted border-white/10"
                 )}>
                   {t.status}
                 </div>
-                <div className={cn(
-                  "px-2 py-0.5 rounded text-[8px] font-bold border",
-                  t.clientApproval === 'Approval' ? "border-emerald-500/20 text-emerald-500/60" : "border-orange-500/20 text-orange-500/60"
-                )}>
-                  {t.clientApproval || 'Approval'}
-                </div>
-              </div>
-              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 border-white/5 pt-3 sm:pt-0">
-                <div className={cn("px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-tight border", getStatusColor(t.status))}>
-                   {t.status}
-                </div>
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (confirm('Permanently decommission this tactical asset?')) {
-                      deleteTask(t.id);
-                      setSelectedTasks(prev => ({ ...prev, tasks: prev.tasks.filter(x => x.id !== t.id) }));
-                    }
-                  }} 
-                  className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-xl transition-all"
-                >
-                  <Trash2 size={14} />
-                </button>
               </div>
             </div>
           ))}
@@ -806,13 +782,13 @@ function ClientListView({ tasks, clients, onSelect }) {
         <div className="flex flex-col md:flex-row items-center justify-between mb-8 sm:mb-12 border-b border-white/5 pb-8 gap-6 text-center md:text-left">
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight">Intelligence Workspace</h1>
-            <p className="text-[10px] sm:text-xs text-muted mt-2 font-medium opacity-50 uppercase tracking-widest font-mono">Select a strategic partner identity to initiate deep-dive analysis</p>
+            <p className="text-[10px] sm:text-xs text-muted mt-2 font-medium opacity-50 tracking-widest font-mono">Select a strategic partner identity to initiate deep-dive analysis</p>
           </div>
           <div className="bg-[#0a0a0a] border border-white/10 px-6 py-3 rounded-2xl flex items-center gap-4 shadow-2xl">
             <span className="text-white font-black text-xl lg:text-2xl tabular-nums leading-none tracking-tighter">{activeClients.length}</span>
             <div className="flex flex-col">
-              <span className="text-primary text-[8px] font-black uppercase tracking-widest leading-none">Active</span>
-              <span className="text-muted text-[8px] font-bold opacity-40 uppercase tracking-widest leading-none mt-1">Partners</span>
+              <span className="text-primary text-[8px] font-black tracking-widest leading-none">Active</span>
+              <span className="text-muted text-[8px] font-bold opacity-40 tracking-widest leading-none mt-1">Partners</span>
             </div>
           </div>
         </div>
@@ -996,7 +972,7 @@ export default function ClientWorks() {
             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-primary transition-colors">
               <ArrowLeft size={18} className="text-black" />
             </div>
-            <span className="text-[10px] font-black text-white/50 group-hover:text-white transition-opacity uppercase tracking-widest">Return to Workspace</span>
+            <span className="text-[10px] font-black text-white/50 group-hover:text-white transition-opacity tracking-widest">Return to Workspace</span>
           </button>
         </div>
       </div>

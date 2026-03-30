@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { getStatusClass, cn } from '../../lib/utils'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Inbox } from 'lucide-react'
 
 export function StatusBadge({ status }) {
   return (
@@ -55,8 +55,8 @@ export function EmptyState({ title = 'No data yet', description = 'Data will app
           <Icon size={32} />
         </div>
       ) : (
-        <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl" style={{ background: 'var(--bg-secondary)' }}>
-          📭
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-muted/20" style={{ background: 'var(--bg-secondary)' }}>
+          <Inbox size={32} />
         </div>
       )}
       <div>

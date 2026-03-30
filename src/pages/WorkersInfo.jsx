@@ -173,7 +173,7 @@ export default function WorkersInfo() {
                       </div>
                     </td>
                     <td className="px-8 py-4 border-r border-border">
-                      <span className="text-[11px] text-muted font-bold tracking-wider bg-white/5 px-2.5 py-1 rounded-md border border-white/5 uppercase">
+                      <span className="text-[11px] text-muted font-bold tracking-wider bg-white/5 px-2.5 py-1 rounded-md border border-white/5">
                         {w.employeeID || 'AE-PENDING'}
                       </span>
                     </td>
@@ -242,7 +242,7 @@ export default function WorkersInfo() {
 
                     <div className="bg-black/20 backdrop-blur-3xl border border-white/5 rounded-xl p-4 sm:p-5 group-hover:border-primary/20 transition-all duration-500 flex items-center justify-between">
                       <div className="space-y-1">
-                        <p className="text-[9px] text-muted font-bold opacity-50 uppercase tracking-widest leading-none">Joined On</p>
+                        <p className="text-[9px] text-muted font-bold opacity-50 tracking-widest leading-none">Joined On</p>
                         <div className="flex items-center gap-2 text-white font-bold text-sm sm:text-base tracking-tighter tabular-nums drop-shadow-2xl">
                           <Calendar size={14} className="text-primary/60" />
                           <span>{w.joinedDate ? formatDate(w.joinedDate) : 'Not Registered'}</span>
@@ -291,7 +291,7 @@ export default function WorkersInfo() {
           </div>
           <div className="w-full mt-6 space-y-4">
              <div className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-xl">
-                <span className="text-[10px] text-muted font-bold uppercase tracking-widest">Employee ID</span>
+                <span className="text-[10px] text-muted font-bold  tracking-widest">Employee ID</span>
                 <span className="text-xs text-white font-bold bg-white/5 px-3 py-1 rounded-lg">{previewData?.employeeID || 'AE-GEN-001'}</span>
              </div>
              <button 
