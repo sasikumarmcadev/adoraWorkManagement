@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useData } from '../context/DataContext'
 import { formatDate, cn } from '../lib/utils'
-import { Plus, Edit2, Filter, Search, Target, Move, Image as ImageIcon, Trash2, Calendar as CalendarIcon, MoreVertical, ArrowLeft, Menu, X, FileText } from 'lucide-react'
+import { Plus, Edit2, Filter, Search, Target, Move, Image as ImageIcon, Trash2, Calendar as CalendarIcon, MoreVertical, ArrowLeft, Menu, X, FileText, Eye } from 'lucide-react'
 import { Modal, FormField, SearchBar, StatusSelect, CustomSelect } from '../components/ui/index'
 
 // FullCalendar imports
@@ -24,6 +24,38 @@ const SidebarIcon = ({ className, size = 18 }) => (
     className={className}
   >
     <path d="M5.625 2.1875v10.625M1.875 5.875c0 -1.4000000000000001 0 -2.1 0.2725 -2.6350000000000002a2.5 2.5 0 0 1 1.0925 -1.0925C3.775 1.875 4.475 1.875 5.875 1.875h3.25c1.4000000000000001 0 2.1 0 2.6350000000000002 0.2725a2.5 2.5 0 0 1 1.0925 1.0925C13.125 3.775 13.125 4.475 13.125 5.875v3.25c0 1.4000000000000001 0 2.1 -0.2725 2.6350000000000002a2.5 2.5 0 0 1 -1.0925 1.0925C11.225000000000001 13.125 10.525 13.125 9.125 13.125H5.875c-1.4000000000000001 0 -2.1 0 -2.6350000000000002 -0.2725a2.5 2.5 0 0 1 -1.0925 -1.0925C1.875 11.225000000000001 1.875 10.525 1.875 9.125z" strokeWidth="1" />
+  </svg>
+)
+
+// --- WORK DONE SVG ICON ---
+const WorkDoneIcon = ({ size = 12, className = "" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth="2"
+    stroke="currentColor"
+    width={size}
+    height={size}
+    className={className}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+)
+
+// --- INCENTIVE SVG ICON ---
+const IncentiveIcon = ({ size = 12, className = "" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth="2"
+    stroke="currentColor"
+    width={size}
+    height={size}
+    className={className}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236c2.198-.328 4.433-.5 6.75-.5 2.317 0 4.552.172 6.75.5m0 0a48.098 48.098 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.003 6.003 0 01-5.395-4.972m0 0c.563.063 1.126.094 1.69.094.563 0 1.127-.031 1.69-.094" />
   </svg>
 )
 
@@ -255,15 +287,14 @@ function IncentiveCard() {
   )
 }
 
-function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, statusFilter, setStatusFilter }) {
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Done': return 'text-emerald-400 bg-[#062016] border-[#0a3622]'
-      case 'In Progress': return 'text-blue-400 bg-[#0b213f] border-[#0f2d54]'
-      case 'Not Started': return 'text-white/60 bg-[#1a1a1a] border-white/10'
-      default: return 'text-gray-400 bg-[#111] border-white/5'
-    }
-  }
+function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, statusFilter, setStatusFilter, activeFilter, setActiveFilter, onViewDateWise }) {
+  const stats = useMemo(() => ({
+    total: tasks.length,
+    done: tasks.filter(t => t.status === 'Done').length,
+    progress: tasks.filter(t => t.status === 'In Progress').length,
+    workDone: tasks.filter(t => t.contentCheck).length,
+    incentive: tasks.filter(t => t.incentiveCheck).length
+  }), [tasks])
 
   const [mobileView, setMobileView] = useState(window.innerWidth < 768)
 
@@ -273,11 +304,67 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Done': return 'text-emerald-400 bg-[#062016] border-[#0a3622]'
+      case 'In Progress': return 'text-blue-400 bg-[#0b213f] border-[#0f2d54]'
+      case 'Not Started': return 'text-white/60 bg-[#1a1a1a] border-white/10'
+      default: return 'text-gray-400 bg-[#111] border-white/5'
+    }
+  }
+
   return (
     <div className="flex flex-col h-full overflow-hidden p-0 bg-panel">
+      {/* Task Stats Row */}
+      <div className="px-4 py-3 bg-[#050505] border-b border-white/5 overflow-x-auto scrollbar-none">
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 min-w-[400px]">
+          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+            <p className="text-[10px] text-muted uppercase font-bold tracking-tighter">Total</p>
+            <p className="text-sm font-bold text-white leading-none mt-1">{stats.total}</p>
+          </div>
+          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+            <p className="text-[10px] text-emerald-500/60 uppercase font-bold tracking-tighter">Completed</p>
+            <p className="text-sm font-bold text-emerald-400 leading-none mt-1">{stats.done}</p>
+          </div>
+          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+            <p className="text-[10px] text-blue-500/60 uppercase font-bold tracking-tighter">In Progress</p>
+            <p className="text-sm font-bold text-blue-400 leading-none mt-1">{stats.progress}</p>
+          </div>
+          <div className="bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
+            <p className="text-[10px] text-emerald-400/60 uppercase font-bold tracking-tighter">Work Done</p>
+            <p className="text-sm font-bold text-emerald-400 leading-none mt-1">{stats.workDone}</p>
+          </div>
+          <div className="bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
+            <p className="text-[10px] text-blue-400/60 uppercase font-bold tracking-tighter">Incentives</p>
+            <p className="text-sm font-bold text-blue-400 leading-none mt-1">{stats.incentive}</p>
+          </div>
+        </div>
+      </div>
+
       <div className="p-3 sm:p-4 border-b border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 bg-sidebar">
-        <div className="w-full sm:w-64">
-          <SearchBar value={search} onChange={setSearch} placeholder="Search tasks..." />
+        <div className="w-full sm:flex-1 flex items-center gap-2">
+          <div className="flex-1 max-w-[400px]">
+            <SearchBar value={search} onChange={setSearch} placeholder="Search tasks..." />
+          </div>
+          <div className="flex items-center gap-2">
+             <select
+              value={activeFilter}
+              onChange={(e) => setActiveFilter(e.target.value)}
+              className="bg-sidebar border border-white/10 rounded-md py-2 px-3 text-xs font-bold text-white outline-none focus:border-primary/40 transition-all h-[38px] appearance-none"
+              style={{ backgroundImage: 'linear-gradient(45deg, transparent 50%, #444 50%), linear-gradient(135deg, #444 50%, transparent 50%)', backgroundPosition: 'calc(100% - 15px) center, calc(100% - 10px) center', backgroundSize: '5px 5px, 5px 5px', backgroundRepeat: 'no-repeat' }}
+            >
+              <option value="All">All Projects</option>
+              <option value="WorkDone">Work Done</option>
+              <option value="Incentive">Incentive</option>
+            </select>
+
+            <button 
+              onClick={onViewDateWise}
+              className="btn-ghost py-1.5 px-3 text-xs sm:text-sm whitespace-nowrap border border-white/10 hover:border-white/30 text-secondary h-[38px] flex items-center gap-2 transition-all"
+            >
+              <Eye size={12} /> Date Wise
+            </button>
+          </div>
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
           <button className="btn-primary py-1.5 px-3 text-xs sm:text-sm" onClick={onAdd}>
@@ -297,7 +384,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
         </div>
       </div>
 
-      <div className="flex-1 overflow-x-auto">
+      <div className="flex-1 overflow-x-auto overflow-y-auto max-h-[400px] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         {mobileView ? (
           <div className="p-3 space-y-3">
             {(() => {
@@ -376,11 +463,11 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Client Name</th>
                 <th className="px-4 py-3 font-medium">Task</th>
-                <th className="px-4 py-3 font-medium text-center">Count</th>
                 <th className="px-4 py-3 font-medium">Decline Date</th>
-                <th className="px-4 py-3 font-medium text-center">Approval</th>
                 <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium text-center">Check Box</th>
+                <th className="px-4 py-3 font-medium text-center">Approval</th>
+                <th className="px-4 py-3 font-medium text-center">Work Done</th>
+                <th className="px-4 py-3 font-medium text-center">Incentive</th>
                 <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
@@ -413,10 +500,15 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                           • {task.task || 'No description'}
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-center font-bold text-white">
-                        <span className="bg-surface-800 px-2 py-1 rounded text-[10px]">1</span>
-                      </td>
                       <td className="px-4 py-4 text-secondary text-xs">{formatDate(task.declineDate)}</td>
+                      <td className="px-4 py-4">
+                        <StatusSelect
+                          value={task.status}
+                          options={['Not Started', 'In Progress', 'Done']}
+                          onChange={(newStatus) => onUpdateTask(task.id, { status: newStatus })}
+                          getStatusColor={getStatusColor}
+                        />
+                      </td>
                       <td className="px-4 py-4 text-center">
                         <StatusSelect
                           value={task.clientApproval === 'Approval' ? 'Completed' : (task.clientApproval || 'Completed')}
@@ -429,21 +521,13 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                           }}
                         />
                       </td>
-                      <td className="px-4 py-4">
-                        <StatusSelect
-                          value={task.status}
-                          options={['Not Started', 'In Progress', 'Done']}
-                          onChange={(newStatus) => onUpdateTask(task.id, { status: newStatus })}
-                          getStatusColor={getStatusColor}
-                        />
-                      </td>
                       <td className="px-4 py-4 text-center border-r border-border">
                         <div className="flex justify-center">
                           <button
                             onClick={() => onUpdateTask(task.id, {
-                              ...task,
                               contentCheck: !task.contentCheck,
-                              updatedDate: new Date().toISOString().split('T')[0]
+                              incentiveCheck: false,
+                              updatedDate: new Date().toISOString().split('T')[0],
                             })}
                             className={cn(
                               "w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90",
@@ -455,6 +539,28 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                             <div className={cn(
                               "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
                               task.contentCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                            )} />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-center border-r border-border">
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => onUpdateTask(task.id, {
+                              incentiveCheck: !task.incentiveCheck,
+                              contentCheck: false,
+                              updatedDate: new Date().toISOString().split('T')[0],
+                            })}
+                            className={cn(
+                              "w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90",
+                              task.incentiveCheck
+                                ? "bg-blue-600 border-blue-600 shadow-[0_0_10px_rgba(59,130,246,0.2)]"
+                                : "border-white/10 hover:border-white/30 bg-white/[0.02]"
+                            )}
+                          >
+                            <div className={cn(
+                              "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
+                              task.incentiveCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
                             )} />
                           </button>
                         </div>
@@ -585,39 +691,91 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
   )
 }
 
+function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
+  const sortedDates = useMemo(() => Object.keys(tasksByDate).sort((a, b) => b.localeCompare(a)), [tasksByDate])
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Date Wise Task Overview" size="lg">
+      <div className="space-y-6 mt-4 max-h-[70vh] overflow-y-auto px-1 pr-2 scrollbar-thin scrollbar-thumb-white/10">
+        {sortedDates.map(date => (
+          <div key={date} className="space-y-3">
+            <div className="flex items-center gap-3 sticky top-0 bg-[#0a0a0a] py-2 z-10">
+              <div className="h-px flex-1 bg-border/50" />
+              <span className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">{formatDate(date)}</span>
+              <div className="h-px flex-1 bg-border/50" />
+            </div>
+            <div className="grid grid-cols-1 gap-2">
+              {tasksByDate[date].map(t => (
+                <div key={t.id} className="p-3 bg-sidebar border border-border rounded-lg flex items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-bold text-white bg-white/5 px-2 py-0.5 rounded border border-white/10">{t.clientName}</span>
+                      {t.contentCheck && <span className="text-[8px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20 uppercase">Work Done</span>}
+                      {t.incentiveCheck && <span className="text-[8px] font-bold text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded border border-blue-400/20 uppercase">Incentive</span>}
+                    </div>
+                    <p className="text-xs text-muted truncate">{t.task}</p>
+                  </div>
+                  <span className={cn(
+                    "text-[8px] font-black uppercase px-2 py-1 rounded border",
+                    t.status === 'Done' ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" :
+                    t.status === 'In Progress' ? "text-blue-400 bg-blue-400/10 border-blue-400/20" :
+                    "text-white/40 bg-white/5 border-white/10"
+                  )}>{t.status}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+        {sortedDates.length === 0 && <div className="text-center py-20 text-muted">No date-wise data available</div>}
+      </div>
+    </Modal>
+  )
+}
+
 function CalendarView({ tasks, deleteTask }) {
   const { desktopCollapsed } = useData()
   const calendarRef = useRef(null)
+  const containerRef = useRef(null)
   const [selectedTasks, setSelectedTasks] = useState(null)
 
   const events = useMemo(() => {
     const grouped = [...tasks].reduce((acc, t) => {
-      const date = t.contentCheck ? t.updatedDate : (t.scheduleDate || t.takenDate);
-      const key = `${date}-${t.clientName}`;
+      const date = t.takenDate || t.scheduleDate || t.updatedDate;
+      const type = t.incentiveCheck ? 'inc' : t.contentCheck ? 'work' : 'done';
+      const key = `${date}-${t.clientName}-${type}`;
       if (!acc[key]) {
-        acc[key] = { ...t, date, count: 1, allCompleted: t.contentCheck };
+        acc[key] = { ...t, date, count: 1, allCompleted: t.contentCheck, isIncentive: t.incentiveCheck };
       } else {
         acc[key].count++;
-        acc[key].allCompleted = acc[key].allCompleted && t.contentCheck;
+        acc[key].isIncentive = acc[key].isIncentive || t.incentiveCheck;
+        acc[key].allCompleted = acc[key].allCompleted || t.contentCheck;
       }
       return acc;
     }, {});
 
     return Object.values(grouped).map(t => ({
       id: t.id,
-      title: t.contentCheck ? t.clientName : (t.clientName + ' (' + t.count + ')'),
+      title: (t.isIncentive ? `INC: ${t.clientName}` : t.allCompleted ? `WORK: ${t.clientName}` : `DONE: ${t.clientName}`) + ` (${t.count})`,
       date: t.date,
-      backgroundColor: t.contentCheck
-        ? 'rgba(16, 185, 129, 0.2)'
-        : t.status === 'Done'
-          ? 'rgba(16, 185, 129, 0.1)'
-          : t.status === 'In Progress'
-            ? 'rgba(59, 130, 246, 0.1)'
-            : 'rgba(255, 255, 255, 0.05)',
-      textColor: t.contentCheck ? '#34d399' : t.status === 'Done' ? '#10b981' : t.status === 'In Progress' ? '#3b82f6' : '#a1a1aa',
-      borderColor: t.contentCheck ? 'rgba(52, 211, 153, 0.5)' : t.status === 'Done' ? 'rgba(16, 185, 129, 0.3)' : t.status === 'In Progress' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(255, 255, 255, 0.1)'
+      backgroundColor: t.isIncentive ? '#2563eb' : t.allCompleted ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+      textColor: t.isIncentive ? '#ffffff' : t.allCompleted ? '#34d399' : '#a1a1aa',
+      borderColor: t.isIncentive ? '#3b82f6' : t.allCompleted ? 'rgba(16, 185, 129, 0.6)' : 'rgba(255, 255, 255, 0.2)'
     }));
   }, [tasks])
+
+  const handleDateClick = (arg) => {
+    const api = calendarRef.current?.getApi()
+    if (api && api.view.type === 'multiMonthYear') {
+      api.changeView('dayGridMonth', arg.date)
+      return
+    }
+
+    const dayTasks = tasks.filter(t => (t.takenDate || t.scheduleDate || t.updatedDate) === arg.dateStr)
+    if (dayTasks.length > 0) {
+      setSelectedTasks({ date: arg.dateStr, tasks: dayTasks })
+    } else {
+      setSelectedTasks(null)
+    }
+  }
 
   useEffect(() => {
     const api = calendarRef.current?.getApi()
@@ -629,44 +787,120 @@ function CalendarView({ tasks, deleteTask }) {
     }
   }, [desktopCollapsed])
 
+  useEffect(() => {
+    if (!containerRef.current) return
+    const resizeObserver = new ResizeObserver(() => {
+      const api = calendarRef.current?.getApi()
+      if (api) api.updateSize()
+    })
+    resizeObserver.observe(containerRef.current)
+    return () => resizeObserver.disconnect()
+  }, [])
+
   return (
     <div id="calendar-view" className="w-full flex-1 p-0 overflow-hidden flex flex-col bg-panel">
       <style>{`
         .fc-theme-standard td, .fc-theme-standard th { border-color: var(--border) !important; }
+        .fc-scrollgrid { border-color: var(--border) !important; border-radius: 0.25rem !important; }
+        .fc-theme-standard .fc-scrollgrid { border: none !important; }
         .fc-header-toolbar { margin: 0.75rem !important; flex-wrap: wrap; gap: 0.5rem; }
-        .fc-button-primary { background-color: var(--bg-card) !important; border-color: var(--border) !important; font-size: 0.7rem !important; }
-        .fc-event { border-radius: 6px !important; font-size: 8px !important; padding: 3px 6px !important; font-weight: 800 !important; cursor: pointer !important; }
+        .fc-button-primary { background-color: var(--bg-card) !important; border-color: var(--border) !important; color: var(--text-primary) !important; text-transform: capitalize !important; border-radius: 0.25rem !important; padding: 0.3rem 0.5rem !important; font-size: 0.7rem !important; }
+        .fc-button-primary:hover { background-color: var(--border) !important; }
+        .fc-button-active { background-color: var(--text-primary) !important; color: var(--bg-primary) !important; }
+        .fc-day-today { background-color: rgba(255, 255, 255, 0.05) !important; }
+        .fc-event { 
+          border-radius: 9999px !important; 
+          font-size: 8px !important; 
+          padding: 3px 6px !important; 
+          cursor: pointer !important; 
+          white-space: nowrap; 
+          overflow: hidden; 
+          text-overflow: ellipsis; 
+          font-weight: 800 !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.02em !important;
+          border-width: 1px !important;
+          margin: 1px 2px !important;
+          transition: all 0.2s ease !important;
+        }
+        .fc-event:hover {
+          filter: brightness(1.2);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+        .fc-col-header-cell { background-color: #111111 !important; border-bottom: 2px solid var(--border) !important; }
+        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; text-transform: uppercase; padding: 0.6rem !important; display: block !important; }
+        .fc-daygrid-day-number { color: var(--text-primary) !important; font-size: 0.7rem; padding: 0.3rem !important; }
+        .fc-toolbar-title { color: var(--text-primary) !important; font-size: 0.9rem !important; font-weight: 700 !important; }
+        
+        .fc-theme-standard .fc-list, .fc-theme-standard .fc-list-day-cushion { background: transparent !important; }
+        .fc-multimonth { background: transparent !important; }
+        .fc-multimonth-month { border: none !important; transition: all 0.2s ease; border-radius: 0.5rem; }
+        .fc-multimonth-month:hover { background: rgba(255, 255, 255, 0.05) !important; cursor: pointer; transform: scale(1.02); }
+        .fc-multimonth-title { color: var(--text-primary) !important; font-size: 0.8rem !important; font-weight: 700 !important; background: transparent !important; padding: 0.75rem 0 !important; }
+        .fc-multimonth-daygrid-table { background: transparent !important; }
+        .fc-multimonth-daygrid-table td { pointer-events: none !important; }
+        .fc-multimonth-month { pointer-events: auto !important; }
+        
+        @media (max-width: 768px) {
+          .fc-header-toolbar { flex-direction: column; align-items: center; }
+          .fc-toolbar-chunk { margin-bottom: 0.25rem; }
+          .fc-event { font-size: 0.55rem !important; }
+          .fc-button-primary { padding: 0.25rem 0.4rem !important; font-size: 0.65rem !important; }
+          .fc-col-header-cell-cushion { font-size: 0.6rem !important; padding: 0.4rem !important; }
+        }
       `}</style>
+
       <div className="p-3 sm:p-5 border-b border-border bg-sidebar">
         <h2 className="text-base sm:text-lg font-bold text-primary">Work Calendar Overview</h2>
       </div>
-      <div className="p-0 bg-panel flex-1 overflow-auto">
+
+      <div ref={containerRef} className="p-0 bg-panel flex-1 overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin, multiMonthPlugin]}
           initialView={window.innerWidth < 640 ? 'dayGridWeek' : 'dayGridMonth'}
+          initialDate={new Date().toISOString().split('T')[0]}
           events={events}
-          dateClick={(arg) => {
-            const dayTasks = tasks.filter(t => t.takenDate === arg.dateStr)
-            if (dayTasks.length > 0) setSelectedTasks({ date: arg.dateStr, tasks: dayTasks })
+          dateClick={handleDateClick}
+          headerToolbar={{
+            left: window.innerWidth < 640 ? 'prev,next' : 'prev,next today',
+            center: 'title',
+            right: window.innerWidth < 640 ? 'today' : 'multiMonthYear,dayGridMonth,dayGridWeek'
           }}
           height="auto"
+          contentHeight="auto"
+          handleWindowResize={true}
+          expandRows={true}
+          eventDisplay="block"
         />
       </div>
+
       <Modal isOpen={!!selectedTasks} onClose={() => setSelectedTasks(null)} title={`Tasks for ${selectedTasks?.date}`} size="md">
         <div className="space-y-2 mt-4">
           {selectedTasks?.tasks.map(t => (
-            <div key={t.id} className="p-3 border border-border rounded-md bg-sidebar flex justify-between items-center gap-3">
+            <div key={t.id} className="p-3 border border-border rounded-md bg-sidebar flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm text-white truncate">{t.clientName}</p>
-                <p className="text-xs text-muted truncate">{t.task}</p>
+                <div className="flex flex-col gap-1">
+                  <p className="font-semibold text-sm text-white truncate">{t.clientName}</p>
+                  <p className="text-xs text-muted truncate max-w-[200px]">{t.task}</p>
+                </div>
               </div>
-              <button
-                onClick={() => { if (confirm('Decommission this asset?')) { deleteTask(t.id); setSelectedTasks(prev => ({ ...prev, tasks: prev.tasks.filter(x => x.id !== t.id) })); } }}
-                className="p-2 text-muted hover:text-red-500 rounded-full transition-all"
-              >
-                <Trash2 size={14} />
-              </button>
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                <div className="flex flex-col items-end gap-1.5">
+                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-[#222] text-primary self-end">{t.status}</span>
+                  <div className="flex gap-1">
+                    {t.contentCheck && <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">WORK DONE</span>}
+                    {t.incentiveCheck && <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">INCENTIVE</span>}
+                  </div>
+                </div>
+                <button
+                  onClick={() => { if (confirm('Decommission this asset?')) { deleteTask(t.id); setSelectedTasks(prev => ({ ...prev, tasks: prev.tasks.filter(x => x.id !== t.id) })); } }}
+                  className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-full transition-all"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -697,20 +931,24 @@ function MetaAdsListView({ tasks, workers, onSelect }) {
           </div>
           <div className="bg-primary/10 border border-primary/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md">
             <span className="text-primary font-bold text-sm sm:text-base">{specialists.length}</span>
-            <span className="text-muted text-[10px] sm:text-xs ml-2">Active Specialists</span>
+            <span className="text-muted text-[10px] sm:text-xs ml-2 tracking-wider">Active Specialists</span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {specialists.map(name => {
             const specialistTasks = tasks.filter(t => t.workerName === name)
-            const doneCount = specialistTasks.filter(t => t.status === 'Done').length
+            const stats = {
+              total: specialistTasks.length,
+              pending: specialistTasks.filter(t => t.status !== 'Done').length,
+              done: specialistTasks.filter(t => t.status === 'Done').length
+            }
 
             return (
               <button
                 key={name}
                 onClick={() => onSelect(name)}
-                className="group flex flex-col p-4 sm:p-6 bg-panel border border-border hover:border-primary/50 transition-all text-left rounded-lg"
+                className="group flex flex-col p-4 sm:p-6 bg-panel border border-border hover:border-primary/50 transition-all text-left rounded-lg hover:shadow-xl hover:scale-[1.02] duration-200"
               >
                 <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-bold text-base sm:text-lg overflow-hidden group-hover:scale-110 transition-transform">
@@ -733,20 +971,23 @@ function MetaAdsListView({ tasks, workers, onSelect }) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-auto">
-                  <div className="bg-[#111] p-2 sm:p-3 rounded border border-white/5">
-                    <p className="text-[8px] sm:text-[10px] text-muted font-bold mb-1">Total Jobs</p>
-                    <p className="text-lg sm:text-xl font-bold text-white">{specialistTasks.length}</p>
+                <div className="grid grid-cols-3 gap-2 mt-auto">
+                  <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
+                    <p className="text-[8px] text-muted font-bold mb-0.5">Jobs</p>
+                    <p className="text-sm font-bold text-white">{stats.total}</p>
                   </div>
-                  <div className="bg-[#111] p-2 sm:p-3 rounded border border-white/5">
-                    <p className="text-[8px] sm:text-[10px] text-muted font-bold mb-1">Pending</p>
-                    <p className="text-lg sm:text-xl font-bold text-orange-400">{specialistTasks.length - doneCount}</p>
+                  <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
+                    <p className="text-[8px] text-muted font-bold mb-0.5">Pending</p>
+                    <p className="text-sm font-bold text-orange-400">{stats.pending}</p>
+                  </div>
+                  <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
+                    <p className="text-[8px] text-muted font-bold mb-0.5">Done</p>
+                    <p className="text-sm font-bold text-emerald-400">{stats.done}</p>
                   </div>
                 </div>
 
-                <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/5 flex items-center justify-between text-[10px] sm:text-xs text-muted">
-                  <span>View Full Dashboard</span>
-                  <Plus size={12} className="sm:w-[14px] sm:h-[14px] group-hover:translate-x-1 transition-transform" />
+                <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-end text-[10px] text-muted">
+                  <span className="group-hover:translate-x-1 transition-transform text-primary text-[10px] font-medium">View Dashboard →</span>
                 </div>
               </button>
             )
@@ -764,13 +1005,16 @@ export default function MetaAdsPage() {
   const [editTask, setEditTask] = useState(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
+  const [activeFilter, setActiveFilter] = useState('All') // 'All', 'WorkDone', 'Incentive'
+  const [showDateWiseModal, setShowDateWiseModal] = useState(false)
+  const [tasksByDate, setTasksByDate] = useState({})
 
   useEffect(() => {
     setHideHeader(!!selectedSpecialist)
     return () => setHideHeader(false)
   }, [selectedSpecialist, setHideHeader])
 
-  const specialistTasks = tasks.filter(t => {
+  const specialistTasks = useMemo(() => tasks.filter(t => {
     const isOwner = (t.workerRole === 'Meta Ads' || t.workerName === selectedSpecialist) && (!selectedSpecialist || t.workerName === selectedSpecialist)
     if (!isOwner) return false
 
@@ -780,8 +1024,25 @@ export default function MetaAdsPage() {
 
     const matchesStatus = statusFilter === 'All' || t.status === statusFilter
 
-    return matchesSearch && matchesStatus
-  })
+    const matchesFilter = activeFilter === 'All' || 
+      (activeFilter === 'WorkDone' && t.contentCheck) ||
+      (activeFilter === 'Incentive' && t.incentiveCheck)
+
+    return matchesSearch && matchesStatus && matchesFilter
+  }), [tasks, selectedSpecialist, search, statusFilter, activeFilter])
+
+  // Prepare date-wise tasks for modal
+  useEffect(() => {
+    const grouped = specialistTasks.reduce((acc, task) => {
+      const date = task.takenDate
+      if (date) {
+        if (!acc[date]) acc[date] = []
+        acc[date].push(task)
+      }
+      return acc
+    }, {})
+    setTasksByDate(grouped)
+  }, [specialistTasks])
 
   const handleAddTask = (form) => {
     if (form.id) {
@@ -833,12 +1094,19 @@ export default function MetaAdsPage() {
                 setSearch={setSearch}
                 statusFilter={statusFilter}
                 setStatusFilter={setStatusFilter}
+                activeFilter={activeFilter}
+                setActiveFilter={setActiveFilter}
+                onViewDateWise={() => setShowDateWiseModal(true)}
               />
             </div>
           </div>
           <div className="min-h-[400px] sm:min-h-[500px] lg:h-[600px] border-b border-border flex flex-col">
             <CalendarView
-              tasks={specialistTasks.filter(t => t.clientApproval === 'Approval' || t.clientApproval === 'Completed' || t.clientApproval === 'No Changes' || t.status === 'Done' || t.contentCheck || !t.clientApproval)}
+              tasks={specialistTasks.filter(t => {
+                if (activeFilter === 'Incentive') return t.incentiveCheck;
+                if (activeFilter === 'WorkDone') return t.contentCheck;
+                return t.contentCheck || t.incentiveCheck || t.status === 'Done';
+              })}
               deleteTask={deleteTask}
             />
           </div>
@@ -863,6 +1131,12 @@ export default function MetaAdsPage() {
         onSave={handleAddTask}
         clients={clients}
         editTask={editTask}
+      />
+
+      <DateWiseTaskModal
+        isOpen={showDateWiseModal}
+        onClose={() => setShowDateWiseModal(false)}
+        tasksByDate={tasksByDate}
       />
     </div>
   )

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 import {
   CLIENTS, ENQUIRIES, TASKS, PAYMENTS, SALARIES,
-  EXPENSES, HIRING, INCENTIVES, SOP_LIBRARY, USERS, ACTIVITY_LOG
+  EXPENSES, HIRING, INCENTIVES, INCENTIVE_PROTOCOLS, SOP_LIBRARY, USERS, ACTIVITY_LOG
 } from '../lib/data'
 
 const DataContext = createContext(null)
@@ -47,6 +47,7 @@ export function DataProvider({ children }) {
   const [expenses, setExpenses] = useState(EXPENSES)
   const [hiring, setHiring] = useState(HIRING)
   const [incentives, setIncentives] = useState(INCENTIVES)
+  const [incentiveProtocols, setIncentiveProtocols] = useState(INCENTIVE_PROTOCOLS)
   const [sopLibrary, setSopLibrary] = useState(SOP_LIBRARY)
   const [workers, setWorkers] = useState(() => {
     const initialWorkers = USERS.filter(u => u.access === 'Worker')
@@ -135,6 +136,11 @@ export function DataProvider({ children }) {
   const addIncentive = (i) => setIncentives(prev => [...prev, { ...i, id: `i${Date.now()}` }])
   const deleteIncentive = (id) => setIncentives(prev => prev.filter(i => i.id !== id))
 
+  // INCENTIVE PROTOCOLS
+  const addIncentiveProtocol = (ip) => setIncentiveProtocols(prev => [...prev, { ...ip, id: `ip${Date.now()}` }])
+  const updateIncentiveProtocol = (id, data) => setIncentiveProtocols(prev => prev.map(ip => ip.id === id ? { ...ip, ...data } : ip))
+  const deleteIncentiveProtocol = (id) => setIncentiveProtocols(prev => prev.filter(ip => ip.id !== id))
+
   // SALARIES
   const addSalary = (s) => setSalaries(prev => [...prev, { ...s, id: `s${Date.now()}` }])
   const updateSalary = (id, data) => setSalaries(prev => prev.map(s => s.id === id ? { ...s, ...data } : s))
@@ -184,6 +190,7 @@ export function DataProvider({ children }) {
       expenses, addExpense, updateExpense, deleteExpense,
       hiring, addHiring, updateHiring, deleteHiring,
       incentives, addIncentive, deleteIncentive,
+      incentiveProtocols, addIncentiveProtocol, updateIncentiveProtocol, deleteIncentiveProtocol,
       sopLibrary, addSop, updateSop, deleteSop,
       workers, addWorker, updateWorker, deleteWorker,
       activityLog, addActivity,

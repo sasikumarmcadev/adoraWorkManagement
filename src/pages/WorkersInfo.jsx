@@ -5,7 +5,7 @@ import { cn, formatDate } from '../lib/utils'
 import {
   Plus, Search, Edit2, Trash2,
   Users, Calendar, Briefcase, Camera,
-  ArrowLeft, ShoppingBag, User
+  ArrowLeft, ShoppingBag, User, Check
 } from 'lucide-react'
 import { Modal, FormField, SearchBar } from '../components/ui/index'
 
@@ -34,7 +34,13 @@ export default function WorkersInfo() {
   const filteredWorkers = useMemo(() => {
     return (workers || []).filter(w => {
       return !search || w.name?.toLowerCase().includes(search.toLowerCase()) || w.role?.toLowerCase().includes(search.toLowerCase())
-    }).sort((a, b) => new Date(b.joinedDate || 0) - new Date(a.joinedDate || 0))
+    }).sort((a, b) => {
+      const aTL = a.level === 'Team Lead' || a.isTeamLead
+      const bTL = b.level === 'Team Lead' || b.isTeamLead
+      if (aTL && !bTL) return -1
+      if (!aTL && bTL) return 1
+      return new Date(b.joinedDate || 0) - new Date(a.joinedDate || 0)
+    })
   }, [workers, search])
 
   const openAdd = () => {
@@ -72,7 +78,8 @@ export default function WorkersInfo() {
     if (!form.name || !form.role) return
     const payload = {
       ...form,
-      access: form.access || 'Worker'
+      access: form.access || 'Worker',
+      isTeamLead: form.level === 'Team Lead'
     }
     if (selectedWorker) updateWorker(selectedWorker.id, payload)
     else addWorker(payload)
@@ -148,7 +155,7 @@ export default function WorkersInfo() {
               <tbody className="divide-y divide-border">
                 {filteredWorkers.map((w) => (
                   <tr key={w.id} className="hover:bg-sidebar transition-colors group">
-                    <td className="px-6 py-3 border-r border-border">
+                    <td className="px-6 py-4 border-r border-border">
                       <div className="flex justify-center">
                         <button 
                           onClick={() => { if (w.avatar) { setPreviewData(w); setIsPreviewOpen(true); } }}
@@ -160,35 +167,35 @@ export default function WorkersInfo() {
                           {w.avatar ? (
                             <img src={w.avatar} alt={w.name} className="w-full h-full object-cover" />
                           ) : (
-                            <span className="text-primary font-bold text-[11px]">{w.name?.split(' ').map(n => n[0]).join('')}</span>
+                            <span className="text-primary font-bold text-[13px]">{w.name?.split(' ').map(n => n[0]).join('')}</span>
                           )}
                         </button>
                       </div>
                     </td>
-                    <td className="px-8 py-3 border-r border-border">
+                    <td className="px-8 py-4 border-r border-border">
                       <span className="text-[11px] text-muted font-bold tracking-wider bg-white/5 px-2.5 py-1 rounded-md border border-white/5 uppercase">
                         {w.employeeID || 'AE-PENDING'}
                       </span>
                     </td>
-                    <td className="px-8 py-3 border-r border-border overflow-hidden">
-                      <span className="text-white font-bold text-sm tracking-tight block truncate" title={w.name}>{w.name}</span>
+                    <td className="px-8 py-4 border-r border-border overflow-hidden">
+                      <span className="text-white font-bold text-[13px] tracking-tight block truncate" title={w.name}>{w.name}</span>
                     </td>
-                    <td className="px-8 py-3 border-r border-border">
+                    <td className="px-8 py-4 border-r border-border">
                       <div className="flex items-center gap-2.5">
                         <div className="w-2 h-2 rounded-full bg-primary shadow-lg shadow-primary/20" />
                         <span className="text-[13px] font-bold text-secondary whitespace-nowrap">{w.role}</span>
                       </div>
                     </td>
-                     <td className="px-8 py-3 border-r border-border font-bold text-[11px] uppercase text-primary/80">
+                     <td className="px-8 py-4 border-r border-border font-bold text-[13px] text-primary/80">
                        {w.level || '—'}
                      </td>
-                     <td className="px-8 py-3 border-r border-border text-secondary font-bold text-[13px] tabular-nums opacity-90">
+                     <td className="px-8 py-4 border-r border-border text-secondary font-bold text-[13px] tabular-nums opacity-90">
                        {w.joinedDate ? formatDate(w.joinedDate) : '—'}
                      </td>
-                    <td className="px-8 py-3">
+                    <td className="px-8 py-4">
                       <div className="flex items-center justify-end gap-3">
-                        <button onClick={() => openEdit(w)} className="p-2.5 text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all"><Edit2 size={16} /></button>
-                        {canManage && <button onClick={() => handleDelete(w.id)} className="p-2.5 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-xl transition-all"><Trash2 size={16} /></button>}
+                        <button onClick={() => openEdit(w)} className="p-2.5 text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all active:scale-95"><Edit2 size={16} /></button>
+                        {canManage && <button onClick={() => handleDelete(w.id)} className="p-2.5 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-xl transition-all active:scale-95"><Trash2 size={16} /></button>}
                       </div>
                     </td>
                   </tr>
@@ -218,7 +225,7 @@ export default function WorkersInfo() {
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                              <span className="text-[9px] text-muted font-bold bg-white/5 px-2 py-0.5 rounded border border-white/5 uppercase tracking-tighter">{w.employeeID || 'AE-PENDING'}</span>
-                              {w.level && <span className="text-[9px] text-primary font-bold bg-primary/10 px-2 py-0.5 rounded border border-primary/20 uppercase tracking-tighter">{w.level}</span>}
+                              {w.level && <span className="text-[9px] text-primary font-bold bg-primary/10 px-2 py-0.5 rounded border border-primary/20 tracking-tighter">{w.level}</span>}
                           </div>
                           <p className="text-white font-bold text-base sm:text-lg tracking-tight leading-tight line-clamp-1">{w.name}</p>
                           <div className="flex items-center gap-2 drop-shadow-lg">
@@ -355,18 +362,29 @@ export default function WorkersInfo() {
               </FormField>
             </div>
 
-            <FormField label="Position Level">
-              <select
-                className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner appearance-none"
-                value={form.level || ''}
-                onChange={e => setForm({ ...form, level: e.target.value })}
+            <div className="pt-4 pb-2">
+              <button
+                type="button"
+                onClick={() => setForm({ ...form, level: form.level === 'Team Lead' ? '' : 'Team Lead' })}
+                className="flex items-center gap-3 transition-all group cursor-pointer w-fit"
               >
-                <option value="">Select Position Level</option>
-                <option value="Senior">Senior</option>
-                <option value="Junior">Junior</option>
-                <option value="Team Lead">Team Lead</option>
-              </select>
-            </FormField>
+                <div className={cn(
+                  "w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-300",
+                  form.level === 'Team Lead' 
+                    ? "bg-primary border-primary text-black shadow-lg shadow-primary/20" 
+                    : "bg-transparent border-white/10 text-transparent group-hover:border-white/30"
+                )}>
+                  <Check size={16} strokeWidth={4} />
+                </div>
+                <div className="flex flex-col items-start leading-none">
+                  <span className={cn(
+                    "text-[13px] font-bold transition-colors",
+                    form.level === 'Team Lead' ? "text-white" : "text-muted"
+                  )}>Position as a Team Lead</span>
+                  <p className="text-[10px] text-muted opacity-40 font-medium mt-1">Check to assign leadership authority</p>
+                </div>
+              </button>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-6 border-t border-white/5">

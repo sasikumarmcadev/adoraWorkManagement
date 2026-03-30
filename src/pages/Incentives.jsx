@@ -1,112 +1,120 @@
-import { useState } from 'react'
-import { Layout, Sparkles, FileText, Gift, Award, Target, TrendingUp } from 'lucide-react'
-import { Modal } from '../components/ui/index'
-import { cn } from '../lib/utils'
-
-const ROLES = ['Content Specialist', 'Editor', 'Video Grapher', 'Meta Ads', 'Software Developer']
-
-const ROLE_INCENTIVES = {
-  'Editor': {
-    title: 'Editor Incentives',
-    subtitle: 'Consistency pays off!',
-    description: 'The more you create, the more you earn.',
-    structure: [
-      { label: 'Weekly 1', tasks: 4, amount: 1200 },
-      { label: 'Weekly 2', tasks: 4, amount: 2400 },
-      { label: 'Weekly 3', tasks: 4, amount: 3600 },
-      { label: 'Weekly 4', tasks: 4, amount: 5000 },
-    ],
-    motivation: ['Keep pushing', 'Keep growing', 'Keep earning']
-  },
-  'Content Specialist': {
-    title: 'Content Specialist Incentives',
-    subtitle: 'High quality content rewards!',
-    description: 'Engage more, earn more. Quality over quantity.',
-    structure: [
-      { label: 'Phase 1', tasks: 5, amount: 1500 },
-      { label: 'Phase 2', tasks: 5, amount: 3000 },
-      { label: 'Phase 3', tasks: 5, amount: 4500 },
-      { label: 'Phase 4', tasks: 5, amount: 6500 },
-    ],
-    motivation: ['Create magic', 'Drive impact', 'Refine beauty']
-  },
-  'Video Grapher': {
-    title: 'Video Grapher Incentives',
-    subtitle: 'Visual storytelling paid well!',
-    description: 'Capturing moments that matter.',
-    structure: [
-      { label: 'Batch 1', tasks: 3, amount: 2000 },
-      { label: 'Batch 2', tasks: 3, amount: 4000 },
-      { label: 'Batch 3', tasks: 3, amount: 6000 },
-      { label: 'Batch 4', tasks: 3, amount: 8000 },
-    ],
-    motivation: ['Film boldly', 'Edit sharply', 'Scale high']
-  },
-  'Meta Ads': {
-    title: 'Meta Ads Incentives',
-    subtitle: 'Performance driving rewards!',
-    description: 'Optimize better, yield higher.',
-    structure: [
-      { label: 'Tier 1', tasks: 2, amount: 2500 },
-      { label: 'Tier 2', tasks: 2, amount: 5000 },
-      { label: 'Tier 3', tasks: 2, amount: 7500 },
-      { label: 'Tier 4', tasks: 2, amount: 10000 },
-    ],
-    motivation: ['Target deep', 'Convert fast', 'Max ROI']
-  },
-  'Software Developer': {
-    title: 'Software Developer Incentives',
-    subtitle: 'Code quality brings value!',
-    description: 'Shipping features with precision.',
-    structure: [
-      { label: 'Sprint 1', tasks: 5, amount: 3000 },
-      { label: 'Sprint 2', tasks: 5, amount: 6000 },
-      { label: 'Sprint 3', tasks: 5, amount: 9000 },
-      { label: 'Sprint 4', tasks: 5, amount: 12000 },
-    ],
-    motivation: ['Ship clean', 'Resolve fast', 'Build scale']
-  }
-}
+import React, { useState } from 'react';
+import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
+import { Plus, Edit2, Trash2, Gift, FileText, Target, Sparkles, X } from 'lucide-react';
+import { Modal, FormField } from '../components/ui/index';
+import { cn } from '../lib/utils';
 
 /**
  * RoleIncentiveCard Component
+ * Displays individual incentive protocols matching the SOP style exactly
  */
-const RoleIncentiveCard = ({ roleName, data, onClick }) => {
+const RoleIncentiveCard = ({ protocol, onClick, onEdit, onDelete, canManage }) => {
   return (
     <div
-      onClick={() => onClick({ roleName, ...data })}
-      className="group relative bg-[#0a0a0a] border border-[#27272a] p-6 rounded-2xl hover:border-white/20 transition-all duration-300 cursor-pointer flex flex-col h-full"
+      onClick={() => onClick(protocol)}
+      className="group relative bg-[#0a0a0a] border border-[#27272a] p-6 rounded-2xl hover:border-white/20 transition-all duration-300 cursor-pointer flex flex-col h-full shadow-2xl"
     >
-      <div className="flex justify-between items-start mb-4">
-        <h3 className="text-lg font-bold text-white line-clamp-1 tracking-tight">{roleName}</h3>
-        <div className="p-2 text-primary opacity-40 group-hover:opacity-100 transition-opacity">
-           <Gift size={20} />
+      <div className="flex justify-between items-start mb-4 relative z-10">
+        <h3 className="text-lg text-white tracking-tight truncate pr-16">{protocol.roleName}</h3>
+        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 absolute top-0 right-0">
+          {canManage && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); onEdit(protocol); }}
+                className="p-2 text-muted hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+              >
+                <Edit2 size={16} />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); onDelete(protocol.id); }}
+                className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-lg transition-colors"
+              >
+                <Trash2 size={16} />
+              </button>
+            </>
+          )}
         </div>
       </div>
       
-      <p className="text-muted text-sm leading-relaxed line-clamp-2 mb-4">
-        {data.subtitle}
+      <p className="text-muted text-[13px] leading-relaxed mb-6 line-clamp-3 opacity-60">
+        {protocol.description}
       </p>
 
-      <div className="space-y-3 mb-6">
-        <div className="flex items-center gap-2 text-[10px] font-bold text-muted tracking-widest opacity-60">
-           <Award size={12} className="text-primary" />
-           <span>Growth Structure</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {data.structure.slice(0, 2).map((s, i) => (
-            <div key={i} className="bg-white/5 px-3 py-2 rounded-lg border border-white/5">
-              <p className="text-[10px] font-bold text-white">₹{s.amount.toLocaleString()}</p>
-              <p className="text-[8px] text-muted font-medium">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-auto pt-4 flex items-center text-white text-xs font-bold opacity-40 group-hover:opacity-100 transition-opacity">
-        View Protocol Details →
+      <div className="mt-auto pt-4 flex items-center text-white text-xs opacity-40 group-hover:opacity-100 transition-opacity gap-2">
+        View Details <span className="text-primary">→</span>
       </div>
     </div>
+  );
+};
+
+/**
+ * AddIncentiveModal Component
+ * Simplified to just Role and Description text area
+ */
+const AddIncentiveModal = ({ isOpen, onClose, onSave, editData }) => {
+  const [roleName, setRoleName] = useState('');
+  const [description, setDescription] = useState('');
+
+  React.useEffect(() => {
+    if (editData) {
+      setRoleName(editData.roleName || '');
+      setDescription(editData.description || '');
+    } else {
+      setRoleName('');
+      setDescription('');
+    }
+  }, [editData, isOpen]);
+
+  if (!isOpen) return null;
+
+  const handleSave = () => {
+    if (!roleName.trim() || !description.trim()) return;
+    onSave({ 
+      roleName, 
+      description
+    });
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={editData ? 'Modify Incentive Protocol' : 'Engineer New Protocol'} size="md">
+      <div className="space-y-6 mt-2">
+        <FormField label="Target Department / Role">
+          <input
+            type="text"
+            value={roleName}
+            onChange={(e) => setRoleName(e.target.value)}
+            placeholder="e.g. Editor, Meta Ads..."
+            className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-2xl text-[13px] text-white outline-none focus:border-primary/40 transition-all shadow-inner"
+          />
+        </FormField>
+
+        <FormField label="Incentive Protocol Details">
+          <textarea
+            rows={10}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Define tiered reward structure, special bonuses, and motivational hooks here..."
+            className="bg-sidebar border border-white/10 w-full p-5 rounded-2xl text-[13px] text-white outline-none focus:border-primary/40 transition-all shadow-inner resize-none"
+          />
+        </FormField>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-end mt-10 border-t border-white/5 pt-8">
+          <button
+            onClick={onClose}
+            className="h-14 px-8 rounded-2xl text-[12px] text-muted hover:text-white hover:bg-white/5 transition-all outline-none order-1 sm:order-none"
+          >
+            Abort
+          </button>
+          <button
+            onClick={handleSave}
+            className="h-14 px-10 rounded-2xl text-[12px] bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none active:scale-95"
+          >
+            {editData ? 'Update Protocol' : 'Deploy Protocol'}
+          </button>
+        </div>
+      </div>
+    </Modal>
   );
 };
 
@@ -118,42 +126,19 @@ const DetailViewModal = ({ data, onClose }) => {
 
   return (
     <Modal isOpen={!!data} onClose={onClose} title={`${data.roleName} Protocols`} size="lg">
-      <div className="space-y-8 py-2">
-        <div>
-          <h4 className="text-sm font-bold text-muted tracking-[0.2em] mb-4 opacity-40">Tiered Earnings Structure</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {data.structure.map((item, idx) => (
-              <div key={idx} className="bg-white/5 border border-white/10 rounded-2xl p-6 group hover:border-primary/40 transition-all duration-300">
-                <p className="text-[10px] font-bold text-muted tracking-widest mb-1">{item.label}</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold text-white">₹{item.amount.toLocaleString()}</span>
-                </div>
-                <div className="flex items-center gap-2 text-[10px] font-bold text-primary/60 mt-2">
-                  <Target size={12} />
-                  <span>Requirement: {item.tasks} Completed Tasks</span>
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="space-y-6 py-4">
+        <div className="min-h-[40vh] max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar p-1">
+          <p className="text-muted leading-relaxed whitespace-pre-wrap text-sm sm:text-base opacity-80">
+            {data.description}
+          </p>
         </div>
-
-        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6">
-          <div className="flex items-center gap-3 mb-4">
-             <Sparkles size={18} className="text-primary" />
-             <h4 className="text-xs font-bold text-primary tracking-widest">Growth Motivation</h4>
-          </div>
-          <div className="flex flex-wrap gap-4">
-             {data.motivation.map((m, i) => (
-               <div key={i} className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  <span className="text-sm font-bold text-white tracking-tight">{m}</span>
-               </div>
-             ))}
-          </div>
-        </div>
-
-        <div className="flex justify-end pr-2 font-bold text-[10px] text-muted opacity-20 tracking-[0.3em]">
-           Operational Standards v1.0
+        <div className="flex items-center justify-end border-t border-white/5 pt-6">
+          <button
+            onClick={onClose}
+            className="px-10 h-14 bg-white text-black rounded-2xl text-[12px] transition-all active:scale-95 shadow-xl shadow-primary/20"
+          >
+            Acknowledge Standards
+          </button>
         </div>
       </div>
     </Modal>
@@ -164,7 +149,34 @@ const DetailViewModal = ({ data, onClose }) => {
  * Main IncentivesPage
  */
 export default function Incentives() {
-  const [selectedRoleData, setSelectedRoleData] = useState(null)
+  const { incentiveProtocols, addIncentiveProtocol, updateIncentiveProtocol, deleteIncentiveProtocol } = useData();
+  const { isManager, isJeevan } = useAuth();
+  const canManage = isManager || isJeevan;
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedProtocol, setSelectedProtocol] = useState(null);
+  const [editingProtocol, setEditingProtocol] = useState(null);
+
+  const handleSave = (data) => {
+    if (editingProtocol) {
+      updateIncentiveProtocol(editingProtocol.id, data);
+    } else {
+      addIncentiveProtocol(data);
+    }
+    setIsAddModalOpen(false);
+    setEditingProtocol(null);
+  };
+
+  const openEdit = (protocol) => {
+    setEditingProtocol(protocol);
+    setIsAddModalOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Decommission this incentive protocol? This action is irreversible.')) {
+      deleteIncentiveProtocol(id);
+    }
+  }
 
   return (
     <div className="w-full flex-1 min-h-screen bg-background flex flex-col">
@@ -173,17 +185,17 @@ export default function Incentives() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
-                Incentive <span className="text-primary/50 text-base sm:text-lg">Protocols</span>
+              <h1 className="text-xl sm:text-2xl md:text-3xl text-white tracking-tighter truncate">
+                Incentive <span className="text-muted/40 text-base sm:text-lg">Library</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none">
-                Structural Library • Performance Reward Systems
+              <p className="text-[10px] sm:text-[12px] text-muted mt-1 opacity-60 leading-none tracking-widest">
+                Structural Efficiency Library • Dynamic Yield Systems
               </p>
             </div>
             <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-               <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Defined Roles</p>
-               <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums leading-none">
-                 {ROLES.length.toString().padStart(2, '0')}
+               <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest leading-none">Defined Protocols</p>
+               <p className="text-2xl sm:text-4xl text-white tracking-tighter tabular-nums leading-none">
+                 {(incentiveProtocols?.length || 0).toString().padStart(2, '0')}
                </p>
             </div>
           </div>
@@ -195,27 +207,64 @@ export default function Incentives() {
           {/* Functional Bar Area */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
             <div>
-              <h2 className="text-sm font-bold text-white tracking-[0.2em] opacity-40">Incentive Architecture Registry</h2>
+              <h2 className="text-[11px] text-white tracking-[0.3em] opacity-40">Operational Architecture Registry</h2>
             </div>
+            {canManage && (
+              <button
+                onClick={() => { setEditingProtocol(null); setIsAddModalOpen(true); }}
+                className="flex items-center justify-center gap-2 px-10 h-14 bg-white text-black rounded-2xl shadow-xl transition-all hover:translate-y-[-2px] active:translate-y-0 active:scale-95"
+              >
+                <Plus size={20} />
+                <span className="text-[13px]">Add Protocol</span>
+              </button>
+            )}
           </div>
 
           {/* Grid Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {Object.entries(ROLE_INCENTIVES).map(([role, data]) => (
-              <RoleIncentiveCard
-                key={role}
-                roleName={role}
-                data={data}
-                onClick={setSelectedRoleData}
-              />
-            ))}
-          </div>
+          {!incentiveProtocols || incentiveProtocols.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-40 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] border border-white/5 flex items-center justify-center mb-6">
+                <Gift size={40} className="text-white/10" />
+              </div>
+              <h2 className="text-2xl text-white mb-2">No Protocols Defined</h2>
+              <p className="text-muted mb-8 max-w-xs mx-auto">Engineer your first incentive structure to empower your workforce.</p>
+              {canManage && (
+                <button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="px-10 h-14 bg-white text-black rounded-2xl transition-all active:scale-95"
+                >
+                  + Add Protocol
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {incentiveProtocols.map((ip) => (
+                <RoleIncentiveCard
+                  key={ip.id}
+                  protocol={ip}
+                  onClick={setSelectedProtocol}
+                  onEdit={openEdit}
+                  onDelete={handleDelete}
+                  canManage={canManage}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Modals */}
+      <AddIncentiveModal
+        isOpen={isAddModalOpen}
+        onClose={() => { setIsAddModalOpen(false); setEditingProtocol(null); }}
+        onSave={handleSave}
+        editData={editingProtocol}
+      />
+
       <DetailViewModal
-        data={selectedRoleData}
-        onClose={() => setSelectedRoleData(null)}
+        data={selectedProtocol}
+        onClose={() => setSelectedProtocol(null)}
       />
     </div>
   );

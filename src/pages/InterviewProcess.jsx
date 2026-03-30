@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useData } from '../context/DataContext'
 import { useAuth } from '../context/AuthContext'
 import { cn, formatDate } from '../lib/utils'
-import { Plus, Edit2, Trash2, Calendar, User, Phone, MapPin, Briefcase, Activity, Search } from 'lucide-react'
+import { Plus, Edit2, Trash2, Calendar, User, Phone, MapPin, Briefcase, Activity, Search, StickyNote, FileText } from 'lucide-react'
 import { FormField, Modal, EmptyState, SearchBar } from '../components/ui/index'
 
 const STATUSES = ['Applied', 'Interview', 'Selected', 'Rejected']
@@ -14,6 +14,8 @@ export default function InterviewProcess() {
   
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [showNotesModal, setShowNotesModal] = useState(false)
+  const [boardNotes, setBoardNotes] = useState(() => localStorage.getItem('interview_board_notes') || '')
   const [editItem, setEditItem] = useState(null)
   const [form, setForm] = useState({})
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1200 : false)
@@ -68,6 +70,11 @@ export default function InterviewProcess() {
     }
   }
 
+  const handleNotesSave = () => {
+    localStorage.setItem('interview_board_notes', boardNotes)
+    setShowNotesModal(false)
+  }
+
   return (
     <div className="w-full flex-1 min-h-screen bg-background flex flex-col">
       {/* Header Area */}
@@ -99,12 +106,20 @@ export default function InterviewProcess() {
             <SearchBar value={search} onChange={setSearch} placeholder="Search Applicants..." />
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={() => setShowNotesModal(true)}
+              className="group flex-1 sm:flex-none flex items-center justify-center gap-3 px-6 h-11 bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 rounded-full transition-all active:scale-95 shadow-xl"
+            >
+              <StickyNote size={18} className="text-primary/60 group-hover:text-primary group-hover:rotate-12 transition-all duration-500" />
+              <span className="text-[11px] sm:text-[13px] font-bold text-white/70 group-hover:text-white transition-opacity whitespace-nowrap tracking-tight">Notes</span>
+            </button>
+
             {canEdit && (
               <button
                 onClick={openAdd}
-                className="group flex-1 sm:flex-none flex items-center justify-center gap-3 pl-1.5 pr-6 py-1.5 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all active:scale-95 shadow-xl ring-1 ring-white/5"
+                className="group flex-1 sm:flex-none flex items-center justify-center gap-3 pl-1.5 pr-6 h-11 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all active:scale-95 shadow-xl ring-1 ring-white/5"
               >
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-primary flex items-center justify-center text-black group-hover:rotate-90 transition-transform duration-500 shadow-lg shadow-primary/20">
+                <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:rotate-90 transition-transform duration-500 shadow-lg shadow-primary/20">
                   <Plus size={18} strokeWidth={3} />
                 </div>
                 <span className="text-[11px] sm:text-[13px] font-bold text-white opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap tracking-tight">Add Candidate</span>
@@ -131,49 +146,53 @@ export default function InterviewProcess() {
               <tbody className="divide-y divide-border">
                 {filteredHiring.map(h => (
                   <tr key={h.id} className="hover:bg-sidebar transition-colors group">
-                    <td className="px-8 py-3 border-r border-border text-left">
-                      <div className="flex items-center gap-3 justify-start">
-                        <Calendar size={14} className="text-primary/60" />
-                        <span className="text-white/70 font-bold tabular-nums text-[13px]">{formatDate(h.date)}</span>
+                    <td className="px-8 py-4 border-r border-border text-left">
+                      <div className="flex items-center gap-3 justify-start h-full">
+                        <Calendar size={14} className="text-primary/60 shrink-0" />
+                        <span className="text-white/70 font-bold tabular-nums text-[13px] leading-none">{formatDate(h.date)}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-3 border-r border-border text-left overflow-hidden">
-                      <div className="flex items-center gap-3 justify-start">
-                        <span className="text-white font-bold tracking-tight truncate" title={h.candidateName}>{h.candidateName}</span>
+                    <td className="px-8 py-4 border-r border-border text-left">
+                      <div className="flex items-center gap-3 justify-start h-full">
+                        <User size={14} className="text-muted/40 shrink-0" />
+                        <span className="text-white font-bold tracking-tight text-[13px] truncate leading-none" title={h.candidateName}>{h.candidateName}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-3 border-r border-border text-left">
-                      <div className="flex items-center gap-3 justify-start">
-                        <Phone size={14} className="text-muted/40" />
-                        <span className="text-white/80 font-bold text-[13px] tabular-nums">{h.phone}</span>
+                    <td className="px-8 py-4 border-r border-border text-left">
+                      <div className="flex items-center gap-3 justify-start h-full">
+                        <Phone size={14} className="text-muted/40 shrink-0" />
+                        <span className="text-white/80 font-bold text-[13px] tabular-nums leading-none">{h.phone}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-3 border-r border-border text-left">
-                      <div className="flex items-center gap-3 justify-start">
-                        <MapPin size={14} className="text-muted/40" />
-                        <div className="flex flex-col">
-                          <span className="text-white/80 font-bold text-[12px] truncate">{h.city || '—'}</span>
+                    <td className="px-8 py-4 border-r border-border text-left">
+                      <div className="flex items-center gap-3 justify-start h-full">
+                        <MapPin size={14} className="text-muted/40 shrink-0" />
+                        <div className="flex flex-col justify-center leading-tight">
+                          <span className="text-white/80 font-bold text-[13px] truncate">{h.city || '—'}</span>
                           <span className="text-muted text-[10px] font-bold tracking-tighter opacity-50">{h.state || '—'}</span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-3 border-r border-border text-left">
-                      <span className="text-[10px] font-bold text-white/70 tracking-tight">
-                        {h.role}
-                      </span>
+                    <td className="px-8 py-4 border-r border-border text-left">
+                      <div className="flex items-center gap-3 justify-start h-full">
+                        <Briefcase size={14} className="text-muted/40 shrink-0" />
+                        <span className="text-[13px] font-bold text-white/70 tracking-tight leading-none">
+                          {h.role}
+                        </span>
+                      </div>
                     </td>
 
-                    <td className="px-8 py-3 border-r border-border text-left">
-                       <div className="flex items-center gap-3 justify-start">
+                    <td className="px-8 py-4 border-r border-border text-left">
+                       <div className="flex items-center gap-3 justify-start h-full">
                         <div className={cn(
-                          "w-2 h-2 rounded-full",
+                          "w-2 h-2 rounded-full shrink-0",
                           h.status === 'Selected' ? "bg-green-500 shadow-sm shadow-green-500/50" :
                           h.status === 'Rejected' ? "bg-red-500 shadow-sm shadow-red-500/50" :
                           h.status === 'Interview' ? "bg-yellow-500 shadow-sm shadow-yellow-500/50" :
                           "bg-primary shadow-sm shadow-primary/50"
                         )} />
                         <span className={cn(
-                          "text-[12px] font-bold",
+                          "text-[13px] font-bold leading-none",
                           h.status === 'Selected' ? "text-green-400" :
                           h.status === 'Rejected' ? "text-red-400" :
                           h.status === 'Interview' ? "text-yellow-400" :
@@ -335,6 +354,31 @@ export default function InterviewProcess() {
             <button className="flex-1 h-14 rounded-xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Cancel</button>
             <button className="flex-1 h-14 rounded-xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none active:scale-95" onClick={save}>
               Save Changes
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal isOpen={showNotesModal} onClose={() => setShowNotesModal(false)} title="Recruitment Board Notes" size="md">
+        <div className="space-y-6 my-4 px-1">
+          <div className="space-y-3">
+             <div className="flex items-center gap-3 text-muted/40 mb-2">
+                <FileText size={16} />
+                <span className="text-[10px] font-bold uppercase tracking-widest leading-none">Global Evaluation Criteria</span>
+             </div>
+             <textarea 
+               className="w-full h-80 bg-sidebar border border-white/10 rounded-2xl p-6 text-[13px] text-white/80 font-bold outline-none focus:border-primary/40 transition-all shadow-inner resize-none leading-relaxed placeholder:text-muted/20"
+               placeholder="Enter internal evaluation criteria, hiring standards, or general board notes here..."
+               value={boardNotes}
+               onChange={e => setBoardNotes(e.target.value)}
+             />
+             <p className="text-[10px] text-muted font-bold opacity-30 px-2 italic font-mono">Changes stay persistent across local board sessions.</p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 pt-4 mt-6 border-t border-white/5">
+            <button className="flex-1 h-14 rounded-xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowNotesModal(false)}>Close</button>
+            <button className="flex-1 h-14 rounded-xl text-[12px] font-bold bg-primary/90 hover:bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none active:scale-95" onClick={handleNotesSave}>
+              Save Board Notes
             </button>
           </div>
         </div>

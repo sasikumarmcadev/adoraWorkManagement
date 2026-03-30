@@ -6,13 +6,13 @@ export const ROLES = ['Content Specialist', 'Editor', 'Video Grapher', 'Meta Ads
 export const USERS = [
   { id: 'u1', name: 'Adora Manager', role: 'Manager', username: 'manager', password: 'manager123', access: 'Manager', avatar: 'AM' },
   { id: 'u2', name: 'Jeevan', role: 'Jeevan', username: 'jeevan', password: 'jeevan123', access: 'Jeevan', avatar: 'JV' },
-  { id: 'w1', name: 'Priya Sharma', role: 'Content Specialist', username: 'priya', password: 'priya123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Senior' },
-  { id: 'w2', name: 'Arjun Nair', role: 'Editor', username: 'arjun', password: 'arjun123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Senior' },
-  { id: 'w3', name: 'Kavya Reddy', role: 'Video Grapher', username: 'kavya', password: 'kavya123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Senior' },
-  { id: 'w4', name: 'Rohit Kumar', role: 'Editor', username: 'rohit', password: 'rohit123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200', level: 'Junior' },
-  { id: 'w5', name: 'Sneha Patel', role: 'Content Specialist', username: 'sneha', password: 'sneha123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200', level: 'Junior' },
-  { id: 'w6', name: 'Kiran Rao', role: 'Meta Ads', username: 'kiran', password: 'kiran123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Senior' },
-  { id: 'w7', name: 'Rahul Das', role: 'Software Developer', username: 'rahul', password: 'rahul123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Senior' },
+  { id: 'w1', name: 'Priya Sharma', role: 'Content Specialist', username: 'priya', password: 'priya123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Team Lead' },
+  { id: 'w2', name: 'Arjun Nair', role: 'Editor', username: 'arjun', password: 'arjun123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Team Lead' },
+  { id: 'w3', name: 'Kavya Reddy', role: 'Video Grapher', username: 'kavya', password: 'kavya123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Team Lead' },
+  { id: 'w4', name: 'Rohit Kumar', role: 'Editor', username: 'rohit', password: 'rohit123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
+  { id: 'w5', name: 'Sneha Patel', role: 'Content Specialist', username: 'sneha', password: 'sneha123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200' },
+  { id: 'w6', name: 'Kiran Rao', role: 'Meta Ads', username: 'kiran', password: 'kiran123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Team Lead' },
+  { id: 'w7', name: 'Rahul Das', role: 'Software Developer', username: 'rahul', password: 'rahul123', access: 'Worker', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200', isTeamLead: true, level: 'Team Lead' },
 ]
 
 export const CLIENTS = [
@@ -81,6 +81,79 @@ export const HIRING = [
   { id: 'h3', date: '2025-03-12', candidateName: 'Suresh Babu', phone: '9633445566', state: 'Tamil Nadu', city: 'Chennai', role: 'Video Grapher', status: 'Applied', notes: 'Entry level experience', rounds: 0, result: 'Pending' },
   { id: 'h4', date: '2025-03-15', candidateName: 'Meera Iyer', phone: '9544556677', state: 'Kerala', city: 'Kochi', role: 'Content Specialist', status: 'Rejected', notes: 'Skill mismatch', rounds: 2, result: 'Not Selected' },
   { id: 'h5', date: '2025-03-19', candidateName: 'Kiran Rao', phone: '9400667788', state: 'Andhra Pradesh', city: 'Hyderabad', role: 'Meta Ads', status: 'Interview', notes: 'Good FB Ads experience', rounds: 1, result: 'Pending' },
+]
+
+export const INCENTIVE_PROTOCOLS = [
+  {
+    id: 'ip1',
+    roleName: 'Editor',
+    title: 'Editor Incentives',
+    subtitle: 'Consistency pays off!',
+    description: 'The more you create, the more you earn.',
+    structure: [
+      { label: 'Weekly 1', tasks: 4, amount: 1200 },
+      { label: 'Weekly 2', tasks: 4, amount: 2400 },
+      { label: 'Weekly 3', tasks: 4, amount: 3600 },
+      { label: 'Weekly 4', tasks: 4, amount: 5000 },
+    ],
+    motivation: ['Keep pushing', 'Keep growing', 'Keep earning']
+  },
+  {
+    id: 'ip2',
+    roleName: 'Content Specialist',
+    title: 'Content Specialist Incentives',
+    subtitle: 'High quality content rewards!',
+    description: 'Engage more, earn more. Quality over quantity.',
+    structure: [
+      { label: 'Phase 1', tasks: 5, amount: 1500 },
+      { label: 'Phase 2', tasks: 5, amount: 3000 },
+      { label: 'Phase 3', tasks: 5, amount: 4500 },
+      { label: 'Phase 4', tasks: 5, amount: 6500 },
+    ],
+    motivation: ['Create magic', 'Drive impact', 'Refine beauty']
+  },
+  {
+    id: 'ip3',
+    roleName: 'Video Grapher',
+    title: 'Video Grapher Incentives',
+    subtitle: 'Visual storytelling paid well!',
+    description: 'Capturing moments that matter.',
+    structure: [
+      { label: 'Batch 1', tasks: 3, amount: 2000 },
+      { label: 'Batch 2', tasks: 3, amount: 4000 },
+      { label: 'Batch 3', tasks: 3, amount: 6000 },
+      { label: 'Batch 4', tasks: 3, amount: 8000 },
+    ],
+    motivation: ['Film boldly', 'Edit sharply', 'Scale high']
+  },
+  {
+    id: 'ip4',
+    roleName: 'Meta Ads',
+    title: 'Meta Ads Incentives',
+    subtitle: 'Performance driving rewards!',
+    description: 'Optimize better, yield higher.',
+    structure: [
+      { label: 'Tier 1', tasks: 2, amount: 2500 },
+      { label: 'Tier 2', tasks: 2, amount: 5000 },
+      { label: 'Tier 3', tasks: 2, amount: 7500 },
+      { label: 'Tier 4', tasks: 2, amount: 10000 },
+    ],
+    motivation: ['Target deep', 'Convert fast', 'Max ROI']
+  },
+  {
+    id: 'ip5',
+    roleName: 'Software Developer',
+    title: 'Software Developer Incentives',
+    subtitle: 'Code quality brings value!',
+    description: 'Shipping features with precision.',
+    structure: [
+      { label: 'Sprint 1', tasks: 5, amount: 3000 },
+      { label: 'Sprint 2', tasks: 5, amount: 6000 },
+      { label: 'Sprint 3', tasks: 5, amount: 9000 },
+      { label: 'Sprint 4', tasks: 5, amount: 12000 },
+    ],
+    motivation: ['Ship clean', 'Resolve fast', 'Build scale']
+  }
 ]
 
 export const INCENTIVES = [

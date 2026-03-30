@@ -11,10 +11,10 @@ const SOPCard = ({ sop, onClick, onEdit, onDelete }) => {
   return (
     <div
       onClick={() => onClick(sop)}
-      className="group relative bg-[#0a0a0a] border border-[#27272a] p-6 rounded-2xl hover:border-white/20 transition-all duration-300 cursor-pointer flex flex-col h-full"
+      className="group relative bg-[#0a0a0a] border border-[#27272a] p-6 rounded-2xl hover:border-white/20 transition-all duration-300 cursor-pointer flex flex-col h-full shadow-2xl"
     >
       <div className="flex justify-between items-start mb-4">
-        <h3 className="text-lg font-bold text-white line-clamp-1">{sop.title}</h3>
+        <h3 className="text-lg text-white line-clamp-1">{sop.title}</h3>
         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => { e.stopPropagation(); onEdit(sop); }}
@@ -30,11 +30,11 @@ const SOPCard = ({ sop, onClick, onEdit, onDelete }) => {
           </button>
         </div>
       </div>
-      <p className="text-muted text-sm leading-relaxed line-clamp-3">
+      <p className="text-muted text-sm leading-relaxed line-clamp-3 opacity-60">
         {sop.description}
       </p>
-      <div className="mt-auto pt-4 flex items-center text-white text-xs font-bold opacity-40 group-hover:opacity-100 transition-opacity">
-        View Details →
+      <div className="mt-auto pt-4 flex items-center text-white text-xs opacity-40 group-hover:opacity-100 transition-opacity gap-2">
+        View Details <span className="text-primary">→</span>
       </div>
     </div>
   );
@@ -120,15 +120,15 @@ const DetailViewModal = ({ sop, onClose }) => {
   return (
     <Modal isOpen={!!sop} onClose={onClose} title={sop.title} size="lg">
       <div className="space-y-6">
-        <div className="min-h-[40vh] max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-          <p className="text-muted leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
+        <div className="min-h-[40vh] max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar p-1">
+          <p className="text-muted leading-relaxed whitespace-pre-wrap text-sm sm:text-base opacity-80">
             {sop.description}
           </p>
         </div>
         <div className="flex justify-end pt-6 border-t border-white/5">
           <button
             onClick={onClose}
-            className="btn-primary px-10"
+            className="px-10 h-14 bg-white text-black rounded-2xl text-[12px] transition-all active:scale-95 shadow-xl shadow-primary/20"
           >
             Acknowledge Protocol
           </button>
@@ -169,16 +169,16 @@ export default function SOPLibrary() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
-                SOP <span className="text-primary/50 text-base sm:text-lg">Library</span>
+              <h1 className="text-xl sm:text-2xl md:text-3xl text-white tracking-tighter truncate">
+                SOP <span className="text-muted/40 text-base sm:text-lg">Library</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none tracking-widest">
+              <p className="text-[10px] sm:text-[12px] text-muted mt-1 opacity-60 leading-none tracking-widest">
                 Workflow Protocols • Professional Operational Logic
               </p>
             </div>
             <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Registered Protocols</p>
-              <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums leading-none">
+              <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest leading-none">Registered Protocols</p>
+              <p className="text-2xl sm:text-4xl text-white tracking-tighter tabular-nums leading-none">
                 {sopLibrary.length.toString().padStart(2, '0')}
               </p>
             </div>
@@ -191,14 +191,14 @@ export default function SOPLibrary() {
           {/* Functional Bar Area */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
             <div>
-              <h2 className="text-sm font-bold text-white tracking-[0.2em] opacity-40">System Protocol Registry</h2>
+              <h2 className="text-[11px] text-white tracking-[0.3em] opacity-40">System Protocol Registry</h2>
             </div>
             <button
               onClick={() => { setEditingSop(null); setIsAddModalOpen(true); }}
-              className="flex items-center justify-center gap-2 px-8 py-3 bg-white text-black font-bold rounded-2xl shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0 shadow-primary/20"
+              className="flex items-center justify-center gap-2 px-10 h-14 bg-white text-black rounded-2xl shadow-xl transition-all hover:translate-y-[-2px] active:translate-y-0 active:scale-95 shadow-primary/20"
             >
               <Plus size={20} />
-              <span>Add Protocol</span>
+              <span className="text-[13px]">Add Protocol</span>
             </button>
           </div>
 
@@ -208,17 +208,17 @@ export default function SOPLibrary() {
               <div className="w-24 h-24 bg-white/5 rounded-[2.5rem] border border-white/5 flex items-center justify-center mb-6">
                 <Plus size={40} className="text-white/10" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">No SOP Added</h2>
+              <h2 className="text-2xl text-white mb-2">No SOP Added</h2>
               <p className="text-muted mb-8 max-w-xs mx-auto">Build your library by adding your first standard operating procedure.</p>
               <button
                 onClick={() => setIsAddModalOpen(true)}
-                className="px-8 py-3.5 bg-white text-black font-bold rounded-2xl transition-all active:scale-95"
+                className="px-10 h-14 bg-white text-black rounded-2xl transition-all active:scale-95 shadow-2xl shadow-primary/10"
               >
                 + Add SOP
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {sopLibrary.map((sop) => (
                 <SOPCard
                   key={sop.id}
