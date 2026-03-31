@@ -65,14 +65,14 @@ const Login = () => {
             </div>
 
             <div className="space-y-4">
-              <h1 className="text-5xl font-black  tracking-[-0.05em] leading-[0.9] text-white">
+              <h1 className="text-5xl font-medium  tracking-[-0.05em] leading-[0.9] text-white">
                 Work <br />
                 <span className="text-white/20">Management.</span>
               </h1>
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-bold  tracking-widest text-white/40 leading-relaxed max-w-xs">
+              <p className="text-xs font-medium  tracking-widest text-white/40 leading-relaxed max-w-xs">
                 A high-performance workspace for agency workflow optimization.
               </p>
               <div className="h-0.5 w-8 bg-white/10" />
@@ -91,17 +91,17 @@ const Login = () => {
                 alt="Logo"
                 className="h-12 w-auto mb-6"
               />
-              <h2 className="text-2xl font-black  tracking-tighter">Work Management</h2>
+              <h2 className="text-2xl font-medium  tracking-tighter">Work Management</h2>
             </div>
 
             <div className="mb-8 text-center lg:text-left">
 
-              <h3 className="text-3xl sm:text-4xl font-black tracking-tighter leading-none lg:tracking-[0.1em]">Sign In</h3>
+              <h3 className="text-3xl sm:text-4xl font-medium tracking-tighter leading-none lg:tracking-[0.1em]">Sign In</h3>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-3">
-                <label className="text-[10px]  font-black tracking-[0.2em] text-white/40 ml-1">UserID</label>
+                <label className="text-[10px]  font-medium tracking-[0.2em] text-white/40 ml-1">UserID</label>
                 <div className="relative group/input">
                   <User size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-white/10 group-focus-within/input:text-white transition-colors" />
                   <input
@@ -117,7 +117,7 @@ const Login = () => {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between ml-1">
-                  <label className="text-[10px]  font-black tracking-[0.2em] text-white/40">Password</label>
+                  <label className="text-[10px]  font-medium tracking-[0.2em] text-white/40">Password</label>
                 </div>
                 <div className="relative group/input">
                   <Lock size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-white/10 group-focus-within/input:text-white transition-colors" />
@@ -140,7 +140,7 @@ const Login = () => {
               </div>
 
               {error && (
-                <div className="bg-red-500/5 border border-red-500/10 text-red-500 text-[10px] font-bold  tracking-widest py-4 px-4 rounded-full text-center animate-shake">
+                <div className="bg-red-500/5 border border-red-500/10 text-red-500 text-[10px] font-medium  tracking-widest py-4 px-4 rounded-full text-center animate-shake">
                   {error}
                 </div>
               )}
@@ -161,7 +161,7 @@ const Login = () => {
                   )}
                 </div>
                 <div className="flex flex-col items-start translate-x-1">
-                   <span className="text-white font-bold text-sm tracking-[0.1em] ">Sign In</span>
+                   <span className="text-white font-medium text-sm tracking-[0.1em] ">Sign In</span>
                 </div>
               </button>
             </form>

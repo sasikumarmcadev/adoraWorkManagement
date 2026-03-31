@@ -26,7 +26,7 @@ export function StatCard({ title, value, icon: Icon, color = 'brand', subtitle, 
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>{title}</p>
-          <p className="text-2xl font-bold mt-1.5 tracking-tight" style={{ color: 'var(--text-primary)' }}>{value}</p>
+          <p className="text-2xl font-medium mt-1.5 tracking-tight" style={{ color: 'var(--text-primary)' }}>{value}</p>
           {subtitle && <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{subtitle}</p>}
         </div>
         {Icon && (
@@ -37,7 +37,7 @@ export function StatCard({ title, value, icon: Icon, color = 'brand', subtitle, 
       </div>
       {trend && (
         <div className="mt-3 flex items-center gap-1">
-          <span className={trend > 0 ? 'text-emerald-500 text-xs font-semibold' : 'text-red-500 text-xs font-semibold'}>
+          <span className={trend > 0 ? 'text-emerald-500 text-xs font-medium' : 'text-red-500 text-xs font-medium'}>
             {trend > 0 ? '+' : ''}{trend}%
           </span>
           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>vs last month</span>
@@ -60,7 +60,7 @@ export function EmptyState({ title = 'No data yet', description = 'Data will app
         </div>
       )}
       <div>
-        <p className="font-semibold" style={{ color: 'var(--text-primary)' }}>{title}</p>
+        <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{title}</p>
         <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>{description}</p>
       </div>
     </div>
@@ -78,7 +78,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-sidebar-light/20">
-          <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">{title}</h3>
+          <h3 className="text-base sm:text-lg font-medium text-white tracking-tight">{title}</h3>
           <button 
             onClick={onClose} 
             className="p-1.5 rounded-full hover:bg-white/10 text-muted hover:text-white transition-all duration-200"
@@ -106,7 +106,7 @@ export function Table({ columns, data, onRowClick }) {
         <thead>
           <tr style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border)' }}>
             {columns.map(col => (
-              <th key={col.key} className="text-left px-4 py-3 text-xs font-semibold" style={{ color: 'var(--text-muted)' }}>
+              <th key={col.key} className="text-left px-4 py-3 text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
                 {col.label}
               </th>
             ))}
@@ -205,7 +205,7 @@ export function Slideover({ isOpen, onClose, title, children }) {
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
         <div className="pointer-events-auto w-screen max-w-md bg-[#0a0a0a] border-l border-white/5 shadow-2xl flex flex-col transform transition-transform duration-500 ease-in-out translate-x-0">
           <div className="flex items-center justify-between px-6 py-5 border-b border-white/5 bg-sidebar-light/10">
-            <h2 className="text-lg font-bold text-white tracking-tight">{title}</h2>
+            <h2 className="text-lg font-medium text-white tracking-tight">{title}</h2>
             <button 
               onClick={onClose}
               className="p-2 rounded-full hover:bg-white/10 text-muted hover:text-white transition-all duration-200"
@@ -287,7 +287,7 @@ export function CustomSelect({ value, options, onChange, getStatusColor, isFilte
                 setIsOpen(false)
               }}
               className={cn(
-                "w-full text-left px-3 py-2 rounded-lg text-xs font-bold",
+                "w-full text-left px-3 py-2 rounded-lg text-xs font-medium",
                 value === optValue 
                   ? "bg-blue-600 text-white" 
                   : "text-white/80 hover:bg-white/5 hover:text-white"
@@ -308,7 +308,7 @@ export function CustomSelect({ value, options, onChange, getStatusColor, isFilte
   })()
 
   return (
-    <div className={cn("relative inline-block", isFilter ? "w-full" : "w-full min-w-[100px]")}>
+    <div className={cn("relative inline-block", isFilter ? "w-full" : "min-w-[100px]")}>
       <div ref={containerRef} className="w-full">
         <button
           onClick={() => {
@@ -316,8 +316,8 @@ export function CustomSelect({ value, options, onChange, getStatusColor, isFilte
             setIsOpen(!isOpen)
           }}
           className={cn(
-            "w-full font-bold rounded-lg text-center border flex items-center justify-center gap-2",
-            isFilter ? "min-h-[44px] bg-sidebar/40 border-white/5 px-4 text-xs text-white justify-between" : "px-3 py-2 text-[10px] shadow-2xl tracking-normal",
+            "w-full font-medium rounded-lg text-center border flex items-center justify-center gap-2",
+            isFilter ? "min-h-[44px] bg-sidebar/40 border-white/5 px-4 text-xs text-white justify-between" : "px-2.5 py-1.5 text-[10px] shadow-2xl tracking-normal min-w-[80px]",
             !isFilter && getStatusColor ? getStatusColor(value) : (isFilter ? "" : "bg-[#111] text-white border-white/10")
           )}
         >

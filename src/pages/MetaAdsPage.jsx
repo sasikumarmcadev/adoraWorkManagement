@@ -186,7 +186,7 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
 
       <div className={`absolute top-3 right-3 sm:top-4 sm:right-6 z-30 transition-opacity duration-300 ${isDragging || showOptions ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} ref={menuRef}>
         {isDragging ? (
-          <button onClick={handleSavePosition} className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-hover text-black text-[10px] sm:text-xs font-bold rounded-full shadow-lg transition-all scale-105">
+          <button onClick={handleSavePosition} className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-hover text-black text-[10px] sm:text-xs font-medium rounded-full shadow-lg transition-all scale-105">
             Save New Position
           </button>
         ) : (
@@ -245,14 +245,14 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
           )}
 
           <div className="flex flex-col gap-0">
-            <h2 className="text-xl sm:text-2xl font-bold text-white leading-none drop-shadow-2xl tracking-tight">{title}</h2>
+            <h2 className="text-xl sm:text-2xl font-medium text-white leading-none drop-shadow-2xl tracking-tight">{title}</h2>
           </div>
         </div>
       )}
 
       {isDragging && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-          <div className="bg-black/60 backdrop-blur px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-white text-xs sm:text-sm font-bold border border-white/20 shadow-2xl">
+          <div className="bg-black/60 backdrop-blur px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-white text-xs sm:text-sm font-medium border border-white/20 shadow-2xl">
             Drag image vertically to reposition
           </div>
         </div>
@@ -266,16 +266,16 @@ function IncentiveCard() {
     <div className="h-full flex flex-col gap-3 sm:gap-4 p-4 sm:p-5 bg-panel">
       <div className="flex items-center gap-2">
         <Target size={16} className="sm:w-[18px] sm:h-[18px] text-emerald-400" />
-        <h3 className="font-semibold text-base sm:text-lg">Worker Incentive</h3>
+        <h3 className="font-medium text-base sm:text-lg">Worker Incentive</h3>
       </div>
 
       <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-md p-3 sm:p-4">
         <h4 className="text-emerald-400 font-medium mb-1 text-sm sm:text-base">Monthly Target</h4>
-        <p className="text-emerald-300 text-xs sm:text-sm font-semibold">Achieved = +1000 Bonus</p>
+        <p className="text-emerald-300 text-xs sm:text-sm font-medium">Achieved = +1000 Bonus</p>
       </div>
 
       <div className="bg-surface-800/30 p-3 sm:p-4 rounded-md border border-border flex-1">
-        <p className="text-[10px] sm:text-xs text-muted mb-2 sm:mb-3 font-semibold">Notes</p>
+        <p className="text-[10px] sm:text-xs text-muted mb-2 sm:mb-3 font-medium">Notes</p>
         <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-300">
           <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> CPA Optimized</li>
           <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> High Quality Leads</li>
@@ -319,24 +319,24 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
       <div className="px-4 py-3 bg-[#050505] border-b border-white/5 overflow-x-auto scrollbar-none">
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 min-w-[400px]">
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted font-bold tracking-tighter">Total</p>
-            <p className="text-sm font-bold text-white leading-none mt-1">{stats.total}</p>
+            <p className="text-[10px] text-muted font-medium tracking-tighter">Total</p>
+            <p className="text-sm font-medium text-white leading-none mt-1">{stats.total}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-emerald-500/60 font-bold tracking-tighter">Completed</p>
-            <p className="text-sm font-bold text-emerald-400 leading-none mt-1">{stats.done}</p>
+            <p className="text-[10px] text-emerald-500/60 font-medium tracking-tighter">Completed</p>
+            <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.done}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-blue-500/60 font-bold tracking-tighter">In Progress</p>
-            <p className="text-sm font-bold text-blue-400 leading-none mt-1">{stats.progress}</p>
+            <p className="text-[10px] text-blue-500/60 font-medium tracking-tighter">In Progress</p>
+            <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.progress}</p>
           </div>
           <div className="bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
-            <p className="text-[10px] text-emerald-400/60 font-bold tracking-tighter">Work Done</p>
-            <p className="text-sm font-bold text-emerald-400 leading-none mt-1">{stats.workDone}</p>
+            <p className="text-[10px] text-emerald-400/60 font-medium tracking-tighter">Work Done</p>
+            <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.workDone}</p>
           </div>
           <div className="bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
-            <p className="text-[10px] text-blue-400/60 font-bold tracking-tighter">Incentives</p>
-            <p className="text-sm font-bold text-blue-400 leading-none mt-1">{stats.incentive}</p>
+            <p className="text-[10px] text-blue-400/60 font-medium tracking-tighter">Incentives</p>
+            <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.incentive}</p>
           </div>
         </div>
       </div>
@@ -350,7 +350,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
              <select
               value={activeFilter}
               onChange={(e) => setActiveFilter(e.target.value)}
-              className="bg-sidebar border border-white/10 rounded-md py-2 px-3 text-xs font-bold text-white outline-none focus:border-primary/40 transition-all h-[38px] appearance-none"
+              className="bg-sidebar border border-white/10 rounded-md py-2 px-3 text-xs font-medium text-white outline-none focus:border-primary/40 transition-all h-[38px] appearance-none"
               style={{ backgroundImage: 'linear-gradient(45deg, transparent 50%, #444 50%), linear-gradient(135deg, #444 50%, transparent 50%)', backgroundPosition: 'calc(100% - 15px) center, calc(100% - 10px) center', backgroundSize: '5px 5px, 5px 5px', backgroundRepeat: 'no-repeat' }}
             >
               <option value="All">All Projects</option>
@@ -374,7 +374,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
               <Plus size={18} />
             </div>
-            <span className="text-[12px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Task</span>
+            <span className="text-[12px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Task</span>
           </button>
           <div className="relative">
             <StatusSelect
@@ -403,8 +403,8 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                   <div key={task.id} className="bg-panel border border-border rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col">
-                        <span className="text-secondary font-medium text-[10px] uppercase tracking-wider opacity-50">Taken Date</span>
-                        <span className="text-white font-bold text-sm">{showDate ? formatDate(task.takenDate) : <span className="opacity-0">---</span>}</span>
+                        <span className="text-secondary font-medium text-[10px]  tracking-wider opacity-50 whitespace-nowrap">Taken Date</span>
+                        <span className="text-white font-medium text-sm leading-none mt-1">{showDate ? formatDate(task.takenDate) : <span className="opacity-0">---</span>}</span>
                       </div>
                       <StatusSelect
                         value={task.status}
@@ -415,7 +415,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                     </div>
 
                     <div>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 border border-primary/20 text-primary mb-2">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 border border-primary/20 text-primary mb-2">
                         {task.clientName}
                       </span>
                       <div className="bg-surface-800/30 p-2.5 rounded-lg border border-white/5">
@@ -429,12 +429,40 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                     <div className="flex items-center justify-between text-[10px] text-muted pt-3 border-t border-white/5">
                       <div className="flex items-center gap-4">
                         <div className="flex flex-col">
-                          <span className="opacity-40 uppercase font-bold text-[8px]">Edit Date</span>
+                          <span className="opacity-40  font-medium text-[8px]">Edit Date</span>
                           <span className="text-white/60 font-medium">{formatDate(task.editDate) || '—'}</span>
                         </div>
-                        <div className="flex flex-col text-center">
-                          <span className="opacity-40 uppercase font-bold text-[8px]">Index</span>
-                          <span className="text-white/60 font-medium">1</span>
+                        <div className="flex flex-col items-center">
+                          <span className="opacity-40  font-medium text-[8px]">Work Done</span>
+                          <button
+                            onClick={() => onUpdateTask(task.id, {
+                              contentCheck: !task.contentCheck,
+                              incentiveCheck: false,
+                              updatedDate: new Date().toISOString().split('T')[0],
+                            })}
+                            className={cn(
+                              "w-4 h-4 rounded-full border flex items-center justify-center transition-all mt-1",
+                              task.contentCheck ? "bg-emerald-600 border-emerald-600" : "border-white/10"
+                            )}
+                          >
+                            <div className={cn("w-1 h-1 rounded-full bg-white", task.contentCheck ? "scale-100" : "scale-0")} />
+                          </button>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <span className="opacity-40 font-medium text-[8px]">Incentive</span>
+                          <button
+                            onClick={() => onUpdateTask(task.id, {
+                              incentiveCheck: !task.incentiveCheck,
+                              contentCheck: false,
+                              updatedDate: new Date().toISOString().split('T')[0]
+                            })}
+                            className={cn(
+                              "w-4 h-4 rounded-full border flex items-center justify-center transition-all mt-1",
+                              task.incentiveCheck ? "bg-blue-600 border-blue-600" : "border-white/10"
+                            )}
+                          >
+                            <div className={cn("w-1 h-1 rounded-full bg-white", task.incentiveCheck ? "scale-100" : "scale-0")} />
+                          </button>
                         </div>
                       </div>
                       <div className="flex gap-1">
@@ -464,7 +492,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
           </div>
         ) : (
           <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="text-xs text-muted font-bold bg-sidebar border-b border-border">
+            <thead className="text-xs text-muted font-medium bg-sidebar border-b border-border">
               <tr>
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Client Name</th>
@@ -497,7 +525,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                         )}
                       </td>
                       <td className="px-4 py-4">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-primary/10 border border-primary/20 text-primary">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-primary/10 border border-primary/20 text-primary">
                           {task.clientName}
                         </span>
                       </td>
@@ -706,7 +734,7 @@ function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
           <div key={date} className="space-y-3">
             <div className="flex items-center gap-3 sticky top-0 bg-[#0a0a0a] py-2 z-10">
               <div className="h-px flex-1 bg-border/50" />
-              <span className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">{formatDate(date)}</span>
+              <span className="text-[11px] font-medium text-primary  tracking-[0.2em]">{formatDate(date)}</span>
               <div className="h-px flex-1 bg-border/50" />
             </div>
             <div className="grid grid-cols-1 gap-2">
@@ -714,14 +742,14 @@ function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
                 <div key={t.id} className="p-3 bg-sidebar border border-border rounded-lg flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-bold text-white bg-white/5 px-2 py-0.5 rounded border border-white/10">{t.clientName}</span>
-                      {t.contentCheck && <span className="text-[8px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20 uppercase">Work Done</span>}
-                      {t.incentiveCheck && <span className="text-[8px] font-bold text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded border border-blue-400/20 uppercase">Incentive</span>}
+                      <span className="text-[10px] font-medium text-white bg-white/5 px-2 py-0.5 rounded border border-white/10">{t.clientName}</span>
+                      {t.contentCheck && <span className="text-[8px] font-medium text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20 ">Work Done</span>}
+                      {t.incentiveCheck && <span className="text-[8px] font-medium text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded border border-blue-400/20 ">Incentive</span>}
                     </div>
                     <p className="text-xs text-muted truncate">{t.task}</p>
                   </div>
                   <span className={cn(
-                    "text-[8px] font-black uppercase px-2 py-1 rounded border",
+                    "text-[8px] font-medium  px-2 py-1 rounded border",
                     t.status === 'Done' ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" :
                     t.status === 'In Progress' ? "text-blue-400 bg-blue-400/10 border-blue-400/20" :
                     "text-white/40 bg-white/5 border-white/10"
@@ -823,7 +851,7 @@ function CalendarView({ tasks, deleteTask }) {
           overflow: hidden; 
           text-overflow: ellipsis; 
           font-weight: 800 !important;
-          text-transform: uppercase !important;
+          text-transform:  !important;
           letter-spacing: 0.02em !important;
           border-width: 1px !important;
           margin: 1px 2px !important;
@@ -835,7 +863,7 @@ function CalendarView({ tasks, deleteTask }) {
           box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
         .fc-col-header-cell { background-color: #111111 !important; border-bottom: 2px solid var(--border) !important; }
-        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; text-transform: uppercase; padding: 0.6rem !important; display: block !important; }
+        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; text-transform: ; padding: 0.6rem !important; display: block !important; }
         .fc-daygrid-day-number { color: var(--text-primary) !important; font-size: 0.7rem; padding: 0.3rem !important; }
         .fc-toolbar-title { color: var(--text-primary) !important; font-size: 0.9rem !important; font-weight: 700 !important; }
         
@@ -858,7 +886,7 @@ function CalendarView({ tasks, deleteTask }) {
       `}</style>
 
       <div className="p-3 sm:p-5 border-b border-border bg-sidebar">
-        <h2 className="text-base sm:text-lg font-bold text-primary">Work Calendar Overview</h2>
+        <h2 className="text-base sm:text-lg font-medium text-primary">Work Calendar Overview</h2>
       </div>
 
       <div ref={containerRef} className="p-0 bg-panel flex-1 overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
@@ -888,16 +916,16 @@ function CalendarView({ tasks, deleteTask }) {
             <div key={t.id} className="p-3 border border-border rounded-md bg-sidebar flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex flex-col gap-1">
-                  <p className="font-semibold text-sm text-white truncate">{t.clientName}</p>
+                  <p className="font-medium text-sm text-white truncate">{t.clientName}</p>
                   <p className="text-xs text-muted truncate max-w-[200px]">{t.task}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
                 <div className="flex flex-col items-end gap-1.5">
-                  <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-[#222] text-primary self-end">{t.status}</span>
+                  <span className="text-[10px] font-medium  px-2 py-0.5 rounded bg-[#222] text-primary self-end">{t.status}</span>
                   <div className="flex gap-1">
-                    {t.contentCheck && <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">WORK DONE</span>}
-                    {t.incentiveCheck && <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">INCENTIVE</span>}
+                    {t.contentCheck && <span className="text-[8px] font-medium  px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">WORK DONE</span>}
+                    {t.incentiveCheck && <span className="text-[8px] font-medium  px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">INCENTIVE</span>}
                   </div>
                 </div>
                 <button
@@ -935,11 +963,11 @@ function MetaAdsListView({ tasks, workers, onSelect }) {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 border-b border-border pb-4 gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Meta Ads Management</h1>
+            <h1 className="text-2xl sm:text-3xl font-medium text-white tracking-tight">Meta Ads Management</h1>
             <p className="text-xs sm:text-sm text-muted mt-1">Select a specialist to view their campaign pipeline and ROI</p>
           </div>
           <div className="bg-primary/10 border border-primary/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md">
-            <span className="text-primary font-bold text-sm sm:text-base">{specialists.length}</span>
+            <span className="text-primary font-medium text-sm sm:text-base">{specialists.length}</span>
             <span className="text-muted text-[10px] sm:text-xs ml-2 tracking-wider">Active Specialists</span>
           </div>
         </div>
@@ -964,7 +992,7 @@ function MetaAdsListView({ tasks, workers, onSelect }) {
                 className="group flex flex-col p-4 sm:p-6 bg-panel border border-border hover:border-primary/50 transition-all text-left rounded-lg hover:shadow-xl hover:scale-[1.02] duration-200"
               >
                 <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-bold text-base sm:text-lg overflow-hidden group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-medium text-base sm:text-lg overflow-hidden group-hover:scale-110 transition-transform">
                     {workers.find(w => w.name === name)?.avatar?.startsWith('http') ? (
                       <img src={workers.find(w => w.name === name).avatar} alt={name} className="w-full h-full object-cover" />
                     ) : (
@@ -972,11 +1000,11 @@ function MetaAdsListView({ tasks, workers, onSelect }) {
                     )}
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-primary transition-colors">{name}</h3>
+                    <h3 className="text-base sm:text-lg font-medium text-white group-hover:text-primary transition-colors">{name}</h3>
                     <div className="flex items-center gap-2">
-                      <p className="text-[9px] sm:text-[10px] text-muted tracking-widest font-bold">Strategic Advertiser</p>
+                      <p className="text-[9px] sm:text-[10px] text-muted tracking-widest font-medium">Strategic Advertiser</p>
                       {workers.find(w => w.name === name)?.level && (
-                        <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
+                        <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-medium">
                           {workers.find(w => w.name === name).level}
                         </span>
                       )}
@@ -986,16 +1014,16 @@ function MetaAdsListView({ tasks, workers, onSelect }) {
 
                 <div className="grid grid-cols-3 gap-2 mt-auto">
                   <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-bold mb-0.5">Jobs</p>
-                    <p className="text-sm font-bold text-white">{stats.total}</p>
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Jobs</p>
+                    <p className="text-sm font-medium text-white">{stats.total}</p>
                   </div>
                   <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-bold mb-0.5">Pending</p>
-                    <p className="text-sm font-bold text-orange-400">{stats.pending}</p>
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Pending</p>
+                    <p className="text-sm font-medium text-orange-400">{stats.pending}</p>
                   </div>
                   <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-bold mb-0.5">Done</p>
-                    <p className="text-sm font-bold text-emerald-400">{stats.done}</p>
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Done</p>
+                    <p className="text-sm font-medium text-emerald-400">{stats.done}</p>
                   </div>
                 </div>
 
@@ -1138,7 +1166,7 @@ export default function MetaAdsPage() {
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-primary transition-colors">
                 <ArrowLeft size={14} className="sm:w-[18px] sm:h-[18px] text-black" />
               </div>
-              <span className="text-[10px] sm:text-xs font-bold text-white tracking-tight opacity-80 group-hover:opacity-100 transition-opacity">Back</span>
+              <span className="text-[10px] sm:text-xs font-medium text-white tracking-tight opacity-80 group-hover:opacity-100 transition-opacity">Back</span>
             </button>
           </div>
         </div>

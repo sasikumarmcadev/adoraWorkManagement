@@ -47,7 +47,7 @@ function ProtectedRoute({ children, allowedRoles }) {
         <div className="text-primary opacity-30">
           <Lock size={64} />
         </div>
-        <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>Access Restricted</h2>
+        <h2 className="text-xl font-medium" style={{ color: 'var(--text-primary)' }}>Access Restricted</h2>
         <p style={{ color: 'var(--text-muted)' }}>You don't have permission to view this page.</p>
       </div>
     )

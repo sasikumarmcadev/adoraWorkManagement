@@ -85,18 +85,18 @@ export default function Expenses() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
                 Expenses <span className="text-primary/50">Audit</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none">
                 Operational Capital Ledger • Track daily agency spend
               </p>
             </div>
             
             <div className="flex flex-row items-center gap-6 sm:gap-10">
               <div className="flex flex-col items-center sm:items-end gap-1">
-                <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-bold leading-none">Total Expenditure</p>
-                <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums text-primary">₹{totalSpend.toLocaleString('en-IN')}</p>
+                <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-medium leading-none">Total Expenditure</p>
+                <p className="text-2xl sm:text-4xl font-medium text-white tracking-tighter tabular-nums text-primary">₹{totalSpend.toLocaleString('en-IN')}</p>
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@ export default function Expenses() {
                 <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
                   <Plus size={18} />
                 </div>
-                <span className="text-[12px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Expense</span>
+                <span className="text-[12px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Expense</span>
               </button>
             )}
           </div>
@@ -249,7 +249,7 @@ export default function Expenses() {
           
           <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-6 border-t border-white/5">
             <button className="flex-1 h-14 rounded-xl text-[12px] text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setIsModalOpen(false)}>Discard</button>
-            <button className="flex-1 h-14 rounded-xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>Confirm Registration</button>
+            <button className="flex-1 h-14 rounded-xl text-[12px] font-medium bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>Confirm Registration</button>
           </div>
         </div>
       </Modal>

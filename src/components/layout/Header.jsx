@@ -67,11 +67,11 @@ export default function Header({ setMobileOpen, sidebarCollapsed, setSidebarColl
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex items-center gap-3 pl-2 pr-1 py-1 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors outline-none cursor-pointer">
-              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-xs font-bold text-white shadow-sm ring-2 ring-white dark:ring-gray-950">
+              <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-xs font-medium text-white shadow-sm ring-2 ring-white dark:ring-gray-950">
                 {user?.avatar || 'AD'}
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-semibold text-gray-900 dark:text-white leading-tight">{user?.name || 'Administrator'}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white leading-tight">{user?.name || 'Administrator'}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{user?.access || 'System'}</p>
               </div>
               <ChevronDown size={14} className="text-gray-400 ml-1 hidden md:block" />
@@ -79,7 +79,7 @@ export default function Header({ setMobileOpen, sidebarCollapsed, setSidebarColl
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48 bg-sidebar border border-border rounded-xl shadow-xl mt-2 p-1 z-50 animate-fade-in outline-none">
             <div className="px-3 py-2 border-b border-border mb-1">
-              <p className="text-sm font-semibold text-gray-900 dark:text-white">{user?.name}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">@{user?.username}</p>
             </div>
             <DropdownMenuItem

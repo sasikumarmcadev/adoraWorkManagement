@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -36,7 +36,7 @@
   }
 
   html {
-    font-family: 'Poppins', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -86,17 +86,17 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-md font-bold text-sm bg-brand-500 text-black hover:bg-brand-600 active:scale-95 transition-all duration-150 cursor-pointer;
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm bg-brand-500 text-black hover:bg-brand-600 active:scale-95 transition-all duration-150 cursor-pointer;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-md font-bold text-sm border hover:bg-surface-100 dark:hover:bg-surface-700 active:scale-95 transition-all duration-150 cursor-pointer;
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-md font-medium text-sm border hover:bg-surface-100 dark:hover:bg-surface-700 active:scale-95 transition-all duration-150 cursor-pointer;
     border-color: var(--border);
     color: var(--text-primary);
   }
 
   .btn-ghost {
-    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-md font-bold text-sm hover:bg-surface-100 dark:hover:bg-surface-800 active:scale-95 transition-all duration-150 cursor-pointer;
+    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-md font-medium text-sm hover:bg-surface-100 dark:hover:bg-surface-800 active:scale-95 transition-all duration-150 cursor-pointer;
     color: var(--text-secondary);
   }
 
@@ -117,7 +117,7 @@
   }
 
   .badge {
-    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-semibold;
+    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-medium;
   }
 
   .sidebar-link {
@@ -133,7 +133,7 @@
   .sidebar-link.active {
     background: var(--brand-light);
     color: var(--brand);
-    font-weight: 600;
+    font-weight: 500;
   }
 
   .table-row-hover {
@@ -145,12 +145,12 @@
   }
 
   .page-title {
-    @apply text-2xl font-bold tracking-tight;
+    @apply text-2xl font-medium tracking-tight;
     color: var(--text-primary);
   }
 
   .section-title {
-    @apply text-sm font-semibold;
+    @apply text-sm font-medium;
     color: var(--text-muted);
   }
 

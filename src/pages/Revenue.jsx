@@ -68,17 +68,17 @@ export default function Revenue() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white truncate tracking-tighter">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white truncate tracking-tighter">
                 Revenue <span className="text-primary/50">Performance</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none">
                 Financial Audit • Agency Growth Metrics
               </p>
             </div>
             
             <div className="flex flex-row items-center gap-6 sm:gap-14 border-l border-white/5 pl-6 sm:pl-10">
               <div className="hidden md:flex flex-col items-center sm:items-end gap-1.5 border-r border-white/5 pr-10">
-                 <p className="text-[9px] text-muted opacity-30 tracking-[0.2em] uppercase leading-none">Growth Intelligence</p>
+                 <p className="text-[9px] text-muted opacity-30 tracking-[0.2em]  leading-none">Growth Intelligence</p>
                  <div className="flex items-center gap-2 mt-0.5">
                     <span className={cn(
                       "text-[10px] font-normal px-2 py-0.5 rounded-full border",
@@ -93,8 +93,8 @@ export default function Revenue() {
               </div>
 
               <div className="flex flex-col items-center sm:items-end gap-1">
-                <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Total Revenue</p>
-                <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums text-primary">{formatCurrency(totalRevenue)}</p>
+                <p className="text-[9px] sm:text-[11px] text-muted font-medium opacity-60 tracking-widest leading-none">Total Revenue</p>
+                <p className="text-2xl sm:text-4xl font-medium text-white tracking-tighter tabular-nums text-primary">{formatCurrency(totalRevenue)}</p>
               </div>
             </div>
           </div>

@@ -52,16 +52,16 @@ export default function Calendar() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
                 Operational <span className="text-primary/50">Calendar</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none">
                 Timeline Audit • Tactical Milestone Tracking
               </p>
             </div>
             <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest uppercase">Ongoing Tasks</p>
-              <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums">
+              <p className="text-[9px] sm:text-[11px] text-muted font-medium opacity-60 tracking-widest ">Ongoing Tasks</p>
+              <p className="text-2xl sm:text-4xl font-medium text-white tracking-tighter tabular-nums">
                 {(tasks?.filter(t => t.status !== 'Done').length || 0).toString().padStart(2, '0')}
               </p>
             </div>
@@ -78,12 +78,12 @@ export default function Calendar() {
                 {/* Calendar Control Bar */}
                 <div className="flex items-center justify-between mb-8">
                    <div>
-                      <h2 className="text-xl font-bold text-white tracking-tight">{MONTHS[month]} <span className="text-primary/40">{year}</span></h2>
-                      <p className="text-[10px] text-muted font-bold uppercase tracking-widest opacity-40 mt-1">Monthly Schedule View</p>
+                      <h2 className="text-xl font-medium text-white tracking-tight">{MONTHS[month]} <span className="text-primary/40">{year}</span></h2>
+                      <p className="text-[10px] text-muted font-medium  tracking-widest opacity-40 mt-1">Monthly Schedule View</p>
                    </div>
                    <div className="flex items-center gap-2">
                       <button onClick={prevMonth} className="p-2 text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all border border-white/5 active:scale-90"><ChevronLeft size={20} /></button>
-                      <button onClick={() => setCurrentDate(new Date())} className="px-4 py-2 text-[10px] font-bold text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all active:scale-95 uppercase tracking-wider">Today</button>
+                      <button onClick={() => setCurrentDate(new Date())} className="px-4 py-2 text-[10px] font-medium text-white bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all active:scale-95  tracking-wider">Today</button>
                       <button onClick={nextMonth} className="p-2 text-muted hover:text-white hover:bg-white/5 rounded-xl transition-all border border-white/5 active:scale-90"><ChevronRight size={20} /></button>
                    </div>
                 </div>
@@ -91,7 +91,7 @@ export default function Calendar() {
                 {/* Grid Header */}
                 <div className="grid grid-cols-7 mb-4">
                    {DAYS.map(d => (
-                     <div key={d} className="text-center text-[10px] font-bold text-muted/40 uppercase tracking-[0.2em] py-2">{d}</div>
+                     <div key={d} className="text-center text-[10px] font-medium text-muted/40  tracking-[0.2em] py-2">{d}</div>
                    ))}
                 </div>
 
@@ -120,7 +120,7 @@ export default function Calendar() {
                          {day && (
                            <>
                               <div className={cn(
-                                "w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-[11px] sm:text-[13px] font-bold transition-all mb-2",
+                                "w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-[11px] sm:text-[13px] font-medium transition-all mb-2",
                                 isToday(day) ? "bg-primary text-black" : "text-white/60 group-hover:text-white"
                               )}>
                                 {day}
@@ -128,7 +128,7 @@ export default function Calendar() {
                               <div className="space-y-1 relative z-10">
                                  {dayTasks.slice(0, 2).map(t => (
                                    <div key={t.id} className={cn(
-                                     "text-[9px] px-2 py-0.5 rounded-md truncate font-bold uppercase tracking-tighter border",
+                                     "text-[9px] px-2 py-0.5 rounded-md truncate font-medium  tracking-tighter border",
                                      t.status === 'Done' ? "bg-green-500/10 text-green-400 border-green-500/10" :
                                      t.status === 'In Progress' ? "bg-primary/10 text-primary border-primary/10" :
                                      "bg-white/5 text-muted border-white/5"
@@ -137,7 +137,7 @@ export default function Calendar() {
                                    </div>
                                  ))}
                                  {dayTasks.length > 2 && (
-                                   <div className="text-[8px] text-center font-bold text-muted/30 pt-1">+{dayTasks.length - 2} MORE</div>
+                                   <div className="text-[8px] text-center font-medium text-muted/30 pt-1">+{dayTasks.length - 2} MORE</div>
                                  )}
                               </div>
                               {hasDeadline && (
@@ -167,15 +167,15 @@ export default function Calendar() {
              {/* Selected Day Panel */}
              <div className="bg-sidebar/30 border border-white/5 rounded-3xl p-6 sm:p-8 backdrop-blur-3xl h-fit">
                 <div className="flex items-center justify-between mb-6">
-                   <h3 className="text-sm font-bold text-white tracking-widest uppercase opacity-60">Agenda View</h3>
+                   <h3 className="text-sm font-medium text-white tracking-widest  opacity-60">Agenda View</h3>
                    {selectedDate && <div className="w-2 h-2 rounded-full bg-primary shadow-sm shadow-primary" />}
                 </div>
                 
                 <div className="mb-6">
-                   <p className="text-2xl font-bold text-white tracking-tighter">
+                   <p className="text-2xl font-medium text-white tracking-tighter">
                       {selectedDate ? `${MONTHS[month]} ${selectedDate}` : 'No Selection'}
                    </p>
-                   <p className="text-[11px] text-muted font-bold uppercase tracking-widest opacity-40 mt-1">
+                   <p className="text-[11px] text-muted font-medium  tracking-widest opacity-40 mt-1">
                       {selectedDate ? `Schedule for Day ${selectedDate}` : 'Select a date from grid'}
                    </p>
                 </div>
@@ -186,7 +186,7 @@ export default function Calendar() {
                         <div className="w-12 h-12 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-4 opacity-20">
                            <CalendarIcon size={24} />
                         </div>
-                        <p className="text-xs font-bold text-muted/40 uppercase tracking-widest">No Operational Tasks</p>
+                        <p className="text-xs font-medium text-muted/40  tracking-widest">No Operational Tasks</p>
                      </div>
                    )}
                    
@@ -194,17 +194,17 @@ export default function Calendar() {
                      <div key={t.id} className="group bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 p-4 rounded-2xl transition-all cursor-pointer">
                         <div className="flex items-start justify-between gap-3 mb-3">
                            <div className="min-w-0">
-                              <p className="text-[13px] font-bold text-white tracking-tight line-clamp-1">{t.task}</p>
-                              <p className="text-[10px] text-muted font-bold opacity-50 mt-1 uppercase tracking-wider">{t.clientName}</p>
+                              <p className="text-[13px] font-medium text-white tracking-tight line-clamp-1">{t.task}</p>
+                              <p className="text-[10px] text-muted font-medium opacity-50 mt-1  tracking-wider">{t.clientName}</p>
                            </div>
                            <span className={cn(
-                             "text-[9px] font-bold px-2 py-0.5 rounded border uppercase shrink-0",
+                             "text-[9px] font-medium px-2 py-0.5 rounded border  shrink-0",
                              t.status === 'Done' ? "bg-green-500/10 text-green-400 border-green-500/10" :
                              t.status === 'In Progress' ? "bg-primary/10 text-primary border-primary/10" :
                              "bg-white/5 text-muted border-white/5"
                            )}>{t.status}</span>
                         </div>
-                        <div className="flex items-center gap-4 text-[10px] text-muted/40 font-bold uppercase tracking-widest">
+                        <div className="flex items-center gap-4 text-[10px] text-muted/40 font-medium  tracking-widest">
                             <div className="flex items-center gap-1.5"><Clock size={12} /> <span>{(t.workerName || 'Staff').split(' ')[0]}</span></div>
                         </div>
                      </div>
@@ -214,7 +214,7 @@ export default function Calendar() {
 
              {/* Upcoming Block */}
              <div className="bg-sidebar/30 border border-white/5 rounded-3xl p-6 sm:p-8 backdrop-blur-3xl h-fit">
-                <h3 className="text-sm font-bold text-white tracking-widest uppercase opacity-60 mb-6">Upcoming Cutoffs</h3>
+                <h3 className="text-sm font-medium text-white tracking-widest  opacity-60 mb-6">Upcoming Cutoffs</h3>
                 <div className="space-y-4">
                   {(tasks || [])
                     .filter(t => t.status !== 'Done' && t.declineDate)
@@ -223,12 +223,12 @@ export default function Calendar() {
                     .map(t => (
                       <div key={t.id} className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-red-400/[0.02] border border-red-400/5 group hover:border-red-400/20 transition-all">
                         <div className="min-w-0 flex-1">
-                          <p className="text-[12px] font-bold text-white tracking-tight truncate group-hover:text-red-400 transition-colors">{t.task}</p>
-                          <p className="text-[9px] text-muted font-bold uppercase tracking-widest opacity-40 mt-1">{t.clientName}</p>
+                          <p className="text-[12px] font-medium text-white tracking-tight truncate group-hover:text-red-400 transition-colors">{t.task}</p>
+                          <p className="text-[9px] text-muted font-medium  tracking-widest opacity-40 mt-1">{t.clientName}</p>
                         </div>
                         <div className="text-right">
-                           <p className="text-[12px] font-bold text-red-500 tabular-nums">{formatDate(t.declineDate)}</p>
-                           <p className="text-[8px] text-red-400/30 font-bold uppercase tracking-tighter">Deadline</p>
+                           <p className="text-[12px] font-medium text-red-500 tabular-nums">{formatDate(t.declineDate)}</p>
+                           <p className="text-[8px] text-red-400/30 font-medium  tracking-tighter">Deadline</p>
                         </div>
                       </div>
                     ))
@@ -248,7 +248,7 @@ function LegendItem({ icon: Icon, label, color, bg, glow }) {
          <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center shrink-0", bg, color, glow && "shadow-[0_0_12px_rgba(239,68,68,0.3)]")}>
             <Icon size={14} />
          </div>
-         <span className="text-[10px] font-bold text-muted uppercase tracking-widest leading-none">{label}</span>
+         <span className="text-[10px] font-medium text-muted  tracking-widest leading-none">{label}</span>
       </div>
    )
 }

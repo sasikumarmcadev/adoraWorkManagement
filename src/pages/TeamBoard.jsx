@@ -19,14 +19,14 @@ function WorkerIncentive({ role }) {
     <div className="h-full flex flex-col gap-4 p-5 bg-panel">
       <div className="flex items-center gap-2">
         <Target size={18} className="text-emerald-400" />
-        <h3 className="font-semibold text-lg">{role} Incentive</h3>
+        <h3 className="font-medium text-lg">{role} Incentive</h3>
       </div>
       <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-md p-4">
         <h4 className="text-emerald-400 font-medium mb-1">Monthly Target</h4>
-        <p className="text-emerald-300 text-sm font-semibold">Achieved = +1000 Bonus</p>
+        <p className="text-emerald-300 text-sm font-medium">Achieved = +1000 Bonus</p>
       </div>
       <div className="bg-surface-800/30 p-4 rounded-md border border-border flex-1">
-        <p className="text-xs text-muted uppercase tracking-widest mb-3 font-semibold">Notes</p>
+        <p className="text-xs text-muted  tracking-widest mb-3 font-medium">Notes</p>
         <ul className="space-y-2 text-sm text-gray-300">
           <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> Quality First</li>
           <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> Meet Deadlines</li>
@@ -55,12 +55,12 @@ export default function TeamBoard({ forcedTab = 'content-specialist' }) {
       <div className="w-full h-full flex flex-col bg-background relative overflow-hidden">
         {/* NAV BAR */}
         <div className="flex-none bg-sidebar border-b border-border px-6 py-2 flex items-center justify-between">
-          <button onClick={() => setSelectedWorker(null)} className="flex items-center gap-2 text-muted hover:text-white transition-colors text-xs font-bold">
+          <button onClick={() => setSelectedWorker(null)} className="flex items-center gap-2 text-muted hover:text-white transition-colors text-xs font-medium">
             <Plus size={14} className="rotate-45" /> Back to Team
           </button>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-muted font-bold">Member:</span>
-            <span className="text-xs font-bold text-primary">{selectedWorker}</span>
+            <span className="text-[10px] text-muted font-medium">Member:</span>
+            <span className="text-xs font-medium text-primary">{selectedWorker}</span>
           </div>
         </div>
 
@@ -88,16 +88,16 @@ export default function TeamBoard({ forcedTab = 'content-specialist' }) {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
                 {roleLabel} <span className="text-primary/50">Management</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none tracking-widest">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none tracking-widest">
                 Personnel Operations • Individual Performance Dashboard
               </p>
             </div>
             <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-               <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Active Members</p>
-               <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums leading-none">
+               <p className="text-[9px] sm:text-[11px] text-muted font-medium opacity-60 tracking-widest leading-none">Active Members</p>
+               <p className="text-2xl sm:text-4xl font-medium text-white tracking-tighter tabular-nums leading-none">
                  {(roleWorkers?.length || 0).toString().padStart(2, '0')}
                </p>
             </div>
@@ -119,23 +119,23 @@ export default function TeamBoard({ forcedTab = 'content-specialist' }) {
                 className="group flex flex-col p-6 bg-panel border border-border hover:border-primary/50 transition-all text-left"
               >
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-bold text-lg group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-medium text-lg group-hover:scale-110 transition-transform">
                     {w.name?.charAt(0) || '?'}
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">{w.name}</h3>
+                    <h3 className="text-lg font-medium text-white group-hover:text-primary transition-colors">{w.name}</h3>
                     <p className="text-xs text-muted font-medium">{w.role}</p>
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-[#111] p-3 rounded border border-white/5">
-                    <p className="text-[10px] text-muted uppercase font-bold mb-1">Assigned</p>
-                    <p className="text-xl font-bold text-white">{workerTasks.length}</p>
+                    <p className="text-[10px] text-muted  font-medium mb-1">Assigned</p>
+                    <p className="text-xl font-medium text-white">{workerTasks.length}</p>
                   </div>
                   <div className="bg-[#111] p-3 rounded border border-white/5">
-                    <p className="text-[10px] text-muted uppercase font-bold mb-1">Done</p>
-                    <p className="text-xl font-bold text-emerald-400">{doneCount}</p>
+                    <p className="text-[10px] text-muted  font-medium mb-1">Done</p>
+                    <p className="text-xl font-medium text-emerald-400">{doneCount}</p>
                   </div>
                 </div>
               </button>
@@ -168,7 +168,7 @@ function EditorCoverSection() {
       </div>
       <div className="p-4 flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>Editor Department</h3>
+          <h3 className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>Editor Department</h3>
           <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>All video & reel editing tasks</p>
         </div>
         <div className="text-xs px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 font-medium">
@@ -195,7 +195,7 @@ function TaskTable({ tasks, isEditor, isVideoGrapher, onView, onEdit, onDelete, 
           <thead>
             <tr style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border)' }}>
               {cols.map(c => (
-                <th key={c} className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider whitespace-nowrap" style={{ color: 'var(--text-muted)' }}>{c}</th>
+                <th key={c} className="text-left px-4 py-3 text-xs font-medium  tracking-wider whitespace-nowrap" style={{ color: 'var(--text-muted)' }}>{c}</th>
               ))}
             </tr>
           </thead>

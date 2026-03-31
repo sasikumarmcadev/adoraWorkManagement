@@ -96,17 +96,17 @@ function DashboardOverview({ title, payments, filteredPayments, clientName, cycl
               </ResponsiveContainer>
             </div>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-1 text-center">
-              <span className="text-[10px] sm:text-[11px] font-bold text-muted opacity-60 leading-none">Net Total</span>
-              <span className="text-base sm:text-lg font-bold text-white leading-none tracking-tighter mt-1">₹{totalValue > 100000 ? (totalValue / 100000).toFixed(1) + 'L' : (totalValue / 1000).toFixed(0) + 'K'}</span>
+              <span className="text-[10px] sm:text-[11px] font-medium text-muted opacity-60 leading-none">Net Total</span>
+              <span className="text-base sm:text-lg font-medium text-white leading-none tracking-tighter mt-1">₹{totalValue > 100000 ? (totalValue / 100000).toFixed(1) + 'L' : (totalValue / 1000).toFixed(0) + 'K'}</span>
             </div>
           </div>
 
           <div className="flex-1 min-w-0 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-10 w-full lg:w-auto">
             <div className="text-center lg:text-left transition-all">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
                 Fiscal <span className="text-primary/50">Intelligence</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-2 opacity-60 leading-none">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-2 opacity-60 leading-none">
                 {cycleLabel} • {clientName !== 'All' ? clientName : 'Real-time Net Metrics'}
               </p>
             </div>
@@ -125,10 +125,10 @@ function DashboardOverview({ title, payments, filteredPayments, clientName, cycl
 
                 return (
                   <div key={stat.label} className="flex flex-col group cursor-default items-center lg:items-start">
-                    <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none mb-2">{stat.label}</p>
+                    <p className="text-[9px] sm:text-[11px] text-muted font-medium opacity-60 tracking-widest leading-none mb-2">{stat.label}</p>
                     <div className="flex items-center gap-3">
                       <div className="h-4 sm:h-5 w-1 rounded-full bg-white/5 transition-all group-hover:h-7" style={{ background: amount > 0 ? stat.color : '' }} />
-                      <p className={`text-2xl sm:text-4xl font-bold tabular-nums tracking-tighter ${amount > 0 ? 'text-white' : 'text-primary/20'}`}>
+                      <p className={`text-2xl sm:text-4xl font-medium tabular-nums tracking-tighter ${amount > 0 ? 'text-white' : 'text-primary/20'}`}>
                         ₹{amount > 1000000 ? (amount / 100000).toFixed(1) + 'L' : Number(amount).toLocaleString('en-IN')}
                       </p>
                     </div>
@@ -228,7 +228,7 @@ export default function PaymentTracking() {
                 <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform">
                   <Plus size={18} />
                 </div>
-                <span className="text-[12px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity">Initialize</span>
+                <span className="text-[12px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity">Initialize</span>
               </button>
             )}
             <div className="relative flex-1 md:w-48">
@@ -246,7 +246,7 @@ export default function PaymentTracking() {
         <div className="px-4 py-4 sm:px-6 bg-background border-b border-border flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-10 w-full lg:w-auto">
             <div className="flex items-center gap-4 w-full sm:w-auto">
-              <span className="text-[11px] font-bold text-muted opacity-50 whitespace-nowrap">Cycle Select</span>
+              <span className="text-[11px] font-medium text-muted opacity-50 whitespace-nowrap">Cycle Select</span>
               <div className={cn("flex items-center gap-1.5 bg-sidebar rounded-xl border border-white/5 p-1 transition-opacity duration-500 w-full sm:w-auto", !isMonthFilterActive && "opacity-20 pointer-events-none")}>
                 <div className="w-full sm:w-32">
                    <CustomSelect 
@@ -269,7 +269,7 @@ export default function PaymentTracking() {
             </div>
 
             <div className="flex items-center gap-4 w-full sm:w-auto">
-              <span className="text-[11px] font-bold text-muted opacity-50 whitespace-nowrap">Target Client</span>
+              <span className="text-[11px] font-medium text-muted opacity-50 whitespace-nowrap">Target Client</span>
               <div className="w-full sm:w-56">
                 <CustomSelect 
                   value={clientFilter === 'All' ? 'All Clients' : clientFilter}
@@ -282,12 +282,12 @@ export default function PaymentTracking() {
           </div>
 
           <div className="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-end border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
-            <span className="text-[11px] font-bold text-muted opacity-50">View Depth</span>
+            <span className="text-[11px] font-medium text-muted opacity-50">View Depth</span>
             <div className="flex bg-sidebar border border-white/5 rounded-full p-1 shadow-inner h-9 sm:h-10">
               <button
                 onClick={() => setIsMonthFilterActive(true)}
                 className={cn(
-                  "px-4 sm:px-5 h-full rounded-full text-[11px] font-bold transition-all duration-300 whitespace-nowrap",
+                  "px-4 sm:px-5 h-full rounded-full text-[11px] font-medium transition-all duration-300 whitespace-nowrap",
                   isMonthFilterActive ? "bg-primary text-black shadow-lg" : "text-muted hover:text-white"
                 )}
               >
@@ -296,7 +296,7 @@ export default function PaymentTracking() {
               <button
                 onClick={() => setIsMonthFilterActive(false)}
                 className={cn(
-                  "px-4 sm:px-5 h-full rounded-full text-[11px] font-bold transition-all duration-300 whitespace-nowrap",
+                  "px-4 sm:px-5 h-full rounded-full text-[11px] font-medium transition-all duration-300 whitespace-nowrap",
                   !isMonthFilterActive ? "bg-white/10 text-white shadow-lg" : "text-muted hover:text-white"
                 )}
               >
@@ -310,7 +310,7 @@ export default function PaymentTracking() {
         <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/5 bg-panel/30">
           {(!isMobile && filteredPayments.length > 0) ? (
             <table className="w-full min-w-[1000px] text-sm text-left border-separate border-spacing-0 table-fixed overflow-visible">
-              <thead className="text-[11px] text-muted font-bold bg-sidebar border-b border-border sticky top-0 z-10">
+              <thead className="text-[11px] text-muted font-medium bg-sidebar border-b border-border sticky top-0 z-10">
                 <tr>
                   <th className="w-[140px] px-6 py-4 border-r border-border leading-none">Cycle</th>
                   <th className="px-6 py-4 border-r border-border min-w-[200px] leading-none">Identity</th>
@@ -330,19 +330,19 @@ export default function PaymentTracking() {
                 ).sort(([a], [b]) => b.localeCompare(a)).map(([month, monthPayments]) => {
                   return monthPayments.map((p, idx) => (
                     <tr key={p.id} className="hover:bg-sidebar transition-colors group">
-                      <td className="px-6 py-5 text-secondary font-bold text-[11px] tabular-nums border-r border-border opacity-70">
+                      <td className="px-6 py-5 text-secondary font-medium text-[11px] tabular-nums border-r border-border opacity-70">
                         {idx === 0 ? getMonthDisplay(month) : ''}
                       </td>
                       <td className="px-6 py-5 border-r border-border">
                         <div className="flex items-center gap-4">
-                          <div className="w-8 h-8 rounded-full bg-surface-800 border border-white/5 flex items-center justify-center font-bold text-primary text-[11px] shadow-inner">
+                          <div className="w-8 h-8 rounded-full bg-surface-800 border border-white/5 flex items-center justify-center font-medium text-primary text-[11px] shadow-inner">
                              {p.clientName?.charAt(0)}
                           </div>
-                          <span className="text-white font-bold text-xs tracking-tight">{p.clientName}</span>
+                          <span className="text-white font-medium text-xs tracking-tight">{p.clientName}</span>
                         </div>
                       </td>
                       <td className="px-6 py-5 border-r border-border">
-                        <div className="flex items-center gap-2 font-bold text-white text-sm tabular-nums">
+                        <div className="flex items-center gap-2 font-medium text-white text-sm tabular-nums">
                           <IndianRupee size={12} className="opacity-40" strokeWidth={3} />
                           <span className="text-xs">{Number(p.amount).toLocaleString('en-IN')}</span>
                         </div>
@@ -382,19 +382,19 @@ export default function PaymentTracking() {
                   <div key={month} className="space-y-3">
                     <div className="flex items-center gap-3 px-2">
                       <div className="h-px flex-1 bg-white/5" />
-                      <span className="text-[11px] font-bold text-muted opacity-50">{getMonthDisplay(month)}</span>
+                      <span className="text-[11px] font-medium text-muted opacity-50">{getMonthDisplay(month)}</span>
                       <div className="h-px flex-1 bg-white/5" />
                     </div>
                     {monthPayments.map((p) => (
                       <div key={p.id} className="bg-sidebar border border-white/5 rounded-2xl p-5 space-y-4 shadow-xl">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-surface-800 border border-white/5 flex items-center justify-center font-black text-primary text-[11px] shadow-inner">
+                            <div className="w-9 h-9 rounded-full bg-surface-800 border border-white/5 flex items-center justify-center font-medium text-primary text-[11px] shadow-inner">
                               {p.clientName?.charAt(0)}
                             </div>
                             <div>
-                               <p className="text-white font-bold text-sm tracking-tight leading-none">{p.clientName}</p>
-                               <p className="text-[11px] text-muted font-bold mt-1.5 opacity-60 tracking-widest">{p.id.substring(0,8)}</p>
+                               <p className="text-white font-medium text-sm tracking-tight leading-none">{p.clientName}</p>
+                               <p className="text-[11px] text-muted font-medium mt-1.5 opacity-60 tracking-widest">{p.id.substring(0,8)}</p>
                             </div>
                           </div>
                           <div className="flex gap-1">
@@ -405,8 +405,8 @@ export default function PaymentTracking() {
                         
                         <div className="grid grid-cols-2 gap-4 pt-2">
                            <div className="bg-background/50 border border-white/5 rounded-xl p-3">
-                              <p className="text-[10px] text-muted font-bold opacity-60 mb-1.5 whitespace-nowrap">Capital Amount</p>
-                              <div className="flex items-center gap-1.5 text-white font-black text-sm tabular-nums">
+                              <p className="text-[10px] text-muted font-medium opacity-60 mb-1.5 whitespace-nowrap">Capital Amount</p>
+                              <div className="flex items-center gap-1.5 text-white font-medium text-sm tabular-nums">
                                 <IndianRupee size={10} className="text-primary opacity-60" />
                                 <span>{Number(p.amount).toLocaleString('en-IN')}</span>
                               </div>
@@ -430,8 +430,8 @@ export default function PaymentTracking() {
                    <div className="w-16 h-16 rounded-3xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-6">
                       <CreditCard size={32} className="text-muted opacity-20" />
                    </div>
-                   <h3 className="text-white font-bold text-sm tracking-tighter whitespace-nowrap">No fiscal matches identified</h3>
-                   <p className="text-[12px] text-muted font-bold mt-2 opacity-60 max-w-[200px]">Adjust filters or initialize a new capital entry to proceed.</p>
+                   <h3 className="text-white font-medium text-sm tracking-tighter whitespace-nowrap">No fiscal matches identified</h3>
+                   <p className="text-[12px] text-muted font-medium mt-2 opacity-60 max-w-[200px]">Adjust filters or initialize a new capital entry to proceed.</p>
                 </div>
               )}
             </div>
@@ -447,7 +447,7 @@ export default function PaymentTracking() {
             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-primary transition-colors">
               <ArrowLeft size={18} className="text-black" />
             </div>
-            <span className="text-[10px] font-black text-white opacity-80 group-hover:opacity-100 transition-opacity tracking-[0.15em] uppercase">Return to Shell</span>
+            <span className="text-[10px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity tracking-[0.15em]">Return</span>
           </button>
         </div>
       </div>
@@ -469,7 +469,7 @@ export default function PaymentTracking() {
               <div className="flex items-center gap-2 bg-sidebar border border-white/10 h-14 px-5 rounded-2xl outline-none focus-within:border-primary/40 transition-all shadow-inner">
                 <IndianRupee size={16} className="text-muted opacity-40" />
                 <input 
-                  className="bg-transparent w-full tabular-nums font-black text-sm text-emerald-400 outline-none placeholder:text-white/5" 
+                  className="bg-transparent w-full tabular-nums font-medium text-sm text-emerald-400 outline-none placeholder:text-white/5" 
                   type="number" 
                   placeholder="0.00" 
                   value={form.amount || ''} 
@@ -479,7 +479,7 @@ export default function PaymentTracking() {
             </FormField>
             <FormField label="Execution Date">
               <input
-                className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-2xl text-[11px] font-black text-white outline-none focus:border-primary/40 transition-all shadow-inner"
+                className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-2xl text-[11px] font-medium text-white outline-none focus:border-primary/40 transition-all shadow-inner"
                 type="date"
                 value={form.date || ''}
                 onChange={e => {
@@ -499,8 +499,8 @@ export default function PaymentTracking() {
             </FormField>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-4 border-t border-white/5">
-            <button className="flex-1 h-14 rounded-2xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all" onClick={() => setIsModalOpen(false)}>Discard</button>
-            <button className="flex-1 h-14 rounded-2xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20" onClick={handleSave}>Authorize Entry</button>
+            <button className="flex-1 h-14 rounded-2xl text-[12px] font-medium text-muted hover:text-white hover:bg-white/5 transition-all" onClick={() => setIsModalOpen(false)}>Discard</button>
+            <button className="flex-1 h-14 rounded-2xl text-[12px] font-medium bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20" onClick={handleSave}>Authorize Entry</button>
           </div>
         </div>
       </Modal>

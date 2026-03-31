@@ -58,16 +58,16 @@ export default function Hiring() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
                 Talent <span className="text-primary/50">Pipeline</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none tracking-widest">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none tracking-widest">
                 Personnel Acquisition • Internal Workforce Expansion
               </p>
             </div>
             <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Active Applicants</p>
-              <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums">
+              <p className="text-[9px] sm:text-[11px] text-muted font-medium opacity-60 tracking-widest leading-none">Active Applicants</p>
+              <p className="text-2xl sm:text-4xl font-medium text-white tracking-tighter tabular-nums">
                 {(hiring?.length || 0).toString().padStart(2, '0')}
               </p>
             </div>
@@ -129,12 +129,12 @@ export default function Hiring() {
                         <tr key={h.id} className="group hover:bg-white/[0.02] transition-all cursor-pointer" onClick={() => setDetailItem(h)}>
                            <td className="px-6 py-4">
                               <div className="flex items-center gap-4">
-                                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-primary group-hover:scale-110 transition-transform">
+                                 <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-medium text-primary group-hover:scale-110 transition-transform">
                                     {h.candidateName?.charAt(0)}
                                  </div>
                                  <div>
-                                    <p className="text-[13px] font-bold text-white tracking-tight">{h.candidateName}</p>
-                                    <p className="text-[10px] text-muted font-bold opacity-30 mt-1 uppercase tracking-tighter tabular-nums">{formatDate(h.date)}</p>
+                                    <p className="text-[13px] font-medium text-white tracking-tight">{h.candidateName}</p>
+                                    <p className="text-[10px] text-muted font-medium opacity-30 mt-1  tracking-tighter tabular-nums">{formatDate(h.date)}</p>
                                  </div>
                               </div>
                            </td>
@@ -149,7 +149,7 @@ export default function Hiring() {
                               </div>
                            </td>
                            <td className="px-6 py-4">
-                              <div className="bg-white/5 border border-white/10 px-3 py-1 rounded-lg w-fit text-[11px] font-bold text-white tracking-tight">
+                              <div className="bg-white/5 border border-white/10 px-3 py-1 rounded-lg w-fit text-[11px] font-medium text-white tracking-tight">
                                  {h.role}
                               </div>
                            </td>
@@ -179,16 +179,16 @@ export default function Hiring() {
                   <div key={h.id} className="bg-sidebar/30 border border-white/5 rounded-3xl p-6 space-y-5 backdrop-blur-3xl group active:scale-[0.98] transition-all" onClick={() => setDetailItem(h)}>
                      <div className="flex items-start justify-between">
                         <div className="flex items-center gap-4">
-                           <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-primary group-hover:scale-110 transition-transform">
+                           <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center font-medium text-primary group-hover:scale-110 transition-transform">
                               {h.candidateName?.charAt(0)}
                            </div>
                            <div>
-                              <p className="text-base font-bold text-white tracking-tight leading-none">{h.candidateName}</p>
+                              <p className="text-base font-medium text-white tracking-tight leading-none">{h.candidateName}</p>
                               <p className="text-[10px] text-muted font-normal opacity-30 mt-2 tracking-widest">{h.role}</p>
                            </div>
                         </div>
                         <span className={cn(
-                          "text-[9px] font-bold px-2 py-0.5 rounded border uppercase tracking-widest",
+                          "text-[9px] font-medium px-2 py-0.5 rounded border  tracking-widest",
                           h.status === 'Applied' ? "bg-blue-400/10 text-blue-400 border-blue-400/20" :
                           h.status === 'Interview' ? "bg-amber-400/10 text-amber-400 border-amber-400/20" :
                           h.status === 'Selected' ? "bg-green-400/10 text-green-400 border-green-400/20" :
@@ -198,7 +198,7 @@ export default function Hiring() {
                      <div className="grid grid-cols-2 gap-4">
                         <div className="bg-white/5 rounded-2xl p-4 flex items-center gap-3">
                            <MapPin size={14} className="text-primary/40" />
-                           <span className="text-[11px] font-bold text-white/60 truncate">{h.city}</span>
+                           <span className="text-[11px] font-medium text-white/60 truncate">{h.city}</span>
                         </div>
                         <div className="bg-white/5 rounded-2xl p-4 flex items-center justify-end gap-3 text-right">
                            <span className="text-[11px] font-normal text-white/40 tracking-widest tabular-nums">{formatDate(h.date)}</span>
@@ -210,7 +210,7 @@ export default function Hiring() {
                {filtered.length === 0 && (
                  <div className="py-24 text-center">
                     <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6 opacity-20"><Target size={32} /></div>
-                    <p className="text-sm font-bold text-muted uppercase tracking-[0.2em] opacity-40">No entries identified</p>
+                    <p className="text-sm font-medium text-muted  tracking-[0.2em] opacity-40">No entries identified</p>
                  </div>
                )}
             </div>
@@ -223,10 +223,10 @@ export default function Hiring() {
         <div className="space-y-6 my-6 px-1 max-h-[80vh] overflow-y-auto custom-scrollbar">
            <div className="glass-panel p-6 rounded-3xl border border-white/5 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField label="Full Name Identity"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.candidateName || ''} onChange={e => f('candidateName', e.target.value)} placeholder="Full name" /></FormField>
-                <FormField label="Primary Contact"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.phone || ''} onChange={e => f('phone', e.target.value)} placeholder="Phone number" /></FormField>
-                <FormField label="State Location"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.state || ''} onChange={e => f('state', e.target.value)} placeholder="State" /></FormField>
-                <FormField label="City Landmark"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.city || ''} onChange={e => f('city', e.target.value)} placeholder="City" /></FormField>
+                <FormField label="Full Name Identity"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-medium text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.candidateName || ''} onChange={e => f('candidateName', e.target.value)} placeholder="Full name" /></FormField>
+                <FormField label="Primary Contact"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-medium text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.phone || ''} onChange={e => f('phone', e.target.value)} placeholder="Phone number" /></FormField>
+                <FormField label="State Location"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-medium text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.state || ''} onChange={e => f('state', e.target.value)} placeholder="State" /></FormField>
+                <FormField label="City Landmark"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-medium text-white outline-none focus:border-primary/40 transition-all shadow-inner" value={form.city || ''} onChange={e => f('city', e.target.value)} placeholder="City" /></FormField>
               </div>
            </div>
 
@@ -247,7 +247,7 @@ export default function Hiring() {
                   isFilter
                 />
               </FormField>
-              <FormField label="Assessment Rounds"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner" type="number" value={form.rounds || 0} onChange={e => f('rounds', parseInt(e.target.value))} /></FormField>
+              <FormField label="Assessment Rounds"><input className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-medium text-white outline-none focus:border-primary/40 transition-all shadow-inner" type="number" value={form.rounds || 0} onChange={e => f('rounds', parseInt(e.target.value))} /></FormField>
               <FormField label="Final Decision">
                 <StatusSelect 
                   value={form.result || 'Pending'} 
@@ -264,8 +264,8 @@ export default function Hiring() {
            </FormField>
 
            <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-6 border-t border-white/5">
-              <button className="flex-1 h-14 rounded-xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Discard</button>
-              <button className="flex-1 h-14 rounded-xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={save}>{editItem ? 'Confirm Refinement' : 'Confirm Registration'}</button>
+              <button className="flex-1 h-14 rounded-xl text-[12px] font-medium text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Discard</button>
+              <button className="flex-1 h-14 rounded-xl text-[12px] font-medium bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={save}>{editItem ? 'Confirm Refinement' : 'Confirm Registration'}</button>
            </div>
         </div>
       </Modal>
@@ -275,11 +275,11 @@ export default function Hiring() {
         {detailItem && (
           <div className="space-y-8 my-6 px-1">
             <div className="flex items-center gap-6 p-6 bg-sidebar/50 border border-white/5 rounded-3xl backdrop-blur-3xl shadow-2xl">
-              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl font-bold text-primary shadow-inner">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl font-medium text-primary shadow-inner">
                 {detailItem.candidateName?.charAt(0)}
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white tracking-tighter">{detailItem.candidateName}</h3>
+                <h3 className="text-xl font-medium text-white tracking-tighter">{detailItem.candidateName}</h3>
                 <div className="flex items-center gap-2 mt-2">
                    <div className="w-2 h-2 rounded-full bg-primary shadow-sm shadow-primary" />
                    <p className="text-[10px] text-muted font-normal tracking-widest opacity-60">{detailItem.role} Candidate</p>
@@ -320,7 +320,7 @@ export default function Hiring() {
             )}
             
             <button 
-              className="w-full h-14 mt-4 bg-white text-black font-bold text-xs rounded-xl hover:bg-primary transition-all active:scale-95 shadow-2xl"
+              className="w-full h-14 mt-4 bg-white text-black font-medium text-xs rounded-xl hover:bg-primary transition-all active:scale-95 shadow-2xl"
               onClick={() => setDetailItem(null)}
             >
                Close Assessment
@@ -363,7 +363,7 @@ function DetailBox({ label, value, icon: Icon }) {
            </div>
            <p className="text-[10px] text-muted font-normal tracking-[0.2em] opacity-40">{label}</p>
         </div>
-        <p className="text-[14px] font-bold text-white tracking-tight">{value}</p>
+        <p className="text-[14px] font-medium text-white tracking-tight">{value}</p>
      </div>
    )
 }

@@ -122,8 +122,8 @@ function DashboardOverview({ clients }) {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-1">
-              <span className="text-3xl sm:text-4xl font-bold text-white leading-none tracking-tighter">{total.toString().padStart(2, '0')}</span>
-              <span className="text-[8px] sm:text-[10px] text-muted font-bold mt-1 opacity-60 uppercase tracking-widest">Partners</span>
+              <span className="text-3xl sm:text-4xl font-medium text-white leading-none tracking-tighter">{total.toString().padStart(2, '0')}</span>
+              <span className="text-[8px] sm:text-[10px] text-muted font-medium mt-1 opacity-60  tracking-widest">Partners</span>
             </div>
           </div>
 
@@ -133,10 +133,10 @@ function DashboardOverview({ clients }) {
 
               return (
                 <div key={status} className="flex flex-col group cursor-default min-w-[80px]">
-                  <p className="text-[9px] sm:text-[11px] text-muted font-bold mb-1 sm:mb-2 group-hover:text-white transition-colors opacity-60 leading-none tracking-widest capitalize">{status.toLowerCase()}</p>
+                  <p className="text-[9px] sm:text-[11px] text-muted font-medium mb-1 sm:mb-2 group-hover:text-white transition-colors opacity-60 leading-none tracking-widest capitalize">{status.toLowerCase()}</p>
                   <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
                     <div className="h-4 sm:h-5 w-1 rounded-full group-hover:h-8 transition-all" style={{ background: count > 0 ? STATUS_COLORS_MAP[status] : 'rgba(255,255,255,0.05)' }} />
-                    <p className={`text-2xl sm:text-4xl font-bold group-hover:scale-110 transition-transform tabular-nums tracking-tighter ${count > 0 ? 'text-white' : 'text-primary/20'}`}>
+                    <p className={`text-2xl sm:text-4xl font-medium group-hover:scale-110 transition-transform tabular-nums tracking-tighter ${count > 0 ? 'text-white' : 'text-primary/20'}`}>
                       {count.toString().padStart(2, '0')}
                     </p>
                   </div>
@@ -236,10 +236,10 @@ export default function ClientsDetails() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
                 Partnership <span className="text-primary/50">Registry</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none">
                 Strategic Alliance Management • Internal Agency Hub
               </p>
             </div>
@@ -251,7 +251,7 @@ export default function ClientsDetails() {
                 <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-primary flex items-center justify-center text-black group-hover:rotate-90 transition-transform duration-500 shadow-lg shadow-primary/20">
                   <Plus size={18} strokeWidth={3} />
                 </div>
-                <span className="text-[11px] sm:text-[13px] font-bold text-white tracking-tight">Onboard Client</span>
+                <span className="text-[11px] sm:text-[13px] font-medium text-white tracking-tight">Onboard Client</span>
               </button>
             )}
           </div>
@@ -308,7 +308,7 @@ export default function ClientsDetails() {
                        </div>
                     </td>
                     <td className="px-8 py-3 border-r border-border">
-                       <span className="text-[11px] text-white/40 tracking-tight bg-white/5 px-2.5 py-1 rounded-md border border-white/5 uppercase">
+                       <span className="text-[11px] text-white/40 tracking-tight bg-white/5 px-2.5 py-1 rounded-md border border-white/5 ">
                          {c.clientID || 'PENDING'}
                        </span>
                     </td>
@@ -362,7 +362,7 @@ export default function ClientsDetails() {
                           <ClientAvatar name={c.name} logo={c.logo} />
                           <div className="space-y-0.5">
                              <p className="text-white text-sm tracking-tight leading-tight line-clamp-1">{c.name}</p>
-                             <p className="text-[9px] text-muted opacity-40 uppercase tracking-tight">ID: {c.clientID || 'PENDING'}</p>
+                             <p className="text-[9px] text-muted opacity-40  tracking-tight">ID: {c.clientID || 'PENDING'}</p>
                           </div>
                        </div>
                        <div className="flex gap-2">
@@ -372,14 +372,14 @@ export default function ClientsDetails() {
 
                     <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
                        <div className="space-y-1.5">
-                          <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Contact</p>
+                          <p className="text-[8px] text-muted opacity-40  tracking-widest leading-none">Contact</p>
                           <div className="flex items-center gap-2 text-white text-[12px] tabular-nums truncate">
                              <Phone size={12} className="text-primary/40 shrink-0" />
                              <span>{c.contact || 'N/A'}</span>
                           </div>
                        </div>
                        <div className="space-y-1.5 text-right">
-                          <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Activity</p>
+                          <p className="text-[8px] text-muted opacity-40  tracking-widest leading-none">Activity</p>
                           <div className="flex justify-end">
                              <ActivityToggle 
                                value={c.activeStatus || 'Active'} 
@@ -390,7 +390,7 @@ export default function ClientsDetails() {
                     </div>
 
                     <div className="pt-4 border-t border-white/5">
-                       <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none mb-3">Payment Status</p>
+                       <p className="text-[8px] text-muted opacity-40  tracking-widest leading-none mb-3">Payment Status</p>
                        <StatusSelect 
                           value={c.paymentStatus} 
                           options={PAYMENT_STATUSES}
@@ -425,7 +425,7 @@ export default function ClientsDetails() {
                     ) : (
                        <div className="flex flex-col items-center gap-2 text-muted">
                           <Camera size={24} className="opacity-40" />
-                          <span className="text-[9px] uppercase tracking-widest">Brand Logo</span>
+                          <span className="text-[9px]  tracking-widest">Brand Logo</span>
                        </div>
                     )}
                  </div>
@@ -477,7 +477,7 @@ export default function ClientsDetails() {
            
            <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-6 border-t border-white/5">
               <button className="flex-1 h-14 rounded-2xl text-[12px] text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Discard</button>
-              <button className="flex-1 h-14 rounded-2xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>
+              <button className="flex-1 h-14 rounded-2xl text-[12px] font-medium bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>
                  {editItem ? 'Confirm Refinement' : 'Confirm Registration'}
               </button>
            </div>

@@ -16,16 +16,16 @@ export default function WorkersDashboard() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
                 Workers <span className="text-primary/50">Intelligence</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none tracking-widest">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none tracking-widest">
                 Personnel Performance • Workforce Analytical Systems
               </p>
             </div>
             <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest leading-none">Registered Personnel</p>
-              <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums leading-none">
+              <p className="text-[9px] sm:text-[11px] text-muted font-medium opacity-60 tracking-widest leading-none">Registered Personnel</p>
+              <p className="text-2xl sm:text-4xl font-medium text-white tracking-tighter tabular-nums leading-none">
                 {(workers?.length || 0).toString().padStart(2, '0')}
               </p>
             </div>
@@ -79,7 +79,7 @@ function WorkersList({ workers, tasks, salaries, incentives, onSelect }) {
             >
               <div className="flex items-start justify-between mb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-surface-800 border border-border flex items-center justify-center text-primary font-bold text-lg overflow-hidden group-hover:scale-110 transition-transform duration-500">
+                  <div className="w-12 h-12 rounded-2xl bg-surface-800 border border-border flex items-center justify-center text-primary font-medium text-lg overflow-hidden group-hover:scale-110 transition-transform duration-500">
                     {w.avatar?.startsWith('http') ? (
                       <img src={w.avatar} alt={w.name} className="w-full h-full object-cover" />
                     ) : (
@@ -87,8 +87,8 @@ function WorkersList({ workers, tasks, salaries, incentives, onSelect }) {
                     )}
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-white group-hover:text-primary transition-colors">{w.name}</h3>
-                    <p className="text-[10px] text-muted font-bold tracking-widest mt-0.5 opacity-60 uppercase">{w.role}</p>
+                    <h3 className="text-base font-medium text-white group-hover:text-primary transition-colors">{w.name}</h3>
+                    <p className="text-[10px] text-muted font-medium tracking-widest mt-0.5 opacity-60 ">{w.role}</p>
                   </div>
                 </div>
                 <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-muted group-hover:bg-primary group-hover:text-black transition-all">
@@ -99,8 +99,8 @@ function WorkersList({ workers, tasks, salaries, incentives, onSelect }) {
               {/* Enhanced Progress Section */}
               <div className="mb-6 space-y-2">
                 <div className="flex justify-between items-end">
-                  <p className="text-[10px] font-bold text-muted tracking-widest opacity-40 uppercase">Task Efficiency</p>
-                  <p className="text-sm font-bold text-emerald-400 tabular-nums">{pct}%</p>
+                  <p className="text-[10px] font-medium text-muted tracking-widest opacity-40 ">Task Efficiency</p>
+                  <p className="text-sm font-medium text-emerald-400 tabular-nums">{pct}%</p>
                 </div>
                 <div className="h-1.5 rounded-full bg-surface-800 border border-white/5 overflow-hidden">
                   <div
@@ -112,27 +112,27 @@ function WorkersList({ workers, tasks, salaries, incentives, onSelect }) {
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-surface-800/50 border border-white/5 rounded-xl p-2.5 text-center transition-colors group-hover:border-white/10">
-                  <p className="text-[9px] text-muted font-bold uppercase tracking-widest opacity-40 mb-1">Total</p>
-                  <p className="text-sm font-bold text-white tabular-nums">{workerTasks.length.toString().padStart(2, '0')}</p>
+                  <p className="text-[9px] text-muted font-medium  tracking-widest opacity-40 mb-1">Total</p>
+                  <p className="text-sm font-medium text-white tabular-nums">{workerTasks.length.toString().padStart(2, '0')}</p>
                 </div>
                 <div className="bg-surface-800/50 border border-white/5 rounded-xl p-2.5 text-center transition-colors group-hover:border-white/10">
-                  <p className="text-[9px] text-muted font-bold uppercase tracking-widest opacity-40 mb-1">Done</p>
-                  <p className="text-sm font-bold text-emerald-400 tabular-nums">{completed.toString().padStart(2, '0')}</p>
+                  <p className="text-[9px] text-muted font-medium  tracking-widest opacity-40 mb-1">Done</p>
+                  <p className="text-sm font-medium text-emerald-400 tabular-nums">{completed.toString().padStart(2, '0')}</p>
                 </div>
                 <div className="bg-surface-800/50 border border-white/5 rounded-xl p-2.5 text-center transition-colors group-hover:border-white/10">
-                  <p className="text-[9px] text-muted font-bold uppercase tracking-widest opacity-40 mb-1">Hold</p>
-                  <p className="text-sm font-bold text-amber-400 tabular-nums">{pending.toString().padStart(2, '0')}</p>
+                  <p className="text-[9px] text-muted font-medium  tracking-widest opacity-40 mb-1">Hold</p>
+                  <p className="text-sm font-medium text-amber-400 tabular-nums">{pending.toString().padStart(2, '0')}</p>
                 </div>
               </div>
 
               <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/5">
                 <div className="flex flex-col">
-                  <span className="text-[9px] text-muted font-bold tracking-widest opacity-40 uppercase">Base Salary</span>
-                  <span className="text-xs font-bold text-white mt-0.5">{salary ? formatCurrency(salary.amount) : '—'}</span>
+                  <span className="text-[9px] text-muted font-medium tracking-widest opacity-40 ">Base Salary</span>
+                  <span className="text-xs font-medium text-white mt-0.5">{salary ? formatCurrency(salary.amount) : '—'}</span>
                 </div>
                 <div className="flex flex-col items-end text-right">
-                  <span className="text-[9px] text-muted font-bold tracking-widest opacity-40 uppercase">Incentives</span>
-                  <span className="text-xs font-bold text-emerald-400 mt-0.5">{formatCurrency(incentive)}</span>
+                  <span className="text-[9px] text-muted font-medium tracking-widest opacity-40 ">Incentives</span>
+                  <span className="text-xs font-medium text-emerald-400 mt-0.5">{formatCurrency(incentive)}</span>
                 </div>
               </div>
             </div>
@@ -165,7 +165,7 @@ function WorkerDetail({ worker, tasks, salaries, incentives }) {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-5 p-5 rounded-2xl bg-sidebar/50 border border-border">
-        <div className="w-16 h-16 rounded-2xl bg-surface-800 border border-border flex items-center justify-center text-2xl font-bold text-primary overflow-hidden shadow-xl">
+        <div className="w-16 h-16 rounded-2xl bg-surface-800 border border-border flex items-center justify-center text-2xl font-medium text-primary overflow-hidden shadow-xl">
           {worker.avatar?.startsWith('http') ? (
             <img src={worker.avatar} alt={worker.name} className="w-full h-full object-cover" />
           ) : (
@@ -173,8 +173,8 @@ function WorkerDetail({ worker, tasks, salaries, incentives }) {
           )}
         </div>
         <div>
-          <h3 className="font-bold text-xl text-white tracking-tight">{worker.name}</h3>
-          <p className="text-[11px] font-bold text-muted tracking-widest uppercase opacity-60 mt-1">{worker.role}</p>
+          <h3 className="font-medium text-xl text-white tracking-tight">{worker.name}</h3>
+          <p className="text-[11px] font-medium text-muted tracking-widest  opacity-60 mt-1">{worker.role}</p>
         </div>
       </div>
 
@@ -189,15 +189,15 @@ function WorkerDetail({ worker, tasks, salaries, incentives }) {
 
       {workerIncentives.length > 0 && (
         <div className="mt-2">
-          <p className="text-[10px] font-bold text-muted tracking-widest uppercase opacity-40 mb-3 px-1">Incentive Distribution History</p>
+          <p className="text-[10px] font-medium text-muted tracking-widest  opacity-40 mb-3 px-1">Incentive Distribution History</p>
           <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
             {workerIncentives.map(i => (
               <div key={i.id} className="flex justify-between items-center p-3 rounded-xl bg-sidebar border border-white/5 hover:border-white/10 transition-colors">
                 <div>
-                  <p className="text-xs font-bold text-white leading-none">{i.reason}</p>
+                  <p className="text-xs font-medium text-white leading-none">{i.reason}</p>
                   <p className="text-[10px] text-muted font-medium mt-1.5 opacity-60">{i.month}</p>
                 </div>
-                <span className="text-sm font-bold text-emerald-400 tabular-nums">{formatCurrency(i.amount)}</span>
+                <span className="text-sm font-medium text-emerald-400 tabular-nums">{formatCurrency(i.amount)}</span>
               </div>
             ))}
           </div>
@@ -210,9 +210,9 @@ function WorkerDetail({ worker, tasks, salaries, incentives }) {
 function Metric({ label, value, color }) {
   return (
     <div className="bg-sidebar border border-white/5 rounded-2xl p-4 hover:border-white/10 transition-colors">
-      <p className="text-[10px] font-bold text-muted tracking-widest uppercase opacity-40 mb-1.5 leading-none">{label}</p>
+      <p className="text-[10px] font-medium text-muted tracking-widest  opacity-40 mb-1.5 leading-none">{label}</p>
       <p className={cn(
-        "text-xl font-bold tracking-tight",
+        "text-xl font-medium tracking-tight",
         color === 'emerald' ? 'text-emerald-400' :
           color === 'amber' ? 'text-amber-400' :
             color === 'purple' ? 'text-purple-400' :

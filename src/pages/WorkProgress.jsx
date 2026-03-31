@@ -83,17 +83,17 @@ export default function WorkProgress() {
             
             <div className="flex flex-row items-center gap-6 sm:gap-10">
               <div className="flex flex-col items-center sm:items-end gap-1">
-                <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-normal uppercase">Work Done (Today)</p>
+                <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-normal">Work Done (Today)</p>
                 <p className="text-2xl sm:text-4xl font-normal text-white tracking-tighter tabular-nums">{stats.workDone.toString().padStart(2, '0')}</p>
               </div>
               
               <div className="flex flex-col items-center sm:items-end gap-1">
-                <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-normal uppercase">Pending (Today)</p>
+                <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-normal">Pending (Today)</p>
                 <p className="text-2xl sm:text-4xl font-normal text-white tracking-tighter tabular-nums text-blue-400">{stats.pending.toString().padStart(2, '0')}</p>
               </div>
 
               <div className="flex flex-col items-center sm:items-end gap-1">
-                <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-normal uppercase">Complete (Today)</p>
+                <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-normal">Complete (Today)</p>
                 <p className="text-2xl sm:text-4xl font-normal text-white tracking-tighter tabular-nums text-primary">{stats.complete.toString().padStart(2, '0')}</p>
               </div>
             </div>
@@ -139,7 +139,7 @@ export default function WorkProgress() {
         <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/5 bg-panel/30">
           {!isMobile ? (
             <table className="w-full min-w-[1000px] text-sm text-left border-separate border-spacing-0 table-fixed overflow-visible">
-              <thead className="text-[11px] text-muted bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors">
+              <thead className="text-[11px] text-muted bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors font-medium tracking-widest">
                 <tr>
                   <th className="w-[180px] px-8 py-4 border-r border-border leading-none">Deliverable Date</th>
                   <th className="w-[300px] px-8 py-4 border-r border-border leading-none">Project Details</th>
@@ -150,92 +150,123 @@ export default function WorkProgress() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {filteredTasks.map((t) => (
-                  <tr key={t.id} className="hover:bg-sidebar transition-all group">
-                    <td className="px-8 py-3 border-r border-border">
-                      <div className="flex items-center gap-3">
-                        <Calendar size={13} className="text-primary/40" />
-                        <span className="text-[12px] text-white/50 tabular-nums tracking-tight">
-                          {formatDate(t.updatedDate || t.takenDate || t.scheduleDate)}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-3 border-r border-border overflow-hidden">
-                      <div className="flex flex-col gap-1">
-                        <span className="text-white text-[13px] tracking-tight truncate" title={t.clientName}>{t.clientName}</span>
-                        <span className="text-muted text-[11px] truncate">{t.task}</span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-3 border-r border-border">
-                      <div className="flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-lg bg-surface-800 border border-white/5 flex items-center justify-center text-[10px] text-primary">
-                          {workers.find(w => w.name === t.workerName)?.avatar?.startsWith('http') ? (
-                            <img src={workers.find(w => w.name === t.workerName).avatar} alt={t.workerName} className="w-full h-full object-cover rounded-lg" />
-                          ) : t.workerName?.charAt(0) || '?'}
+                {filteredTasks.map((t) => {
+                  const worker = workers.find(w => w.name === t.workerName)
+                  return (
+                    <tr key={t.id} className="hover:bg-sidebar transition-all group">
+                      <td className="px-8 py-3 border-r border-border">
+                        <div className="flex items-center gap-3">
+                          <Calendar size={13} className="text-primary/40" />
+                          <span className="text-[12px] text-white/50 tabular-nums tracking-tight">
+                            {formatDate(t.updatedDate || t.takenDate || t.scheduleDate)}
+                          </span>
                         </div>
-                        <span className="text-white/80 text-[12px] tracking-tight">{t.workerName}</span>
-                      </div>
-                    </td>
-                    <td className="px-8 py-3 border-r border-border">
-                      <span className="text-muted text-[11px] tracking-tight">{t.workerRole}</span>
-                    </td>
-                    <td className="px-8 py-3 border-r border-border text-center">
-                      <div className="flex justify-center">
-                        <div className={cn(
-                          "px-3 py-1 rounded-full text-[10px] border whitespace-nowrap",
-                          t.status === 'Done' ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
-                          t.status === 'In Progress' ? "text-blue-400 bg-blue-500/10 border-blue-500/20" :
-                          "text-white/40 bg-white/5 border-white/10"
-                        )}>
-                          {t.status}
+                      </td>
+                      <td className="px-8 py-3 border-r border-border overflow-hidden">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-white text-[13px] font-medium tracking-tight truncate" title={t.clientName}>{t.clientName}</span>
+                          <span className="text-muted text-[11px] truncate opacity-50">{t.task}</span>
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-3 text-center">
-                      <div className="flex justify-center">
-                        <div className={cn(
-                          "w-5 h-5 rounded flex items-center justify-center border",
-                          t.contentCheck 
-                            ? "bg-emerald-500 border-emerald-400 text-white" 
-                            : "bg-surface-800/50 border-white/5 text-muted/20"
-                        )}>
-                          <CheckCircle2 size={12} />
+                      </td>
+                      <td className="px-8 py-3 border-r border-border">
+                        <div className="flex items-center gap-3">
+                          <div className="w-7 h-7 rounded-lg bg-surface-800 border border-white/5 flex items-center justify-center text-[10px] text-primary flex-shrink-0 overflow-hidden shadow-inner">
+                            {worker?.avatar?.startsWith('http') ? (
+                              <img src={worker.avatar} alt={t.workerName} className="w-full h-full object-cover" />
+                            ) : t.workerName?.charAt(0) || '?'}
+                          </div>
+                          <span className="text-white/80 text-[12px] font-medium tracking-tight truncate">{t.workerName}</span>
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-8 py-3 border-r border-border">
+                        <span className="text-muted text-[11px] font-medium tracking-tight whitespace-nowrap">{t.workerRole}</span>
+                      </td>
+                      <td className="px-8 py-3 border-r border-border text-center">
+                        <div className="flex justify-center">
+                          <div className={cn(
+                            "px-3 py-1 rounded-full text-[10px] font-medium tracking-widest border",
+                            t.status === 'Done' ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
+                            t.status === 'In Progress' ? "text-blue-400 bg-blue-500/10 border-blue-500/20" :
+                            "text-white/40 bg-white/5 border-white/10"
+                          )}>
+                            {t.status}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-8 py-3 text-center">
+                        <div className="flex justify-center">
+                          <div className={cn(
+                            "w-5 h-5 rounded-md flex items-center justify-center border transition-colors",
+                            t.contentCheck 
+                              ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400" 
+                              : "bg-surface-800/50 border-white/5 text-white/5"
+                          )}>
+                            <CheckCircle2 size={12} />
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           ) : (
-            <div className="p-4 grid grid-cols-1 gap-4">
-              {filteredTasks.map(t => (
-                <div key={t.id} className="bg-sidebar/30 border border-white/5 rounded-2xl p-6 space-y-4 ring-1 ring-white/5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-1">
-                      <p className="text-white text-sm tracking-tight leading-tight line-clamp-1">{t.clientName}</p>
-                      <p className="text-muted text-[11px] line-clamp-1">{t.task}</p>
+            <div className="p-4 grid grid-cols-1 gap-4 pb-20">
+              {filteredTasks.map(t => {
+                const worker = workers.find(w => w.name === t.workerName)
+                return (
+                  <div key={t.id} className="bg-[#0b0b0b] border border-white/5 rounded-2xl p-5 space-y-4 shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-3xl rounded-full -mr-12 -mt-12 opacity-50" />
+                    
+                    <div className="flex items-start justify-between gap-4 relative z-10">
+                      <div className="space-y-1.5 flex-1 min-w-0">
+                        <h3 className="text-white text-sm font-medium tracking-tight leading-tight truncate">{t.clientName}</h3>
+                        <p className="text-muted text-[11px] font-medium line-clamp-1 opacity-60 italic">{t.task}</p>
+                      </div>
+                      <div className={cn(
+                        "px-2.5 py-1 rounded-lg text-[9px] font-medium tracking-widest border whitespace-nowrap",
+                        t.status === 'Done' ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" : 
+                        t.status === 'In Progress' ? "text-blue-400 bg-blue-500/10 border-blue-500/20" : 
+                        "text-white/40 bg-white/5 border-white/10"
+                      )}>
+                        {t.status}
+                      </div>
                     </div>
-                    <div className={cn(
-                      "px-2 py-0.5 rounded-full text-[9px] border",
-                      t.status === 'Done' ? "text-emerald-400 border-emerald-500/20" : "text-white/40 border-white/10"
-                    )}>
-                      {t.status}
+  
+                    <div className="flex items-center justify-between pt-4 border-t border-white/5 relative z-10">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-surface-800 border border-white/5 flex items-center justify-center text-[10px] font-medium text-primary overflow-hidden shadow-inner">
+                          {worker?.avatar?.startsWith('http') ? (
+                            <img src={worker.avatar} alt={t.workerName} className="w-full h-full object-cover" />
+                          ) : t.workerName?.charAt(0) || '?'}
+                        </div>
+                        <div className="flex flex-col">
+                          <p className="text-white text-[11px] font-medium tracking-tight leading-none">{t.workerName}</p>
+                          <p className="text-[9px] text-muted opacity-40 tracking-widest font-medium mt-1">{t.workerRole}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col items-end">
+                         <div className={cn(
+                            "w-6 h-6 rounded-lg flex items-center justify-center border",
+                            t.contentCheck 
+                              ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400" 
+                              : "bg-white/[0.02] border-white/5 text-white/5"
+                          )}>
+                            <CheckCircle2 size={14} />
+                          </div>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
-                    <div className="space-y-1">
-                      <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Assigned To</p>
-                      <p className="text-white/70 text-[11px] tracking-tight">{t.workerName}</p>
-                    </div>
-                    <div className="space-y-1 text-right">
-                      <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Department</p>
-                      <p className="text-white/70 text-[11px] tracking-tight">{t.workerRole}</p>
+                    <div className="flex items-center gap-1.5 pt-3 border-t border-white/5">
+                      <Calendar size={11} className="text-primary/40" />
+                      <span className="text-[10px] text-muted font-medium opacity-30 tracking-tight">
+                        {formatDate(t.updatedDate || t.takenDate || t.scheduleDate)}
+                      </span>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
           {filteredTasks.length === 0 && (

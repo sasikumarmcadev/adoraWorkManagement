@@ -94,16 +94,16 @@ export default function EditorInfo() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
                 {ROLE} <span className="text-primary/50">Info</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-1 opacity-60 leading-none">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none">
                 Person Registry • Internal Agency Workforce
               </p>
             </div>
             <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-1 bg-white/[0.02] sm:bg-transparent px-4 py-2 sm:p-0 rounded-xl border border-white/5 sm:border-0">
-              <p className="text-[9px] sm:text-[11px] text-muted font-bold opacity-60 tracking-widest">Total Employee</p>
-              <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums">
+              <p className="text-[9px] sm:text-[11px] text-muted font-medium opacity-60 tracking-widest">Total Employee</p>
+              <p className="text-2xl sm:text-4xl font-medium text-white tracking-tighter tabular-nums">
                 {filteredWorkers.length.toString().padStart(2, '0')}
               </p>
             </div>
@@ -127,7 +127,7 @@ export default function EditorInfo() {
                 <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-primary flex items-center justify-center text-black group-hover:rotate-90 transition-transform duration-500 shadow-lg shadow-primary/20">
                   <Plus size={18} strokeWidth={3} />
                 </div>
-                <span className="text-[11px] sm:text-[13px] font-bold text-white opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap tracking-tight">Add Member</span>
+                <span className="text-[11px] sm:text-[13px] font-medium text-white opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap tracking-tight">Add Member</span>
               </button>
             )}
           </div>
@@ -137,7 +137,7 @@ export default function EditorInfo() {
         <div className="flex-1 overflow-x-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/5 bg-panel/30">
           {!isMobile && filteredWorkers.length > 0 ? (
             <table className="w-full min-w-[1000px] text-sm text-left border-separate border-spacing-0 table-fixed overflow-visible">
-              <thead className="text-[11px] text-muted font-bold bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors">
+              <thead className="text-[11px] text-muted font-medium bg-sidebar/80 backdrop-blur-md border-b border-border sticky top-0 z-10 transition-colors">
                 <tr>
                   <th className="w-[100px] px-6 py-4 border-r border-border leading-none text-center">Photo</th>
                   <th className="w-[150px] px-8 py-4 border-r border-border leading-none">Employee ID</th>
@@ -163,29 +163,29 @@ export default function EditorInfo() {
                           {w.avatar ? (
                             <img src={w.avatar} alt={w.name} className="w-full h-full object-cover" />
                           ) : (
-                            <span className="text-primary font-bold text-[13px]">{w.name?.split(' ').map(n => n[0]).join('')}</span>
+                            <span className="text-primary font-medium text-[13px]">{w.name?.split(' ').map(n => n[0]).join('')}</span>
                           )}
                         </button>
                       </div>
                     </td>
                     <td className="px-8 py-4 border-r border-border">
-                      <span className="text-[11px] text-muted font-bold tracking-wider bg-white/5 px-2.5 py-1 rounded-md border border-white/5 uppercase">
+                      <span className="text-[11px] text-muted font-medium tracking-wider bg-white/5 px-2.5 py-1 rounded-md border border-white/5 ">
                         {w.employeeID || 'AE-PENDING'}
                       </span>
                     </td>
                     <td className="px-8 py-4 border-r border-border overflow-hidden">
-                      <span className="text-white font-bold text-[13px] tracking-tight block truncate" title={w.name}>{w.name}</span>
+                      <span className="text-white font-medium text-[13px] tracking-tight block truncate" title={w.name}>{w.name}</span>
                     </td>
                     <td className="px-8 py-4 border-r border-border">
                       <div className="flex items-center gap-2.5 overflow-hidden">
                         <div className="w-2 h-2 rounded-full bg-primary shadow-lg shadow-primary/20 shrink-0" />
-                        <span className="text-[13px] font-bold text-secondary truncate">{w.role}</span>
+                        <span className="text-[13px] font-medium text-secondary truncate">{w.role}</span>
                       </div>
                     </td>
-                     <td className="px-8 py-4 border-r border-border font-bold text-[13px] text-primary/80">
+                     <td className="px-8 py-4 border-r border-border font-medium text-[13px] text-primary/80">
                        {w.level || '—'}
                      </td>
-                     <td className="px-8 py-4 border-r border-border text-secondary font-bold text-[13px] tabular-nums opacity-90">
+                     <td className="px-8 py-4 border-r border-border text-secondary font-medium text-[13px] tabular-nums opacity-90">
                        {w.joinedDate ? formatDate(w.joinedDate) : '—'}
                      </td>
                     <td className="px-8 py-4">
@@ -215,18 +215,18 @@ export default function EditorInfo() {
                           {w.avatar ? (
                             <img src={w.avatar} alt={w.name} className="w-full h-full object-cover" />
                           ) : (
-                            <span className="text-primary font-bold text-lg sm:text-xl">{w.name?.split(' ').map(n => n[0]).join('')}</span>
+                            <span className="text-primary font-medium text-lg sm:text-xl">{w.name?.split(' ').map(n => n[0]).join('')}</span>
                           )}
                         </button>
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                              <span className="text-[9px] text-muted font-bold bg-white/5 px-2 py-0.5 rounded border border-white/5 uppercase tracking-tighter">{w.employeeID || 'AE-PENDING'}</span>
-                              {w.level && <span className="text-[9px] text-primary font-bold bg-primary/10 px-2 py-0.5 rounded border border-primary/20 tracking-tighter">{w.level}</span>}
+                              <span className="text-[9px] text-muted font-medium bg-white/5 px-2 py-0.5 rounded border border-white/5 tracking-tighter">{w.employeeID || 'AE-PENDING'}</span>
+                              {w.level && <span className="text-[9px] text-primary font-medium bg-primary/10 px-2 py-0.5 rounded border border-primary/20 tracking-tighter">{w.level}</span>}
                           </div>
-                          <p className="text-white font-bold text-base sm:text-lg tracking-tight leading-tight line-clamp-1">{w.name}</p>
+                          <p className="text-white font-medium text-base sm:text-lg tracking-tight leading-tight line-clamp-1">{w.name}</p>
                           <div className="flex items-center gap-2 drop-shadow-lg">
                             <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-sm shadow-primary" />
-                            <p className="text-[10px] text-muted font-bold uppercase tracking-widest opacity-60">{w.role}</p>
+                            <p className="text-[10px] text-muted font-medium tracking-widest opacity-60">{w.role}</p>
                           </div>
                         </div>
                       </div>
@@ -236,17 +236,17 @@ export default function EditorInfo() {
                       </div>
                     </div>
 
-                    <div className="bg-black/20 backdrop-blur-3xl border border-white/5 rounded-xl p-4 sm:p-5 group-hover:border-primary/20 transition-all duration-500 flex items-center justify-between">
+                    <div className="bg-black/40 backdrop-blur-3xl border border-white/5 rounded-xl p-4 sm:p-5 group-hover:border-primary/20 transition-all duration-500 flex items-center justify-between">
                       <div className="space-y-1">
-                        <p className="text-[9px] text-muted font-bold opacity-50 uppercase tracking-widest leading-none">Joined On</p>
-                        <div className="flex items-center gap-2 text-white font-bold text-sm sm:text-base tracking-tighter tabular-nums drop-shadow-2xl">
+                        <p className="text-[9px] text-muted font-medium opacity-30 tracking-widest leading-none">Intelligence Onboarded</p>
+                        <div className="flex items-center gap-2 text-white font-medium text-sm sm:text-base tracking-tighter tabular-nums drop-shadow-2xl translate-y-0.5">
                           <Calendar size={14} className="text-primary/60" />
                           <span>{w.joinedDate ? formatDate(w.joinedDate) : 'Not Registered'}</span>
                         </div>
                       </div>
                       <div className="hidden sm:block">
-                         <div className="w-8 h-8 rounded-full border border-white/5 flex items-center justify-center bg-white/[0.02]">
-                            <Briefcase size={12} className="text-muted opacity-20" />
+                         <div className="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center bg-white/[0.02] shadow-inner">
+                            <Briefcase size={14} className="text-primary opacity-20" />
                          </div>
                       </div>
                     </div>
@@ -257,8 +257,8 @@ export default function EditorInfo() {
                   <div className="w-24 h-24 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center mb-8 shadow-2xl group transition-all">
                     <Users size={40} className="text-muted opacity-20 group-hover:opacity-40 group-hover:scale-110 transition-all duration-500" />
                   </div>
-                  <h3 className="text-white font-bold text-xl tracking-tighter">No employees identified</h3>
-                  <p className="text-[13px] text-muted font-bold mt-3 opacity-50 max-w-[260px] leading-relaxed">Register a new employee profile to initiate personnel management.</p>
+                  <h3 className="text-white font-medium text-xl tracking-tighter">No employees identified</h3>
+                  <p className="text-[13px] text-muted font-medium mt-3 opacity-50 max-w-[260px] leading-relaxed">Register a new employee profile to initiate personnel management.</p>
                 </div>
               )}
             </div>
@@ -281,17 +281,17 @@ export default function EditorInfo() {
               <div className="text-primary/20 opacity-10">No Image Available</div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-8 flex flex-col justify-end">
-               <p className="text-white font-bold text-2xl tracking-tighter">{previewData?.name}</p>
-               <p className="text-primary font-bold text-xs uppercase tracking-widest mt-1">{previewData?.role}</p>
+               <p className="text-white font-medium text-2xl tracking-tighter">{previewData?.name}</p>
+               <p className="text-primary font-medium text-xs  tracking-widest mt-1">{previewData?.role}</p>
             </div>
           </div>
           <div className="w-full mt-6 space-y-4">
              <div className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-xl">
-                <span className="text-[10px] text-muted font-bold  tracking-widest">Employee ID</span>
-                <span className="text-xs text-white font-bold bg-white/5 px-3 py-1 rounded-lg">{previewData?.employeeID || 'AE-GEN-001'}</span>
+                <span className="text-[10px] text-muted font-medium  tracking-widest">Employee ID</span>
+                <span className="text-xs text-white font-medium bg-white/5 px-3 py-1 rounded-lg">{previewData?.employeeID || 'AE-GEN-001'}</span>
              </div>
              <button 
-                className="w-full h-14 bg-white text-black font-bold text-xs rounded-xl hover:bg-primary hover:text-black transition-all active:scale-95 shadow-xl"
+                className="w-full h-14 bg-white text-black font-medium text-xs rounded-xl hover:bg-primary hover:text-black transition-all active:scale-95 shadow-xl"
                 onClick={() => setIsPreviewOpen(false)}
              >
                Close View
@@ -309,7 +309,7 @@ export default function EditorInfo() {
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex flex-col items-center gap-2 text-muted">
-                    <span className="text-[10px] font-bold">Upload Photo</span>
+                    <span className="text-[10px] font-medium">Upload Photo</span>
                   </div>
                 )}
               </div>
@@ -329,7 +329,7 @@ export default function EditorInfo() {
           <div className="grid grid-cols-1 gap-6">
             <FormField label="Full Name">
               <input
-                className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner"
+                className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-medium text-white outline-none focus:border-primary/40 transition-all shadow-inner"
                 type="text"
                 placeholder="Name"
                 value={form.name || ''}
@@ -339,14 +339,14 @@ export default function EditorInfo() {
 
             <div className="grid grid-cols-2 gap-5">
               <FormField label="Role (Automatic)">
-                <div className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-bold text-white/50 flex items-center shadow-inner pointer-events-none">
+                <div className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-xs font-medium text-white/50 flex items-center shadow-inner pointer-events-none">
                   {ROLE}
                 </div>
               </FormField>
 
               <FormField label="Joined Date">
                 <input
-                  className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-[11px] font-bold text-white outline-none focus:border-primary/40 transition-all shadow-inner"
+                  className="bg-sidebar border border-white/10 h-14 w-full px-5 rounded-xl text-[11px] font-medium text-white outline-none focus:border-primary/40 transition-all shadow-inner"
                   type="date"
                   value={form.joinedDate || ''}
                   onChange={e => setForm({ ...form, joinedDate: e.target.value })}
@@ -370,7 +370,7 @@ export default function EditorInfo() {
                 </div>
                 <div className="flex flex-col items-start leading-none">
                   <span className={cn(
-                    "text-[13px] font-bold transition-colors",
+                    "text-[13px] font-medium transition-colors",
                     form.level === 'Team Lead' ? "text-white" : "text-muted"
                   )}>Position as a Team Lead</span>
                   <p className="text-[10px] text-muted opacity-40 font-medium mt-1">Check to assign leadership authority</p>
@@ -380,8 +380,8 @@ export default function EditorInfo() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-6 border-t border-white/5">
-            <button className="flex-1 h-14 rounded-xl text-[12px] font-bold text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setIsModalOpen(false)}>Discard</button>
-            <button className="flex-1 h-14 rounded-xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>Confirm Registration</button>
+            <button className="flex-1 h-14 rounded-xl text-[12px] font-medium text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setIsModalOpen(false)}>Discard</button>
+            <button className="flex-1 h-14 rounded-xl text-[12px] font-medium bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>Confirm Registration</button>
           </div>
         </div>
       </Modal>

@@ -12,7 +12,7 @@ export default function SidebarGroup({ title, children, isOpen, onToggle, collap
         <div className="flex items-center gap-3 overflow-hidden">
           {Icon && <Icon size={16} className="text-gray-500 group-hover:text-primary transition-colors flex-shrink-0" />}
           <div className={`transition-all duration-300 ${collapsed ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-gray-200 transition-colors whitespace-nowrap">
+            <span className="text-[11px] font-medium text-gray-400  tracking-widest group-hover:text-gray-200 transition-colors whitespace-nowrap">
               {title}
             </span>
           </div>

@@ -187,7 +187,7 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
 
       <div className={`absolute top-3 right-3 sm:top-4 sm:right-6 z-30 transition-opacity duration-300 ${isDragging || showOptions ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} ref={menuRef}>
         {isDragging ? (
-          <button onClick={handleSavePosition} className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-hover text-black text-[10px] sm:text-xs font-bold rounded-full shadow-lg transition-all scale-105">
+          <button onClick={handleSavePosition} className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-hover text-black text-[10px] sm:text-xs font-medium rounded-full shadow-lg transition-all scale-105">
             Save New Position
           </button>
         ) : (
@@ -246,14 +246,14 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
           )}
 
           <div className="flex flex-col gap-0">
-            <h2 className="text-xl sm:text-2xl font-bold text-white leading-none drop-shadow-2xl tracking-tight">{title}</h2>
+            <h2 className="text-xl sm:text-2xl font-medium text-white leading-none drop-shadow-2xl tracking-tight">{title}</h2>
           </div>
         </div>
       )}
 
       {isDragging && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-          <div className="bg-black/60 backdrop-blur px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-white text-xs sm:text-sm font-bold border border-white/20 shadow-2xl">
+          <div className="bg-black/60 backdrop-blur px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-white text-xs sm:text-sm font-medium border border-white/20 shadow-2xl">
             Drag image vertically to reposition
           </div>
         </div>
@@ -267,16 +267,16 @@ function IncentiveCard() {
     <div className="h-full flex flex-col gap-3 sm:gap-4 p-4 sm:p-5 bg-panel">
       <div className="flex items-center gap-2">
         <Target size={16} className="sm:w-[18px] sm:h-[18px] text-emerald-400" />
-        <h3 className="font-semibold text-base sm:text-lg">Worker Incentive</h3>
+        <h3 className="font-medium text-base sm:text-lg">Worker Incentive</h3>
       </div>
 
       <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-md p-3 sm:p-4">
         <h4 className="text-emerald-400 font-medium mb-1 text-sm sm:text-base">Monthly Target</h4>
-        <p className="text-emerald-300 text-xs sm:text-sm font-semibold">Achieved = +1000 Bonus</p>
+        <p className="text-emerald-300 text-xs sm:text-sm font-medium">Achieved = +1000 Bonus</p>
       </div>
 
       <div className="bg-surface-800/30 p-3 sm:p-4 rounded-md border border-border flex-1">
-        <p className="text-[10px] sm:text-xs text-muted tracking-widest mb-2 sm:mb-3 font-semibold">Notes</p>
+        <p className="text-[10px] sm:text-xs text-muted tracking-widest mb-2 sm:mb-3 font-medium">Notes</p>
         <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-300">
           <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> No shortcuts</li>
           <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> Just standards</li>
@@ -302,7 +302,7 @@ function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
         <div className="mb-6 pb-3 border-b border-border">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg sm:text-xl font-semibold text-white tracking-tight"># Total task</h2>
+              <h2 className="text-lg sm:text-xl font-medium text-white tracking-tight"># Total task</h2>
               <p className="text-xs text-muted mt-0.5">Complete task breakdown by date</p>
             </div>
             <div className="bg-primary/10 px-2.5 py-1 rounded-md border border-primary/20">
@@ -315,8 +315,8 @@ function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
         {/* Table Headers - Date and Category */}
         <div className="mb-3 pb-2 border-b border-white/10">
           <div className="grid grid-cols-2 gap-4">
-            <div className="text-[10px] font-bold text-muted uppercase tracking-wider">Date</div>
-            <div className="text-[10px] font-bold text-muted uppercase tracking-wider">Category</div>
+            <div className="text-[10px] font-medium text-muted  tracking-wider">Date</div>
+            <div className="text-[10px] font-medium text-muted  tracking-wider">Category</div>
           </div>
         </div>
 
@@ -402,24 +402,24 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
       <div className="p-3 sm:p-4 border-b border-border flex flex-col gap-3 bg-sidebar">
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted font-bold">Total</p>
-            <p className="text-sm font-bold text-white">{stats.total}</p>
+            <p className="text-[10px] text-muted font-medium">Total</p>
+            <p className="text-sm font-medium text-white">{stats.total}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted font-bold">Completed</p>
-            <p className="text-sm font-bold text-emerald-400">{stats.completed}</p>
+            <p className="text-[10px] text-muted font-medium">Completed</p>
+            <p className="text-sm font-medium text-emerald-400">{stats.completed}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted font-bold">In Progress</p>
-            <p className="text-sm font-bold text-blue-400">{stats.inProgress}</p>
+            <p className="text-[10px] text-muted font-medium">In Progress</p>
+            <p className="text-sm font-medium text-blue-400">{stats.inProgress}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5 hidden sm:block">
-            <p className="text-[10px] text-muted font-bold">Work Done</p>
-            <p className="text-sm font-bold text-emerald-400">{stats.workDone}</p>
+            <p className="text-[10px] text-muted font-medium">Work Done</p>
+            <p className="text-sm font-medium text-emerald-400">{stats.workDone}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5 hidden sm:block">
-            <p className="text-[10px] text-muted font-bold">Incentives</p>
-            <p className="text-sm font-bold text-blue-400">{stats.incentives}</p>
+            <p className="text-[10px] text-muted font-medium">Incentives</p>
+            <p className="text-sm font-medium text-blue-400">{stats.incentives}</p>
           </div>
         </div>
 
@@ -444,7 +444,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
                 <Plus size={18} />
               </div>
-              <span className="text-[12px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Task</span>
+              <span className="text-[12px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Task</span>
             </button>
             <select
               value={statusFilter === 'All' ? 'All Status' : statusFilter}
@@ -470,137 +470,234 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
       </div>
 
       <div className="flex-1 overflow-x-auto overflow-y-auto max-h-[400px] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        <table className="w-full text-sm text-left whitespace-nowrap">
-          <thead className="text-xs text-muted font-bold bg-sidebar border-b border-border sticky top-0 z-10">
-            <tr>
-              <th className="px-4 py-3 font-medium">Date</th>
-              <th className="px-4 py-3 font-medium">Client Name</th>
-              <th className="px-4 py-3 font-medium">Task</th>
-              <th className="px-4 py-3 font-medium">Decline Date</th>
-              <th className="px-4 py-3 font-medium">Status</th>
-              <th className="px-4 py-3 font-medium text-center">Approval</th>
-              <th className="px-4 py-3 font-medium text-center">Work Done</th>
-              <th className="px-4 py-3 font-medium text-center">Incentive</th>
-              <th className="px-4 py-3 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
+        {mobileView ? (
+          <div className="p-3 space-y-3">
             {(() => {
               let lastDate = '';
-              return [...tasks].sort((a, b) => (b.takenDate || '').localeCompare(a.takenDate || '')).map((task, idx) => {
+              return [...tasks].sort((a, b) => (b.takenDate || '').localeCompare(a.takenDate || '')).map((task) => {
                 const showDate = task.takenDate !== lastDate;
                 lastDate = task.takenDate;
 
                 return (
-                  <tr key={task.id} className="hover:bg-panel/50 transition-colors border-b border-border last:border-0 group/row">
-                    <td className="px-4 py-4 text-secondary font-medium min-w-[120px]">
-                      {showDate ? (
-                        <div className="flex flex-col">
-                          <span className="text-white">{formatDate(task.takenDate)}</span>
-                        </div>
-                      ) : (
-                        <span className="opacity-0 pointer-events-none hidden sm:inline">{formatDate(task.takenDate)}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-primary/10 border border-primary/20 text-primary">
-                        {task.clientName}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 text-primary max-w-[300px]">
-                      <div className="flex items-center gap-1 truncate text-xs opacity-90">
-                        • {task.task || 'No description'}
+                  <div key={task.id} className="bg-panel border border-border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-secondary font-medium text-[10px] tracking-wider opacity-50 whitespace-nowrap">Task Date</span>
+                        <span className="text-white font-medium text-sm leading-none mt-1">{showDate ? formatDate(task.takenDate) : <span className="opacity-0">---</span>}</span>
                       </div>
-                    </td>
-                    <td className="px-4 py-4 text-secondary text-xs">{formatDate(task.declineDate)}</td>
-                    <td className="px-4 py-4">
                       <StatusSelect
                         value={task.status}
                         options={['Not Started', 'In Progress', 'Done']}
                         onChange={(newStatus) => onUpdateTask(task.id, { status: newStatus })}
                         getStatusColor={getStatusColor}
                       />
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      <StatusSelect
-                        value={task.clientApproval === 'Approval' ? 'Completed' : (task.clientApproval || 'Completed')}
-                        options={['Completed', 'Changes', 'No Changes']}
-                        onChange={(newVal) => onUpdateTask(task.id, { clientApproval: newVal === 'Completed' ? 'Approval' : newVal })}
-                        getStatusColor={(s) => {
-                          if (s === 'Completed') return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20'
-                          if (s === 'Changes') return 'text-orange-400 bg-orange-400/10 border-orange-400/20'
-                          return 'text-blue-400 bg-blue-400/10 border-blue-400/20'
-                        }}
-                      />
-                    </td>
-                    <td className="px-4 py-4 text-center border-r border-border">
-                      <div className="flex justify-center">
-                        <button
-                          onClick={() => onUpdateTask(task.id, {
-                            contentCheck: !task.contentCheck,
-                            incentiveCheck: false,
-                            updatedDate: new Date().toISOString().split('T')[0],
-                          })}
-                          className={cn(
-                            "w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90",
-                            task.contentCheck
-                              ? "bg-emerald-600 border-emerald-600 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
-                              : "border-white/10 hover:border-white/30 bg-white/[0.02]"
-                          )}
-                        >
-                          <div className={cn(
-                            "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
-                            task.contentCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                          )} />
-                        </button>
+                    </div>
+
+                    <div>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-primary/10 border border-primary/20 text-primary mb-2">
+                        {task.clientName}
+                      </span>
+                      <div className="bg-surface-800/30 p-2.5 rounded-lg border border-white/5">
+                        <div className="text-xs text-primary py-0.5 flex items-start gap-2">
+                          <span className="opacity-50 mt-1">•</span>
+                          <span>{task.task || 'No description'}</span>
+                        </div>
                       </div>
-                    </td>
-                    <td className="px-4 py-4 text-center border-r border-border">
-                      <div className="flex justify-center">
-                        <button
-                          onClick={() => onUpdateTask(task.id, {
-                            ...task,
-                            incentiveCheck: !task.incentiveCheck,
-                            contentCheck: false,
-                            updatedDate: new Date().toISOString().split('T')[0]
-                          })}
-                          className={cn(
-                            "w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90",
-                            task.incentiveCheck
-                              ? "bg-blue-600 border-blue-600 shadow-[0_0_10px_rgba(59,130,246,0.2)]"
-                              : "border-white/10 hover:border-white/30 bg-white/[0.02]"
-                          )}
-                        >
-                          <div className={cn(
-                            "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
-                            task.incentiveCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                          )} />
-                        </button>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[10px] text-muted pt-3 border-t border-white/5">
+                      <div className="flex items-center gap-4">
+                        <div className="flex flex-col">
+                          <span className="opacity-40  font-medium text-[8px]">Index</span>
+                          <span className="text-white/60 font-medium">1</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <span className="opacity-40  font-medium text-[8px]">Work Done</span>
+                          <button
+                            onClick={() => onUpdateTask(task.id, {
+                              contentCheck: !task.contentCheck,
+                              incentiveCheck: false,
+                              updatedDate: new Date().toISOString().split('T')[0],
+                            })}
+                            className={cn(
+                              "w-4 h-4 rounded-full border flex items-center justify-center transition-all mt-1",
+                              task.contentCheck ? "bg-emerald-600 border-emerald-600" : "border-white/10"
+                            )}
+                          >
+                            <div className={cn("w-1 h-1 rounded-full bg-white", task.contentCheck ? "scale-100" : "scale-0")} />
+                          </button>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <span className="opacity-40  font-medium text-[8px]">Incentive</span>
+                          <button
+                            onClick={() => onUpdateTask(task.id, {
+                              incentiveCheck: !task.incentiveCheck,
+                              contentCheck: false,
+                              updatedDate: new Date().toISOString().split('T')[0],
+                            })}
+                            className={cn(
+                              "w-4 h-4 rounded-full border flex items-center justify-center transition-all mt-1",
+                              task.incentiveCheck ? "bg-blue-600 border-blue-600" : "border-white/10"
+                            )}
+                          >
+                            <div className={cn("w-1 h-1 rounded-full bg-white", task.incentiveCheck ? "scale-100" : "scale-0")} />
+                          </button>
+                        </div>
                       </div>
-                    </td>
-                    <td className="px-4 py-4 text-right">
-                      <div className="flex items-center gap-1 justify-end">
-                        <button onClick={() => onAdd(task)} className="p-1.5 text-muted hover:text-white hover:bg-white/5 rounded transition-all" title="Edit">
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => onAdd(task)}
+                          className="p-2 text-muted hover:text-primary hover:bg-primary/5 rounded-full transition-all"
+                        >
                           <Edit2 size={14} />
                         </button>
-                        <button onClick={() => { if (confirm('Delete this task?')) deleteTask(task.id); }} className="p-1.5 text-muted hover:text-red-500 hover:bg-red-500/5 rounded transition-all" title="Delete">
+                        <button
+                          onClick={() => { if (confirm('Delete this task?')) deleteTask(task.id); }}
+                          className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-full transition-all"
+                        >
                           <Trash2 size={14} />
                         </button>
                       </div>
-                    </td>
-                  </tr>
-                )
+                    </div>
+                  </div>
+                );
               })
             })()}
-            {tasks.length === 0 && (
+            {tasks.length === 0 && <div className="py-12 text-center text-muted">No tasks found...</div>}
+          </div>
+        ) : (
+          <table className="w-full text-sm text-left whitespace-nowrap">
+            <thead className="text-xs text-muted font-medium bg-sidebar border-b border-border sticky top-0 z-10">
               <tr>
-                <td colSpan={9} className="py-12 text-center text-muted">
-                  No tasks found...
-                </td>
+                <th className="px-4 py-3 font-medium">Date</th>
+                <th className="px-4 py-3 font-medium">Client Name</th>
+                <th className="px-4 py-3 font-medium">Task</th>
+                <th className="px-4 py-3 font-medium">Decline Date</th>
+                <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium text-center">Approval</th>
+                <th className="px-4 py-3 font-medium text-center">Work Done</th>
+                <th className="px-4 py-3 font-medium text-center">Incentive</th>
+                <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {(() => {
+                let lastDate = '';
+                return [...tasks].sort((a, b) => (b.takenDate || '').localeCompare(a.takenDate || '')).map((task, idx) => {
+                  const showDate = task.takenDate !== lastDate;
+                  lastDate = task.takenDate;
+
+                  return (
+                    <tr key={task.id} className="hover:bg-panel/50 transition-colors border-b border-border last:border-0 group/row">
+                      <td className="px-4 py-4 text-secondary font-medium min-w-[120px]">
+                        {showDate ? (
+                          <div className="flex flex-col">
+                            <span className="text-white">{formatDate(task.takenDate)}</span>
+                          </div>
+                        ) : (
+                          <span className="opacity-0 pointer-events-none hidden sm:inline">{formatDate(task.takenDate)}</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-4">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-primary/10 border border-primary/20 text-primary">
+                          {task.clientName}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 text-primary max-w-[300px]">
+                        <div className="flex items-center gap-1 truncate text-xs opacity-90">
+                          • {task.task || 'No description'}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-secondary text-xs">{formatDate(task.declineDate)}</td>
+                      <td className="px-4 py-4">
+                        <StatusSelect
+                          value={task.status}
+                          options={['Not Started', 'In Progress', 'Done']}
+                          onChange={(newStatus) => onUpdateTask(task.id, { status: newStatus })}
+                          getStatusColor={getStatusColor}
+                        />
+                      </td>
+                      <td className="px-4 py-4 text-center">
+                        <StatusSelect
+                          value={task.clientApproval === 'Approval' ? 'Completed' : (task.clientApproval || 'Completed')}
+                          options={['Completed', 'Changes', 'No Changes']}
+                          onChange={(newVal) => onUpdateTask(task.id, { clientApproval: newVal === 'Completed' ? 'Approval' : newVal })}
+                          getStatusColor={(s) => {
+                            if (s === 'Completed') return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20'
+                            if (s === 'Changes') return 'text-orange-400 bg-orange-400/10 border-orange-400/20'
+                            return 'text-blue-400 bg-blue-400/10 border-blue-400/20'
+                          }}
+                        />
+                      </td>
+                      <td className="px-4 py-4 text-center border-r border-border">
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => onUpdateTask(task.id, {
+                              contentCheck: !task.contentCheck,
+                              incentiveCheck: false,
+                              updatedDate: new Date().toISOString().split('T')[0],
+                            })}
+                            className={cn(
+                              "w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90",
+                              task.contentCheck
+                                ? "bg-emerald-600 border-emerald-600 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+                                : "border-white/10 hover:border-white/30 bg-white/[0.02]"
+                            )}
+                          >
+                            <div className={cn(
+                              "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
+                              task.contentCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                            )} />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-center border-r border-border">
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => onUpdateTask(task.id, {
+                              ...task,
+                              incentiveCheck: !task.incentiveCheck,
+                              contentCheck: false,
+                              updatedDate: new Date().toISOString().split('T')[0]
+                            })}
+                            className={cn(
+                              "w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90",
+                              task.incentiveCheck
+                                ? "bg-blue-600 border-blue-600 shadow-[0_0_10px_rgba(59,130,246,0.2)]"
+                                : "border-white/10 hover:border-white/30 bg-white/[0.02]"
+                            )}
+                          >
+                            <div className={cn(
+                              "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
+                              task.incentiveCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                            )} />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 text-right">
+                        <div className="flex items-center gap-1 justify-end">
+                          <button onClick={() => onAdd(task)} className="p-1.5 text-muted hover:text-white hover:bg-white/5 rounded transition-all" title="Edit">
+                            <Edit2 size={14} />
+                          </button>
+                          <button onClick={() => { if (confirm('Delete this task?')) deleteTask(task.id); }} className="p-1.5 text-muted hover:text-red-500 hover:bg-red-500/5 rounded transition-all" title="Delete">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
+              })()}
+              {tasks.length === 0 && (
+                <tr>
+                  <td colSpan={9} className="py-12 text-center text-muted">
+                    No tasks found...
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )
@@ -687,8 +784,8 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
           </FormField>
           {form.selectedClient && (
             <div className="mt-2 flex flex-wrap gap-2">
-              <span className="text-[10px] text-muted uppercase font-bold w-full mb-1">Targeting Asset for:</span>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold">
+              <span className="text-[10px] text-muted  font-medium w-full mb-1">Targeting Asset for:</span>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary text-[10px] font-medium">
                 {form.selectedClient.name}
               </span>
             </div>
@@ -700,7 +797,7 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
           </FormField>
         </div>
         <FormField label="Count (Auto)">
-          <div className="input bg-white/5 border-white/10 text-primary font-bold flex items-center h-[42px] pointer-events-none">
+          <div className="input bg-white/5 border-white/10 text-primary font-medium flex items-center h-[42px] pointer-events-none">
             {form.selectedClient ? '1' : '0'} Client Selected
           </div>
         </FormField>
@@ -814,7 +911,7 @@ function CalendarView({ tasks, deleteTask, activeFilter }) {
           overflow: hidden; 
           text-overflow: ellipsis; 
           font-weight: 800 !important;
-          text-transform: uppercase !important;
+          text-transform:  !important;
           letter-spacing: 0.02em !important;
           border-width: 1px !important;
           margin: 1px 2px !important;
@@ -826,7 +923,7 @@ function CalendarView({ tasks, deleteTask, activeFilter }) {
           box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
         .fc-col-header-cell { background-color: #111111 !important; border-bottom: 2px solid var(--border) !important; }
-        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; text-transform: uppercase; padding: 0.6rem !important; display: block !important; }
+        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; text-transform: ; padding: 0.6rem !important; display: block !important; }
         .fc-daygrid-day-number { color: var(--text-primary) !important; font-size: 0.7rem; padding: 0.3rem !important; }
         .fc-toolbar-title { color: var(--text-primary) !important; font-size: 0.9rem !important; font-weight: 700 !important; }
         
@@ -849,7 +946,7 @@ function CalendarView({ tasks, deleteTask, activeFilter }) {
       `}</style>
 
       <div className="p-3 sm:p-5 border-b border-border bg-sidebar">
-        <h2 className="text-base sm:text-lg font-bold text-primary">Work Calendar Overview</h2>
+        <h2 className="text-base sm:text-lg font-medium text-primary">Work Calendar Overview</h2>
       </div>
 
       <div ref={containerRef} className="p-0 bg-panel flex-1 overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
@@ -885,14 +982,14 @@ function CalendarView({ tasks, deleteTask, activeFilter }) {
               <div className="flex-1 min-w-0">
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-semibold text-sm text-white truncate">{t.clientName}</p>
+                    <p className="font-medium text-sm text-white truncate">{t.clientName}</p>
                     {t.contentCheck && (
-                      <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                      <span className="text-[8px] font-medium  px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
                         <WorkDoneIcon size={8} /> Work Done
                       </span>
                     )}
                     {t.incentiveCheck && (
-                      <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1">
+                      <span className="text-[8px] font-medium  px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1">
                         <IncentiveIcon size={8} /> Incentive
                       </span>
                     )}
@@ -901,7 +998,7 @@ function CalendarView({ tasks, deleteTask, activeFilter }) {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-[#222] text-primary">{t.status}</span>
+                <span className="text-[10px] font-medium  px-2 py-0.5 rounded bg-[#222] text-primary">{t.status}</span>
                 <button
                   onClick={() => { if (confirm('Delete this task?')) { deleteTask(t.id); setSelectedTasks(prev => ({ ...prev, tasks: prev.tasks.filter(x => x.id !== t.id) })); } }}
                   className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-full transition-all"
@@ -950,12 +1047,12 @@ function EditorListView({ tasks, onSelect }) {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 border-b border-border pb-4 gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Editor Management</h1>
+            <h1 className="text-2xl sm:text-3xl font-medium text-white tracking-tight">Editor Management</h1>
             <p className="text-xs sm:text-sm text-muted mt-1">Select an editor to view their dashboard and tasks</p>
           </div>
           <div className="flex items-center gap-3">
             <div className="bg-primary/10 border border-primary/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md">
-              <span className="text-primary font-bold text-sm sm:text-base">{editors.length}</span>
+              <span className="text-primary font-medium text-sm sm:text-base">{editors.length}</span>
               <span className="text-muted text-[10px] sm:text-xs ml-2 tracking-wider">Active Editors</span>
             </div>
           </div>
@@ -978,7 +1075,7 @@ function EditorListView({ tasks, onSelect }) {
                 className="group flex flex-col p-4 sm:p-6 bg-panel border border-border hover:border-primary/50 transition-all text-left rounded-lg hover:shadow-xl hover:scale-[1.02] duration-200"
               >
                 <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-bold text-base sm:text-lg overflow-hidden group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-medium text-base sm:text-lg overflow-hidden group-hover:scale-110 transition-transform">
                     {editorInfo?.avatar?.startsWith('http') ? (
                       <img src={editorInfo.avatar} alt={name} className="w-full h-full object-cover" />
                     ) : (
@@ -986,16 +1083,16 @@ function EditorListView({ tasks, onSelect }) {
                     )}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-primary transition-colors">{name}</h3>
+                    <h3 className="text-base sm:text-lg font-medium text-white group-hover:text-primary transition-colors">{name}</h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <p className="text-[9px] sm:text-[10px] text-muted tracking-widest font-bold">Visual Alchemist</p>
+                      <p className="text-[9px] sm:text-[10px] text-muted tracking-widest font-medium">Visual Alchemist</p>
                       {editorInfo?.isTeamLead && (
-                        <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
+                        <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-medium">
                           Team Lead
                         </span>
                       )}
                       {editorInfo?.level && !editorInfo?.isTeamLead && (
-                        <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
+                        <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-medium">
                           {editorInfo.level}
                         </span>
                       )}
@@ -1005,16 +1102,16 @@ function EditorListView({ tasks, onSelect }) {
 
                 <div className="grid grid-cols-3 gap-2 mt-auto">
                   <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-bold mb-0.5">Jobs</p>
-                    <p className="text-sm font-bold text-white">{stats.total}</p>
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Jobs</p>
+                    <p className="text-sm font-medium text-white">{stats.total}</p>
                   </div>
                   <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-bold mb-0.5">Pending</p>
-                    <p className="text-sm font-bold text-orange-400">{stats.pending}</p>
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Pending</p>
+                    <p className="text-sm font-medium text-orange-400">{stats.pending}</p>
                   </div>
                   <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-bold mb-0.5">Done</p>
-                    <p className="text-sm font-bold text-emerald-400">{stats.done}</p>
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Done</p>
+                    <p className="text-sm font-medium text-emerald-400">{stats.done}</p>
                   </div>
                 </div>
 
@@ -1157,7 +1254,7 @@ export default function EditorPage() {
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-primary transition-colors">
                 <ArrowLeft size={14} className="sm:w-[18px] sm:h-[18px] text-black" />
               </div>
-              <span className="text-[10px] sm:text-xs font-bold text-white tracking-tight opacity-80 group-hover:opacity-100 transition-opacity">Back</span>
+              <span className="text-[10px] sm:text-xs font-medium text-white tracking-tight opacity-80 group-hover:opacity-100 transition-opacity">Back</span>
             </button>
           </div>
         </div>

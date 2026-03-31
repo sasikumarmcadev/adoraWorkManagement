@@ -102,10 +102,10 @@ function DashboardOverview({ salaries, filteredSalaries, workerName, cycleLabel 
 
           <div className="flex-1 min-w-0 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-10 w-full lg:w-auto">
             <div className="text-center lg:text-left transition-all">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
                 Salary <span className="text-primary/50">Performance</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-bold mt-2 opacity-60 leading-none">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-2 opacity-60 leading-none">
                 {cycleLabel} • {workerName !== 'All' ? workerName : 'Adora Workforce Economics'}
               </p>
             </div>
@@ -117,10 +117,10 @@ function DashboardOverview({ salaries, filteredSalaries, workerName, cycleLabel 
               ].map(stat => {
                 return (
                   <div key={stat.label} className="flex flex-col group cursor-default items-center lg:items-start">
-                    <p className="text-[9px] sm:text-[11px] text-muted mb-2 opacity-60 transition-colors group-hover:text-primary tracking-widest font-bold">{stat.label}</p>
+                    <p className="text-[9px] sm:text-[11px] text-muted mb-2 opacity-60 transition-colors group-hover:text-primary tracking-widest font-medium">{stat.label}</p>
                     <div className="flex items-center gap-3">
                       <div className="h-4 sm:h-5 w-1 rounded-full bg-white/5 transition-all group-hover:h-7" style={{ background: stat.value > 0 ? stat.color : '' }} />
-                      <p className={`text-2xl sm:text-4xl font-bold tabular-nums tracking-tighter ${stat.value > 0 ? 'text-white' : 'text-primary/20'}`}>
+                      <p className={`text-2xl sm:text-4xl font-medium tabular-nums tracking-tighter ${stat.value > 0 ? 'text-white' : 'text-primary/20'}`}>
                         ₹{stat.value > 100000 ? (stat.value / 100000).toFixed(1) + 'L' : Number(stat.value).toLocaleString('en-IN')}
                       </p>
                     </div>
@@ -239,7 +239,7 @@ export default function Salary() {
                 <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
                   <Plus size={18} />
                 </div>
-                <span className="text-[12px] font-bold text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Pay Salary</span>
+                <span className="text-[12px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Pay Salary</span>
               </button>
             )}
             <div className="relative flex-1 md:w-48">
@@ -503,7 +503,7 @@ export default function Salary() {
           
           <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-4 border-t border-white/5">
             <button className="flex-1 h-14 rounded-2xl text-[12px] text-muted hover:text-white hover:bg-white/5 transition-all" onClick={() => setIsModalOpen(false)}>Discard</button>
-            <button className="flex-1 h-14 rounded-2xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20" onClick={handleSave}>Execute Payout</button>
+            <button className="flex-1 h-14 rounded-2xl text-[12px] font-medium bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20" onClick={handleSave}>Execute Payout</button>
           </div>
         </div>
       </Modal>

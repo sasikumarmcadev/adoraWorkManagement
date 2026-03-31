@@ -64,7 +64,7 @@ function ClientAvatar({ name, logo, size = "md" }) {
   return (
     <div className={cn(
       sizeClasses[size], 
-      "bg-surface-800 border border-white/5 flex items-center justify-center font-black text-primary flex-shrink-0 shadow-inner relative z-10"
+      "bg-surface-800 border border-white/5 flex items-center justify-center font-medium text-primary flex-shrink-0 shadow-inner relative z-10"
     )}>
       {name?.charAt(0)}
     </div>
@@ -84,7 +84,7 @@ function DashboardOverview({ title, tasks, onExpandSidebar, isSidebarCollapsed, 
     if (active && payload && payload.length) {
       return (
         <div className="bg-black/90  border border-white/10 px-3 py-1.5 rounded-lg shadow-2xl">
-          <p className="text-[10px] font-bold text-white flex items-center gap-2">
+          <p className="text-[10px] font-medium text-white flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: payload[0].payload.color || payload[0].fill }} />
             {`${payload[0].name} : ${payload[0].value}`}
           </p>
@@ -119,14 +119,23 @@ function DashboardOverview({ title, tasks, onExpandSidebar, isSidebarCollapsed, 
               </ResponsiveContainer>
             </div>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-1">
-              <span className="text-2xl sm:text-3xl font-black text-white leading-none tracking-tighter">{total}</span>
-              <span className="text-[7px] sm:text-[8px] text-muted font-bold mt-1 opacity-50 tracking-widest">Assets</span>
+              <span className="text-2xl sm:text-3xl font-medium text-white leading-none tracking-tighter">{total}</span>
+              <span className="text-[7px] sm:text-[8px] text-muted font-medium mt-1 opacity-50 tracking-widest">Assets</span>
             </div>
           </div>
 
           <div className="flex-1 min-w-0 w-full text-center lg:text-left">
-            <div className="mb-6 lg:mb-8 flex flex-col items-center lg:items-start text-center lg:text-left transition-all">
-              <h1 className="text-xl sm:text-2xl lg:text-4xl font-bold text-white tracking-tight truncate w-full px-2 lg:px-0">{title}</h1>
+            <div className="mb-6 lg:mb-8 flex flex-col items-center lg:items-start text-center lg:text-left transition-all relative">
+              {onBack && (
+                <button
+                  onClick={onBack}
+                  className="lg:hidden absolute -top-12 left-0 p-2 text-muted hover:text-white transition-all flex items-center gap-2"
+                >
+                  <ArrowLeft size={16} />
+                  <span className="text-[10px] font-medium tracking-widest">Back</span>
+                </button>
+              )}
+              <h1 className="text-xl sm:text-2xl lg:text-4xl font-medium text-white tracking-tight truncate w-full px-2 lg:px-0">{title}</h1>
               <p className="text-[9px] sm:text-xs text-muted font-medium mt-1 opacity-60 tracking-widest font-mono">Strategic Intelligence Suite</p>
             </div>
 
@@ -135,10 +144,10 @@ function DashboardOverview({ title, tasks, onExpandSidebar, isSidebarCollapsed, 
                 const count = tasks.filter(t => t.status === status).length
                 return (
                   <div key={status} className="flex flex-col group cursor-default min-w-[30%] sm:min-w-[80px]">
-                    <p className="text-[9px] sm:text-[10px] text-muted font-bold mb-1 sm:mb-2 opacity-50 group-hover:text-white transition-colors tracking-[0.05em]">{status}</p>
+                    <p className="text-[9px] sm:text-[10px] text-muted font-medium mb-1 sm:mb-2 opacity-50 group-hover:text-white transition-colors tracking-[0.05em]">{status}</p>
                     <div className="flex items-center justify-center lg:justify-start gap-2 sm:gap-3">
                       <div className="h-4 sm:h-5 w-[2px] rounded-full group-hover:h-8 group-hover:bg-primary transition-all" style={{ background: count > 0 ? STATUS_COLORS_MAP[status] : 'rgba(255,255,255,0.05)' }} />
-                      <p className={`text-lg sm:text-2xl font-black tabular-nums transition-transform ${count > 0 ? 'text-white' : 'text-white/10'}`}>
+                      <p className={`text-lg sm:text-2xl font-medium tabular-nums transition-transform ${count > 0 ? 'text-white' : 'text-white/10'}`}>
                         {count}
                       </p>
                     </div>
@@ -210,7 +219,7 @@ function MultiWorkerSelect({ currentWorkers = '', allWorkers, onUpdate, rowIndex
         left: coords.left
       }}
     >
-      <p className="text-[9px] font-bold text-muted tracking-widest p-2 opacity-40 border-b border-white/5 mb-1.5">Assigned Personnel</p>
+      <p className="text-[9px] font-medium text-muted tracking-widest p-2 opacity-40 border-b border-white/5 mb-1.5">Assigned Personnel</p>
       <div className="max-h-48 overflow-y-auto space-y-0.5 scrollbar-thin scrollbar-thumb-white/10">
         {allWorkers.map(w => {
           const isActive = workerList.includes(w.name)
@@ -219,7 +228,7 @@ function MultiWorkerSelect({ currentWorkers = '', allWorkers, onUpdate, rowIndex
               key={w.id}
               onClick={() => toggleWorker(w.name)}
               className={cn(
-                "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold transition-all",
+                "w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all",
                 isActive ? "bg-primary/10 text-primary" : "text-muted hover:bg-white/5 hover:text-white"
               )}
             >
@@ -240,12 +249,12 @@ function MultiWorkerSelect({ currentWorkers = '', allWorkers, onUpdate, rowIndex
       >
         {workerList.length > 0 ? (
           workerList.map(name => (
-            <span key={name} className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-[9px] font-bold text-primary flex items-center gap-1 group">
+            <span key={name} className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-full text-[9px] font-medium text-primary flex items-center gap-1 group">
               {name}
             </span>
           ))
         ) : (
-          <span className="text-[10px] text-muted/40 font-bold px-2 italic">Unassigned</span>
+          <span className="text-[10px] text-muted/40 font-medium px-2 italic">Unassigned</span>
         )}
         <button className="ml-auto p-1 text-muted hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity">
           <Edit2 size={10} />
@@ -301,14 +310,14 @@ function TaskDetailModal({ task, isOpen, onClose }) {
                 <CheckCircle2 size={24} className={task.contentCheck ? "text-emerald-400" : "text-white/10"} />
              </div>
              <div>
-                <p className="text-[10px] font-bold text-muted tracking-widest opacity-40 mb-1">Content Verification</p>
-                <p className={cn("text-xs font-black tracking-tight", task.contentCheck ? "text-emerald-400" : "text-muted")}>
+                <p className="text-[10px] font-medium text-muted tracking-widest opacity-40 mb-1">Content Verification</p>
+                <p className={cn("text-xs font-medium tracking-tight", task.contentCheck ? "text-emerald-400" : "text-muted")}>
                   {task.contentCheck ? 'Verified & Validated' : 'Awaiting Inspection'}
                 </p>
              </div>
           </div>
           <div className="text-right">
-             <p className="text-[10px] font-bold text-muted tracking-widest opacity-40 mb-1">Asset ID</p>
+             <p className="text-[10px] font-medium text-muted tracking-widest opacity-40 mb-1">Asset ID</p>
              <p className="text-xs font-mono text-white/40">#{task.id?.slice(-8) || 'AUTO-GEN'}</p>
           </div>
         </div>
@@ -316,17 +325,17 @@ function TaskDetailModal({ task, isOpen, onClose }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
           {fields.map((field) => (
             <div key={field.label} className="space-y-1.5">
-              <p className="text-[9px] font-bold text-muted tracking-widest opacity-40">{field.label}</p>
+              <p className="text-[9px] font-medium text-muted tracking-widest opacity-40">{field.label}</p>
               {field.type === 'status' ? (
-                <div className={cn("inline-flex px-3 py-1 rounded-full text-[10px] font-black tracking-widest border", getStatusColor(task.status))}>
+                <div className={cn("inline-flex px-3 py-1 rounded-full text-[10px] font-medium tracking-widest border", getStatusColor(task.status))}>
                   {task.status}
                 </div>
               ) : field.type === 'approval' ? (
-                <div className={cn("inline-flex px-3 py-1 rounded-full text-[10px] font-black tracking-widest border", getApprovalColor(task.clientApproval || 'Approval'))}>
+                <div className={cn("inline-flex px-3 py-1 rounded-full text-[10px] font-medium tracking-widest border", getApprovalColor(task.clientApproval || 'Approval'))}>
                   {task.clientApproval || 'Approval'}
                 </div>
               ) : (
-                <p className={cn("text-sm font-bold tracking-tight", field.color)}>{field.value}</p>
+                <p className={cn("text-sm font-medium tracking-tight", field.color)}>{field.value}</p>
               )}
             </div>
           ))}
@@ -335,7 +344,7 @@ function TaskDetailModal({ task, isOpen, onClose }) {
         <div className="pt-8 flex justify-end">
            <button 
              onClick={onClose}
-             className="px-8 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[10px] font-black text-white tracking-widest transition-all active:scale-95"
+             className="px-8 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[10px] font-medium text-white tracking-widest transition-all active:scale-95"
            >
              Close Intel
            </button>
@@ -378,7 +387,7 @@ function TaskTable({ tasks, workers = [], onAdd, onUpdateTask, deleteTask, searc
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform">
               <Plus size={18} />
             </div>
-            <span className="text-[10px] font-bold text-primary tracking-widest">Initialize</span>
+            <span className="text-[10px] font-medium text-primary tracking-widest">Initialize</span>
           </button>
           
           <div className="relative flex-1 md:flex-initial min-w-[160px]">
@@ -397,7 +406,7 @@ function TaskTable({ tasks, workers = [], onAdd, onUpdateTask, deleteTask, searc
           <div className="p-4 space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {tasks.map(task => (
               <div key={task.id} className="bg-[#0d0d0d] border border-white/5 rounded-2xl p-4 sm:p-6 shadow-2xl group/card relative overflow-hidden transition-all active:scale-[0.98]">
-                <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                   <div className="flex items-center gap-4 min-w-0">
                     <button
                       onClick={() => onUpdateTask(task.id, { ...task, contentCheck: !task.contentCheck, updatedDate: new Date().toISOString().split('T')[0] })}
@@ -411,11 +420,11 @@ function TaskTable({ tasks, workers = [], onAdd, onUpdateTask, deleteTask, searc
                       <CheckCircle2 size={16} className={task.contentCheck ? "text-white" : "text-white/5"} />
                     </button>
                     <div className="min-w-0 cursor-pointer group" onClick={() => onViewDetail(task)}>
-                      <h3 className="text-sm font-bold text-white tracking-tight leading-tight mb-1 group-hover:text-primary transition-colors">{task.task}</h3>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[9px] text-muted font-bold opacity-40 tracking-wider">{formatDate(task.takenDate)}</span>
+                      <h3 className="text-sm font-medium text-white tracking-tight leading-tight mb-1 group-hover:text-primary transition-colors">{task.task}</h3>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-[9px] text-muted font-medium opacity-40 tracking-wider whitespace-nowrap">{formatDate(task.takenDate)}</span>
                         <span className="w-1 h-1 rounded-full bg-white/10" />
-                        <span className="text-[9px] text-primary font-bold opacity-60">{task.category || 'General'}</span>
+                        <span className="text-[9px] text-primary font-medium opacity-60">{task.category || 'General'}</span>
                       </div>
                     </div>
                   </div>
@@ -433,7 +442,7 @@ function TaskTable({ tasks, workers = [], onAdd, onUpdateTask, deleteTask, searc
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 mb-6">
+                <div className="grid grid-cols-2 gap-3 mb-6">
                   <div className="relative">
                     <StatusSelect
                       value={task.status}
@@ -454,15 +463,15 @@ function TaskTable({ tasks, workers = [], onAdd, onUpdateTask, deleteTask, searc
 
                 <div className="flex items-center justify-between pt-5 border-t border-white/5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-[8px] font-black text-primary">
+                    <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-[8px] font-medium text-primary">
                       {task.workerName?.charAt(0) || '?'}
                     </div>
-                    <span className="text-[9px] font-bold text-white/50 truncate max-w-[100px]">{task.workerName || 'Unassigned'}</span>
+                    <span className="text-[9px] font-medium text-white/50 truncate max-w-[100px]">{task.workerName || 'Unassigned'}</span>
                   </div>
                   {task.scheduleDate && (
                     <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 rounded-xl border border-white/5">
                       <CalendarIcon size={10} className="text-primary group-hover:scale-110 transition-transform" />
-                      <span className="text-[9px] font-bold text-muted">{task.scheduleDate}</span>
+                      <span className="text-[9px] font-medium text-muted">{task.scheduleDate}</span>
                     </div>
                   )}
                 </div>
@@ -471,7 +480,7 @@ function TaskTable({ tasks, workers = [], onAdd, onUpdateTask, deleteTask, searc
           </div>
         ) : (
           <table className="w-full text-sm text-left border-separate border-spacing-0 min-w-[1250px] table-fixed overflow-visible">
-            <thead className="text-[10px] text-muted font-bold bg-sidebar border-b border-border tracking-wider px-0">
+            <thead className="text-[10px] text-muted font-medium bg-sidebar border-b border-border tracking-wider px-0">
               <tr>
                 <th className="w-[100px] px-4 py-4 border-r border-border">Taken Date</th>
                 <th className="px-4 py-4 border-r border-border min-w-[180px]">Content</th>
@@ -496,16 +505,16 @@ function TaskTable({ tasks, workers = [], onAdd, onUpdateTask, deleteTask, searc
               ).sort(([a], [b]) => b.localeCompare(a)).map(([date, dayTasks]) => {
                 return dayTasks.map((task, idx) => (
                   <tr key={task.id} className="hover:bg-sidebar transition-colors group">
-                    <td className="px-4 py-4 text-secondary font-bold text-[11px] tabular-nums border-r border-border opacity-70">
+                    <td className="px-4 py-4 text-secondary font-medium text-[11px] tabular-nums border-r border-border opacity-70">
                       {idx === 0 ? formatDate(date) : ''}
                     </td>
                     <td className="px-4 py-4 border-r border-border">
                       <div className="flex items-center gap-3 cursor-pointer group/task" onClick={() => onViewDetail(task)}>
                         <FileText size={14} className="text-muted group-hover/task:text-primary transition-colors opacity-40" />
-                        <span className="text-white font-bold text-xs group-hover/task:text-primary transition-colors">{task.task}</span>
+                        <span className="text-white font-medium text-xs group-hover/task:text-primary transition-colors">{task.task}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-4 border-r border-border text-[11px] font-bold text-red-400 opacity-60 tabular-nums">
+                    <td className="px-4 py-4 border-r border-border text-[11px] font-medium text-red-400 opacity-60 tabular-nums">
                       {task.declineDate || '—'}
                     </td>
                     <td className="px-4 py-4 border-r border-border">
@@ -532,10 +541,10 @@ function TaskTable({ tasks, workers = [], onAdd, onUpdateTask, deleteTask, searc
                         getStatusColor={getApprovalColor}
                       />
                     </td>
-                    <td className="px-4 py-4 border-r border-border text-[11px] font-bold text-muted tabular-nums opacity-60">
+                    <td className="px-4 py-4 border-r border-border text-[11px] font-medium text-muted tabular-nums opacity-60">
                       {task.scheduleDate || '—'}
                     </td>
-                    <td className="px-4 py-4 border-r border-border text-[11px] font-bold text-muted/30 tabular-nums">
+                    <td className="px-4 py-4 border-r border-border text-[11px] font-medium text-muted/30 tabular-nums">
                       {task.updatedDate || '—'}
                     </td>
                     <td className="px-4 py-4 border-r border-border text-center">
@@ -701,7 +710,7 @@ function CalendarView({ tasks, onViewDetail, deleteTask, isSmallScreen }) {
       `}</style>
 
       <div className="p-4 sm:p-5 border-b border-border bg-sidebar flex items-center justify-between">
-        <h2 className="text-[10px] sm:text-xs font-bold text-white flex items-center gap-2">
+        <h2 className="text-[10px] sm:text-xs font-medium text-white flex items-center gap-2">
           <CalendarIcon size={14} className="text-primary" /> Operational Roadmap
         </h2>
       </div>
@@ -717,7 +726,7 @@ function CalendarView({ tasks, onViewDetail, deleteTask, isSmallScreen }) {
           headerToolbar={{
             left: isSmallScreen ? 'prev,next' : 'prev,next today',
             center: 'title',
-            right: isSmallScreen ? '' : 'multiMonthYear,dayGridMonth,dayGridWeek'
+            right: 'multiMonthYear,dayGridMonth,dayGridWeek,dayGridDay'
           }}
           height="auto"
           contentHeight="auto"
@@ -742,20 +751,20 @@ function CalendarView({ tasks, onViewDetail, deleteTask, isSmallScreen }) {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                    <div className={cn("w-1.5 h-1.5 rounded-full", t.contentCheck ? "bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-white/10")} />
-                   <p className="font-bold text-sm text-white truncate group-hover/item:text-primary transition-colors">{t.task}</p>
+                   <p className="font-medium text-sm text-white truncate group-hover/item:text-primary transition-colors">{t.task}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-2">
-                  <span className="text-[9px] text-muted font-bold opacity-60 flex items-center gap-1.5">
+                  <span className="text-[9px] text-muted font-medium opacity-60 flex items-center gap-1.5">
                     <User size={10} className="text-primary/60" /> {t.workerName || 'Unassigned'}
                   </span>
-                  <span className="text-[9px] text-muted font-bold opacity-60 flex items-center gap-1.5">
+                  <span className="text-[9px] text-muted font-medium opacity-60 flex items-center gap-1.5">
                     <CalendarIcon size={10} className="text-primary/60" /> {t.scheduleDate || 'No Schedule'}
                   </span>
                 </div>
               </div>
               <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2 shrink-0">
                 <div className={cn(
-                  "px-3 py-1 rounded-lg text-[9px] font-black tracking-widest text-center border",
+                  "px-3 py-1 rounded-lg text-[9px] font-medium tracking-widest text-center border",
                   t.status === 'Done' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
                     t.status === 'In Progress' ? "bg-blue-500/10 text-blue-500 border-blue-500/20" :
                       "bg-white/5 text-muted border-white/10"
@@ -781,14 +790,14 @@ function ClientListView({ tasks, clients, onSelect }) {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between mb-8 sm:mb-12 border-b border-white/5 pb-8 gap-6 text-center md:text-left">
           <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight">Intelligence Workspace</h1>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-white tracking-tight">Intelligence Workspace</h1>
             <p className="text-[10px] sm:text-xs text-muted mt-2 font-medium opacity-50 tracking-widest font-mono">Select a strategic partner identity to initiate deep-dive analysis</p>
           </div>
           <div className="bg-[#0a0a0a] border border-white/10 px-6 py-3 rounded-2xl flex items-center gap-4 shadow-2xl">
-            <span className="text-white font-black text-xl lg:text-2xl tabular-nums leading-none tracking-tighter">{activeClients.length}</span>
+            <span className="text-white font-medium text-xl lg:text-2xl tabular-nums leading-none tracking-tighter">{activeClients.length}</span>
             <div className="flex flex-col">
-              <span className="text-primary text-[8px] font-black tracking-widest leading-none">Active</span>
-              <span className="text-muted text-[8px] font-bold opacity-40 tracking-widest leading-none mt-1">Partners</span>
+              <span className="text-primary text-[8px] font-medium tracking-widest leading-none">Active</span>
+              <span className="text-muted text-[8px] font-medium opacity-40 tracking-widest leading-none mt-1">Partners</span>
             </div>
           </div>
         </div>
@@ -810,22 +819,22 @@ function ClientListView({ tasks, clients, onSelect }) {
                   <div className="flex items-center gap-4 mb-4 sm:mb-6 relative z-10">
                     <ClientAvatar name={client.name} logo={client.logo} size="md" />
                     <div className="min-w-0">
-                      <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-primary transition-colors truncate tracking-tight">{client.name}</h3>
+                      <h3 className="text-base sm:text-lg font-medium text-white group-hover:text-primary transition-colors truncate tracking-tight">{client.name}</h3>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-auto mb-4 sm:mb-6 relative z-10">
                     <div className="bg-[#111] p-2.5 sm:p-3 rounded-lg border border-white/5">
-                      <p className="text-[8px] sm:text-[9px] text-muted font-bold opacity-30 mb-1">Total Assets</p>
-                      <p className="text-lg sm:text-xl font-bold text-white tabular-nums leading-none">{clientTasks.length}</p>
+                      <p className="text-[8px] sm:text-[9px] text-muted font-medium opacity-30 mb-1">Total Assets</p>
+                      <p className="text-lg sm:text-xl font-medium text-white tabular-nums leading-none">{clientTasks.length}</p>
                     </div>
                     <div className="bg-[#111] p-2.5 sm:p-3 rounded-lg border border-white/5">
-                      <p className="text-[8px] sm:text-[9px] text-muted font-bold opacity-30 mb-1">Completed</p>
-                      <p className="text-lg sm:text-xl font-bold text-emerald-400 tabular-nums leading-none">{doneCount}</p>
+                      <p className="text-[8px] sm:text-[9px] text-muted font-medium opacity-30 mb-1">Completed</p>
+                      <p className="text-lg sm:text-xl font-medium text-emerald-400 tabular-nums leading-none">{doneCount}</p>
                     </div>
                   </div>
 
-                  <div className="pt-5 border-t border-white/5 flex items-center justify-between text-[10px] sm:text-xs font-bold text-muted opacity-60 group-hover:text-white transition-all relative z-10">
+                  <div className="pt-5 border-t border-white/5 flex items-center justify-between text-[10px] sm:text-xs font-medium text-muted opacity-60 group-hover:text-white transition-all relative z-10">
                     <span>View Full Dashboard</span>
                     <Plus size={14} className="group-hover:translate-x-1 group-hover:rotate-90 transition-all duration-300" />
                   </div>
@@ -972,7 +981,7 @@ export default function ClientWorks() {
             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-primary transition-colors">
               <ArrowLeft size={18} className="text-black" />
             </div>
-            <span className="text-[10px] font-black text-white/50 group-hover:text-white transition-opacity tracking-widest">Return to Workspace</span>
+            <span className="text-[10px] font-medium text-white/50 group-hover:text-white transition-opacity tracking-widest">Return to Workspace</span>
           </button>
         </div>
       </div>
@@ -1064,14 +1073,14 @@ export default function ClientWorks() {
               checked={!!formValues.contentCheck}
               onChange={e => setFormValues(prev => ({ ...prev, contentCheck: e.target.checked }))}
             />
-            <label htmlFor="contentCheck" className="text-xs font-bold text-muted cursor-pointer">Mark Content as Verified & Ready</label>
+            <label htmlFor="contentCheck" className="text-xs font-medium text-muted cursor-pointer">Mark Content as Verified & Ready</label>
           </div>
 
           <div className="md:col-span-2 pt-6 flex justify-end gap-3">
-            <button onClick={() => setShowAddModal(false)} className="px-6 py-2 rounded-lg text-sm font-bold text-muted hover:bg-white/5 transition-all">Cancel</button>
+            <button onClick={() => setShowAddModal(false)} className="px-6 py-2 rounded-lg text-sm font-medium text-muted hover:bg-white/5 transition-all">Cancel</button>
             <button
               onClick={handleSave}
-              className="px-8 py-2 rounded-lg text-sm font-bold bg-primary text-black hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+              className="px-8 py-2 rounded-lg text-sm font-medium bg-primary text-black hover:scale-105 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)]"
             >
               {editTask ? 'Update Intelligence' : 'Deploy Asset'}
             </button>

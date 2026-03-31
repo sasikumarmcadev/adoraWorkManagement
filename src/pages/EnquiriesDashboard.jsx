@@ -83,14 +83,14 @@ export default function EnquiriesDashboard() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white truncate tracking-tighter">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white truncate tracking-tighter">
                 Enquiries <span className="text-primary/50">Details</span>
               </h1>
             </div>
             <div className="flex flex-row items-center gap-10">
                <div className="flex flex-col items-center sm:items-end gap-1">
-                  <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-bold leading-none">Live Enquiries</p>
-                  <p className="text-2xl sm:text-4xl font-bold text-white tracking-tighter tabular-nums text-primary">
+                  <p className="text-[9px] sm:text-[11px] text-muted opacity-60 tracking-widest font-medium leading-none">Live Enquiries</p>
+                  <p className="text-2xl sm:text-4xl font-medium text-white tracking-tighter tabular-nums text-primary">
                     {(enquiries?.length || 0).toString().padStart(2, '0')}
                   </p>
                </div>
@@ -122,7 +122,7 @@ export default function EnquiriesDashboard() {
                 <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-primary flex items-center justify-center text-black group-hover:rotate-90 transition-transform duration-500 shadow-lg shadow-primary/20">
                   <Plus size={18} strokeWidth={3} />
                 </div>
-                <span className="text-[11px] sm:text-[13px] font-bold text-white opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap tracking-tight">Add Enquiry</span>
+                <span className="text-[11px] sm:text-[13px] font-medium text-white opacity-90 group-hover:opacity-100 transition-opacity whitespace-nowrap tracking-tight">Add Enquiry</span>
               </button>
             )}
           </div>
@@ -210,14 +210,14 @@ export default function EnquiriesDashboard() {
 
                         <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
                            <div className="space-y-1.5">
-                              <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Communication</p>
+                              <p className="text-[8px] text-muted opacity-40  tracking-widest leading-none">Communication</p>
                               <div className="flex items-center gap-2 text-white text-[12px] tabular-nums truncate">
                                  <Phone size={12} className="text-primary/40 shrink-0" />
                                  <span>{e.phone || 'N/A'}</span>
                               </div>
                            </div>
                            <div className="space-y-1.5 text-right">
-                              <p className="text-[8px] text-muted opacity-40 uppercase tracking-widest leading-none">Status</p>
+                              <p className="text-[8px] text-muted opacity-40  tracking-widest leading-none">Status</p>
                               <div className="w-full max-w-[120px] ml-auto">
                                  <StatusSelect
                                     value={e.status}
@@ -262,7 +262,7 @@ export default function EnquiriesDashboard() {
            
            <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-6 border-t border-white/5">
               <button className="flex-1 h-14 rounded-xl text-[12px] text-muted hover:text-white hover:bg-white/5 transition-all outline-none" onClick={() => setShowModal(false)}>Discard</button>
-              <button className="flex-1 h-14 rounded-xl text-[12px] font-bold bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>
+              <button className="flex-1 h-14 rounded-xl text-[12px] font-medium bg-primary text-black transition-all hover:scale-[1.02] shadow-xl shadow-primary/20 outline-none" onClick={handleSave}>
                  {editItem ? 'Confirm Refinement' : 'Confirm Registration'}
               </button>
            </div>
