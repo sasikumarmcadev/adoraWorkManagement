@@ -82,10 +82,10 @@ export default function InterviewProcess() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate leading-none">
                 Interview <span className="text-primary/50">Process</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none">
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-2 opacity-60 leading-none tracking-widest">
                 Recruitment Registry • Internal Agency Workforce
               </p>
             </div>

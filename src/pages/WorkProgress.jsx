@@ -76,9 +76,12 @@ export default function WorkProgress() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-normal text-white truncate tracking-tighter">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white truncate tracking-tighter leading-none">
                 Work <span className="text-primary/50">Progress</span>
               </h1>
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-2 opacity-60 leading-none tracking-widest">
+                Operational Intelligence • Real-time Task Feed
+              </p>
             </div>
             
             <div className="flex flex-row items-center gap-6 sm:gap-10">

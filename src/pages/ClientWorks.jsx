@@ -135,8 +135,8 @@ function DashboardOverview({ title, tasks, onExpandSidebar, isSidebarCollapsed, 
                   <span className="text-[10px] font-medium tracking-widest">Back</span>
                 </button>
               )}
-              <h1 className="text-xl sm:text-2xl lg:text-4xl font-medium text-white tracking-tight truncate w-full px-2 lg:px-0">{title}</h1>
-              <p className="text-[9px] sm:text-xs text-muted font-medium mt-1 opacity-60 tracking-widest font-mono">Strategic Intelligence Suite</p>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-medium text-white tracking-tighter truncate w-full px-2 lg:px-0 leading-none">{title}</h1>
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-2 opacity-60 tracking-widest">Strategic Intelligence Suite</p>
             </div>
 
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-y-6 sm:gap-x-10 lg:gap-16 w-full mt-4 sm:mt-10">

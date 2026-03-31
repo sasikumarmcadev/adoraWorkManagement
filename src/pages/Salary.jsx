@@ -102,11 +102,11 @@ function DashboardOverview({ salaries, filteredSalaries, workerName, cycleLabel 
 
           <div className="flex-1 min-w-0 flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-10 w-full lg:w-auto">
             <div className="text-center lg:text-left transition-all">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate leading-none">
                 Salary <span className="text-primary/50">Performance</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-2 opacity-60 leading-none">
-                {cycleLabel} • {workerName !== 'All' ? workerName : 'Adora Workforce Economics'}
+              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-2 opacity-60 leading-none tracking-widest">
+                {cycleLabel} • Adora Workforce Economics
               </p>
             </div>
 
