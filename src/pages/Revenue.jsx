@@ -14,7 +14,7 @@ import { Line } from 'recharts'
 const PIE_COLORS = ['#10b981', '#6366f1', '#f59e0b', '#ef4444']
 
 export default function Revenue() {
-  const { payments, stats } = useData()
+  const { payments, stats, clients } = useData()
   const [searchParams, setSearchParams] = useSearchParams()
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1200 : false)
 
@@ -272,85 +272,102 @@ export default function Revenue() {
                    </tr>
                  </thead>
                  <tbody className="divide-y divide-border">
-                   {filteredPayments.map(p => (
-                     <tr key={p.id} className="hover:bg-sidebar transition-all group">
-                       <td className="px-8 py-3 border-r border-border">
-                          <div className="flex items-center gap-3 text-white/50">
-                             <Calendar size={13} className="text-primary/40" />
-                             <span className="text-[12px] font-normal tabular-nums tracking-tight">{formatDate(p.date)}</span>
-                          </div>
-                       </td>
-                       <td className="px-8 py-3 border-r border-border overflow-hidden">
-                          <div className="flex items-center gap-3">
-                             <div className="w-7 h-7 rounded-lg bg-surface-800 flex items-center justify-center text-primary font-normal text-[9px] border border-white/5">
-                                {p.clientName?.split(' ').map(n => n[0]).join('')}
-                             </div>
-                             <span className="text-white text-[13px] tracking-tight truncate" title={p.clientName}>{p.clientName}</span>
-                          </div>
-                       </td>
-                       <td className="px-8 py-3 border-r border-border">
-                          <div className="flex items-center gap-2 text-emerald-400 font-normal tabular-nums text-[13px]">
-                             <IndianRupee size={12} className="opacity-40" />
-                             <span>{formatCurrency(p.amount).replace('₹', '')}</span>
-                          </div>
-                       </td>
-                       <td className="px-8 py-3 border-r border-border text-center">
-                          <div className="flex justify-center">
-                            <span className={cn(
-                              "text-[10px] font-normal px-2.5 py-1 rounded-lg border tracking-wider",
-                              p.status === 'Completed' ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
-                              p.status === 'Pending' ? "text-amber-400 bg-amber-500/10 border-amber-500/20" :
-                              "text-blue-400 bg-blue-500/10 border-blue-500/20"
-                            )}>
-                              {p.status}
-                            </span>
-                          </div>
-                       </td>
-                       <td className="px-8 py-3 text-muted/40 text-[11px] truncate" title={p.note}>{p.note || '—'}</td>
-                     </tr>
-                   ))}
+                   {filteredPayments.map(p => {
+                     const client = clients.find(c => c.name === p.clientName)
+                     return (
+                       <tr key={p.id} className="hover:bg-sidebar transition-all group">
+                         <td className="px-8 py-3 border-r border-border">
+                            <div className="flex items-center gap-3 text-white/50">
+                               <Calendar size={13} className="text-primary/40" />
+                               <span className="text-[12px] font-normal tabular-nums tracking-tight">{formatDate(p.date)}</span>
+                            </div>
+                         </td>
+                         <td className="px-8 py-3 border-r border-border overflow-hidden">
+                            <div className="flex items-center gap-3">
+                               <div className="w-7 h-7 rounded-full bg-surface-800 flex items-center justify-center text-primary font-normal text-[9px] border border-white/5 overflow-hidden">
+                                  {client?.logo ? (
+                                    <img src={client.logo} alt="" className="w-full h-full object-cover" />
+                                  ) : (
+                                    p.clientName?.split(' ').map(n => n[0]).join('')
+                                  )}
+                               </div>
+                               <span className="text-white text-[13px] tracking-tight truncate" title={p.clientName}>{p.clientName}</span>
+                            </div>
+                         </td>
+                         <td className="px-8 py-3 border-r border-border">
+                            <div className="flex items-center gap-2 text-emerald-400 font-normal tabular-nums text-[13px]">
+                               <IndianRupee size={12} className="opacity-40" />
+                               <span>{formatCurrency(p.amount).replace('₹', '')}</span>
+                            </div>
+                         </td>
+                         <td className="px-8 py-3 border-r border-border text-center">
+                            <div className="flex justify-center">
+                              <span className={cn(
+                                "text-[10px] font-normal px-2.5 py-1 rounded-lg border tracking-wider",
+                                p.status === 'Completed' ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" :
+                                p.status === 'Pending' ? "text-amber-400 bg-amber-500/10 border-amber-500/20" :
+                                "text-blue-400 bg-blue-500/10 border-blue-500/20"
+                              )}>
+                                {p.status}
+                              </span>
+                            </div>
+                         </td>
+                         <td className="px-8 py-3 text-muted/40 text-[11px] truncate" title={p.note}>{p.note || '—'}</td>
+                       </tr>
+                     )
+                   })}
                  </tbody>
                </table>
               ) : (
                  <div className="p-4 grid grid-cols-1 gap-4">
-                    {filteredPayments.map(p => (
-                       <div key={p.id} className="group bg-sidebar/30 border border-white/5 rounded-2xl p-6 space-y-5 transition-all duration-500 relative overflow-hidden ring-1 ring-white/5">
-                          <div className="flex items-start justify-between gap-4">
-                             <div className="flex items-center gap-4">
-                                <div className="space-y-1">
-                                   <p className="text-white text-sm tracking-tight leading-tight line-clamp-1">{p.clientName}</p>
-                                   <div className="flex items-center gap-2">
-                                      <span className="text-[9px] text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 tracking-tighter tabular-nums">{formatDate(p.date)}</span>
-                                   </div>
-                                </div>
-                             </div>
-                             <span className={cn(
-                                "text-[9px] font-normal px-2 py-0.5 rounded border tracking-tight",
-                                p.status === 'Completed' ? "text-emerald-400 border-emerald-500/20" :
-                                p.status === 'Pending' ? "text-amber-400 border-amber-500/20" :
-                                "text-blue-400 border-blue-200"
-                             )}>
-                               {p.status}
-                             </span>
-                          </div>
-                          
-                          <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
-                             <div className="space-y-1.5">
-                                <p className="text-[8px] text-muted opacity-40 tracking-widest leading-none">financial stake</p>
-                                <div className="flex items-center gap-2 text-emerald-400 text-lg font-normal tabular-nums tracking-tighter">
-                                   <IndianRupee size={14} className="opacity-40" />
-                                   <span>{formatCurrency(p.amount).replace('₹', '')}</span>
-                                </div>
-                             </div>
-                             {p.note && (
-                             <div className="space-y-1.5 text-right">
-                                <p className="text-[8px] text-muted opacity-40 tracking-widest leading-none">journal memo</p>
-                                <p className="text-[10px] text-muted/60 leading-tight line-clamp-2">“{p.note}”</p>
-                             </div>
-                            )}
-                          </div>
-                       </div>
-                    ))}
+                    {filteredPayments.map(p => {
+                       const client = clients.find(c => c.name === p.clientName)
+                       return (
+                         <div key={p.id} className="group bg-sidebar/30 border border-white/5 rounded-2xl p-6 space-y-5 transition-all duration-500 relative overflow-hidden ring-1 ring-white/5">
+                            <div className="flex items-start justify-between gap-4">
+                               <div className="flex items-center gap-4">
+                                  <div className="w-10 h-10 rounded-full bg-surface-800 flex items-center justify-center text-primary font-normal text-[12px] border border-white/5 overflow-hidden">
+                                     {client?.logo ? (
+                                       <img src={client.logo} alt="" className="w-full h-full object-cover" />
+                                     ) : (
+                                       p.clientName?.split(' ').map(n => n[0]).join('')
+                                     )}
+                                  </div>
+                                  <div className="space-y-1">
+                                     <p className="text-white text-sm tracking-tight leading-tight line-clamp-1">{p.clientName}</p>
+                                     <div className="flex items-center gap-2">
+                                        <span className="text-[9px] text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 tracking-tighter tabular-nums">{formatDate(p.date)}</span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <span className={cn(
+                                  "text-[9px] font-normal px-2 py-0.5 rounded border tracking-tight",
+                                  p.status === 'Completed' ? "text-emerald-400 border-emerald-500/20" :
+                                  p.status === 'Pending' ? "text-amber-400 border-amber-500/20" :
+                                  "text-blue-400 border-blue-200"
+                               )}>
+                                 {p.status}
+                               </span>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/5">
+                               <div className="space-y-1.5">
+                                  <p className="text-[8px] text-muted opacity-40 tracking-widest leading-none">financial stake</p>
+                                  <div className="flex items-center gap-2 text-emerald-400 text-lg font-normal tabular-nums tracking-tighter">
+                                     <IndianRupee size={14} className="opacity-40" />
+                                     <span>{formatCurrency(p.amount).replace('₹', '')}</span>
+                                  </div>
+                               </div>
+                               {p.note && (
+                               <div className="space-y-1.5 text-right">
+                                  <p className="text-[8px] text-muted opacity-40 tracking-widest leading-none">journal memo</p>
+                                  <p className="text-[10px] text-muted/60 leading-tight line-clamp-2">“{p.note}”</p>
+                               </div>
+                              )}
+                            </div>
+                         </div>
+                       )
+                    })}
                  </div>
                )}
               {filteredPayments.length === 0 && (
