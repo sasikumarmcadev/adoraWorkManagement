@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useData } from '../context/DataContext'
 import { formatDate, cn } from '../lib/utils'
 import { Modal, FormField, SearchBar, StatusSelect, CustomSelect } from '../components/ui/index'
-import { Star, CheckCircle2, Bookmark, ArrowLeft } from 'lucide-react'
+import { Star, CheckCircle2, Bookmark, ArrowLeft, Plus, Edit2, Trash2, Move, MoreVertical, Image as ImageIcon, Calendar as CalendarIcon, Target, List, Grid, RefreshCw, ChevronRight, ChevronDown, LayoutList, BarChart3, X, Menu, FileText } from 'lucide-react'
 
 // FullCalendar imports
 import FullCalendar from '@fullcalendar/react'
@@ -248,6 +248,270 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
   )
 }
 
+function DayWiseWorkList({ tasks }) {
+  const now = new Date()
+  const [viewYear, setViewYear] = useState(now.getFullYear())
+  const [viewMonth, setViewMonth] = useState(now.getMonth())
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const workDoneTasks = useMemo(() => {
+    return tasks.filter(task => task.contentCheck === true)
+  }, [tasks])
+
+  const allDatesInMonth = useMemo(() => {
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
+    const dates = []
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(viewYear, viewMonth, d)
+      dates.push(date.toISOString().split('T')[0])
+    }
+    return dates
+  }, [viewYear, viewMonth])
+
+  const groupedByDate = useMemo(() => {
+    const grouped = new Map()
+    workDoneTasks.forEach(task => {
+      const date = task.takenDate || task.scheduleDate || task.updatedDate
+      if (!date) return
+      if (!grouped.has(date)) grouped.set(date, [])
+      grouped.get(date).push(task)
+    })
+    return allDatesInMonth.map(date => ({
+      date,
+      tasks: grouped.get(date) || []
+    }))
+  }, [workDoneTasks, allDatesInMonth])
+
+  const clientColorMap = useMemo(() => {
+    const palette = [
+      { bg: '#DBEAFE', text: '#1E40AF' },
+      { bg: '#DCFCE7', text: '#15803D' },
+      { bg: '#FEF3C7', text: '#92400E' },
+      { bg: '#FCE7F3', text: '#9D174D' },
+      { bg: '#EDE9FE', text: '#5B21B6' },
+      { bg: '#CFFAFE', text: '#155E75' },
+      { bg: '#FFEDD5', text: '#9A3412' },
+      { bg: '#ECFCCB', text: '#3F6212' },
+    ]
+    const map = new Map()
+    let idx = 0
+    workDoneTasks.forEach(task => {
+      if (task.clientName && !map.has(task.clientName)) {
+        map.set(task.clientName, palette[idx % palette.length])
+        idx++
+      }
+    })
+    return map
+  }, [workDoneTasks])
+
+  const getClientColor = (name) =>
+    clientColorMap.get(name) || { bg: '#4B5563', text: '#ffffff' }
+
+  const monthLabel = new Date(viewYear, viewMonth, 1).toLocaleString('default', { month: 'long', year: 'numeric' })
+  const todayStr = now.toISOString().split('T')[0]
+  const isCurrentMonth = viewYear === now.getFullYear() && viewMonth === now.getMonth()
+
+  const monthWorkCount = useMemo(() =>
+    groupedByDate.reduce((acc, g) => acc + g.tasks.length, 0)
+  , [groupedByDate])
+
+  const goToPrev = () => {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) }
+    else setViewMonth(m => m - 1)
+  }
+
+  const goToNext = () => {
+    if (isCurrentMonth) return
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1) }
+    else setViewMonth(m => m + 1)
+  }
+
+  const goToCurrentMonth = () => {
+    setViewYear(now.getFullYear())
+    setViewMonth(now.getMonth())
+  }
+
+  const renderClientBadges = (group) => {
+    const clientGroups = new Map()
+    group.tasks.forEach(task => {
+      if (!clientGroups.has(task.clientName)) clientGroups.set(task.clientName, [])
+      clientGroups.get(task.clientName).push(task)
+    })
+    return Array.from(clientGroups.entries()).map(([clientName]) => {
+      const color = getClientColor(clientName)
+      return (
+        <span
+          key={clientName}
+          className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap"
+          style={{ backgroundColor: color.bg, color: color.text }}
+        >
+          {clientName}
+        </span>
+      )
+    })
+  }
+
+  return (
+    <div className="w-full bg-panel">
+      <div className="px-3 sm:px-4 py-3 bg-sidebar border-b border-border">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex-shrink-0 w-1 h-5 bg-emerald-500 rounded-full" />
+            <h2 className="text-xs sm:text-sm font-semibold text-white tracking-wide truncate">
+              DAY WISE WORK LIST
+            </h2>
+          </div>
+          <div className="flex-shrink-0 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+            <span className="text-[10px] font-medium text-emerald-400 whitespace-nowrap">
+              {monthWorkCount} Completed
+            </span>
+          </div>
+        </div>
+        <p className="text-[10px] text-muted mt-1 ml-3">Work completed tasks grouped by date</p>
+      </div>
+
+      <div className="px-3 sm:px-4 py-2 bg-[#0a0a0a] border-b border-border">
+        <div className="flex items-center justify-between gap-2">
+          <button
+            onClick={goToPrev}
+            className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] font-medium text-muted hover:text-white hover:bg-white/5 border border-white/10 hover:border-white/20 transition-all active:scale-95"
+          >
+            <ArrowLeft size={11} />
+            <span className="hidden sm:inline">Prev</span>
+          </button>
+
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide text-center">
+              {monthLabel}
+            </span>
+            {!isCurrentMonth && (
+              <button
+                onClick={goToCurrentMonth}
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all whitespace-nowrap active:scale-95"
+              >
+                <CalendarIcon size={9} />
+                <span>Today</span>
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={goToNext}
+            disabled={isCurrentMonth}
+            className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] font-medium border transition-all active:scale-95 ${
+              isCurrentMonth
+                ? 'text-muted/20 border-white/5 cursor-not-allowed'
+                : 'text-muted hover:text-white hover:bg-white/5 border-white/10 hover:border-white/20'
+            }`}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ArrowLeft size={11} className="rotate-180" />
+          </button>
+        </div>
+      </div>
+
+      {isMobile ? (
+        <div className="divide-y divide-border/40">
+          {groupedByDate.map((group) => {
+            const isToday = group.date === todayStr
+            if (group.tasks.length === 0) {
+              return (
+                <div key={group.date} className={`flex items-center justify-between px-4 py-3 ${isToday ? 'bg-blue-500/5' : ''}`}>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-medium ${isToday ? 'text-blue-400' : 'text-white/60'}`}>{formatDate(group.date)}</span>
+                    {isToday && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">Today</span>}
+                  </div>
+                  <span className="text-muted/40 text-sm leading-none">—</span>
+                </div>
+              )
+            }
+            return (
+              <div key={group.date} className={`${isToday ? 'bg-blue-500/5' : ''}`}>
+                <div className="flex items-center px-4 py-3 border-b border-white/[0.04]">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-semibold ${isToday ? 'text-blue-400' : 'text-white'}`}>{formatDate(group.date)}</span>
+                    {isToday && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">Today</span>}
+                  </div>
+                </div>
+                <div className="px-4 py-2.5 flex flex-wrap gap-2">{renderClientBadges(group)}</div>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-[10px] text-muted font-semibold bg-[#0a0a0a] border-b border-border">
+              <tr>
+                <th className="px-4 py-2.5 font-medium uppercase tracking-wider w-[140px]">Date</th>
+                <th className="px-4 py-2.5 font-medium uppercase tracking-wider">Category</th>
+                <th className="px-4 py-2.5 font-medium uppercase tracking-wider text-center w-[80px]">Count</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/50">
+              {groupedByDate.map((group) => {
+                const isToday = group.date === todayStr
+                return (
+                  <tr key={group.date} className={`transition-colors ${isToday ? 'bg-blue-500/5' : 'hover:bg-white/[0.02]'}`}>
+                    <td className="px-4 py-2.5 text-xs font-medium align-middle w-[140px]">
+                      <div className="flex items-center gap-2">
+                        <span className={isToday ? 'text-blue-400 font-semibold' : 'text-white'}>{formatDate(group.date)}</span>
+                        {isToday && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">Today</span>}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2.5 align-middle">
+                      <div className="flex flex-wrap gap-2">
+                        {group.tasks.length === 0 ? <span className="text-muted/40 text-xs">—</span> : renderClientBadges(group)}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2.5 text-center align-middle">
+                      <span className={cn("inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full border text-[10px] font-semibold", group.tasks.length > 0 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-white/5 border-white/10 text-muted/40")}>
+                        {group.tasks.length}
+                      </span>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function IncentiveCard() {
+  return (
+    <div className="h-full flex flex-col gap-3 sm:gap-4 p-4 sm:p-5 bg-panel">
+      <div className="flex items-center gap-2">
+        <Target size={16} className="sm:w-[18px] sm:h-[18px] text-emerald-400" />
+        <h3 className="font-medium text-base sm:text-lg text-white">Worker Incentive</h3>
+      </div>
+
+      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3 sm:p-4">
+        <h4 className="text-emerald-400 font-medium mb-1 text-sm sm:text-base">Target Met</h4>
+        <p className="text-emerald-300 text-[10px] sm:text-xs font-medium">Achieved = +1000 Bonus Payment</p>
+      </div>
+
+      <div className="bg-surface-800/30 p-3 sm:p-4 rounded-lg border border-border flex-1">
+        <p className="text-[10px] sm:text-xs text-muted mb-2 sm:mb-3 font-medium uppercase tracking-wider">Evaluation Metrics</p>
+        <ul className="space-y-2 sm:space-y-3 text-[11px] sm:text-xs text-gray-300">
+          <li className="flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" /> Task Specific Code Reviews</li>
+          <li className="flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" /> Sprint Timeline Adherence</li>
+          <li className="flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" /> UI/UX Implementation Precision</li>
+          <li className="flex items-center gap-2.5"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500/50" /> System Optimization & Stability</li>
+        </ul>
+      </div>
+    </div>
+  )
+}
+
 function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, statusFilter, setStatusFilter, activeFilter, setActiveFilter, onIncentiveClick }) {
   const stats = useMemo(() => ({
     total: tasks.length,
@@ -278,24 +542,24 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
     <div className="flex-1 flex flex-col h-full overflow-hidden p-0 bg-panel">
       {/* Task Stats Row */}
       <div className="px-4 py-3 bg-[#050505] border-b border-white/5 overflow-x-auto scrollbar-none">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 min-w-[400px]">
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+        <div className="flex sm:grid sm:grid-cols-5 gap-2 min-w-max sm:min-w-0">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-muted font-medium tracking-tighter">Total</p>
             <p className="text-sm font-medium text-white leading-none mt-1">{stats.total}</p>
           </div>
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-emerald-500/60 font-medium tracking-tighter">Completed</p>
             <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.done}</p>
           </div>
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-blue-500/60 font-medium tracking-tighter">In Progress</p>
             <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.progress}</p>
           </div>
-          <div className="bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
             <p className="text-[10px] text-emerald-400/60 font-medium tracking-tighter">Work Done</p>
             <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.workDone}</p>
           </div>
-          <div className="bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
             <p className="text-[10px] text-blue-400/60 font-medium tracking-tighter">Incentives</p>
             <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.incentives}</p>
           </div>
@@ -402,6 +666,18 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                             <div className={cn("w-1 h-1 rounded-full bg-white", task.contentCheck ? "scale-100" : "scale-0")} />
                           </button>
                         </div>
+                        <div className="flex flex-col items-center">
+                          <span className="opacity-40  font-medium text-[8px]">Incentive</span>
+                          <button
+                            onClick={() => onIncentiveClick(task)}
+                            className={cn(
+                              "w-4 h-4 rounded-full border flex items-center justify-center transition-all mt-1",
+                              task.incentiveCheck ? "text-blue-400 border-blue-400 bg-blue-400/10" : "border-white/10"
+                            )}
+                          >
+                            <Star size={8} fill={task.incentiveCheck ? "currentColor" : "none"} />
+                          </button>
+                        </div>
                       </div>
                       <div className="flex gap-1">
                         <button
@@ -435,6 +711,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                 <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium text-center">Approval</th>
                 <th className="px-4 py-3 font-medium text-center">Work Done</th>
+                <th className="px-4 py-3 font-medium text-center">Evaluation</th>
                 <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
@@ -509,6 +786,21 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                           </button>
                         </div>
                       </td>
+                      <td className="px-4 py-4 text-center border-r border-border">
+                        <div className="flex justify-center">
+                          <button
+                            onClick={() => onIncentiveClick(task)}
+                            className={cn(
+                              "p-2 rounded-full transition-all duration-300 cursor-pointer active:scale-90",
+                              task.incentiveCheck
+                                ? "text-blue-400 bg-blue-400/10"
+                                : "text-muted hover:text-blue-400 hover:bg-white/5"
+                            )}
+                          >
+                            <Star size={16} fill={task.incentiveCheck ? "currentColor" : "none"} />
+                          </button>
+                        </div>
+                      </td>
                       <td className="px-4 py-4 text-right">
                         <div className="flex items-center gap-1 justify-end">
                           <button onClick={() => onAdd(task)} className="p-1.5 text-muted hover:text-white hover:bg-white/5 rounded transition-all"><Plus size={14} /></button>
@@ -534,156 +826,153 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
   )
 }
 
-function IncentiveModal({ isOpen, onClose, onSave, task }) {
-  const [scores, setScores] = useState({
-    speed: '',
-    quality: '',
-    creativity: '',
-    deadline: ''
-  })
+function IncentiveModal({ isOpen, onClose, onSave, task, isReadOnly }) {
+  const { evaluationCriteria } = useData()
+  const role = task?.workerRole || 'Software Developer'
+  const criteria = evaluationCriteria[role] || evaluationCriteria['Software Developer'] || []
+  
+  const [scores, setScores] = useState({})
   const [note, setNote] = useState('')
 
   useEffect(() => {
-    if (task) {
-      setScores({
-        speed: (task.evaluationScores?.speed || '').toString(),
-        quality: (task.evaluationScores?.quality || '').toString(),
-        creativity: (task.evaluationScores?.creativity || '').toString(),
-        deadline: (task.evaluationScores?.deadline || '').toString()
+    if (task && criteria.length > 0) {
+      const initialScores = {}
+      criteria.forEach(c => {
+        initialScores[c.id] = (task.evaluationScores?.[c.id] || '').toString()
       })
+      setScores(initialScores)
       setNote(task.performanceNote || '')
-    } else {
-      setScores({ speed: '', quality: '', creativity: '', deadline: '' })
-      setNote('')
     }
-  }, [task, isOpen])
+  }, [task, isOpen, criteria])
 
-  const totalMark = useMemo(() => {
-    return Object.values(scores).reduce((acc, val) => acc + (parseInt(val) || 0), 0)
-  }, [scores])
+  const totalMark = useMemo(() =>
+    Object.values(scores).reduce((acc, v) => acc + (parseInt(v) || 0), 0)
+  , [scores])
 
   const performanceCategory = useMemo(() => {
-    if (totalMark >= 90) return { label: 'Top Performer', color: 'text-emerald-400', bg: 'bg-emerald-400/10', bonus: 'Full BonusEligible' }
-    if (totalMark >= 75) return { label: 'Good', color: 'text-blue-400', bg: 'bg-blue-400/10', bonus: 'Partial Bonus' }
-    if (totalMark >= 60) return { label: 'Needs Improvement', color: 'text-orange-400', bg: 'bg-orange-400/10', bonus: 'No Bonus' }
-    return { label: 'Poor Performance', color: 'text-red-400', bg: 'bg-red-400/10', bonus: 'No Bonus' }
+    if (totalMark >= 90) return { label: 'Top Performer', color: '#10b981', bg: 'rgba(16,185,129,0.1)', bonus: 'Eligible for Full Bonus' }
+    if (totalMark >= 75) return { label: 'Good', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)', bonus: 'Eligible for Partial Bonus' }
+    if (totalMark >= 60) return { label: 'Average', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', bonus: 'No Bonus' }
+    return { label: 'Needs Improvement', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', bonus: 'No Bonus' }
   }, [totalMark])
 
-  const autoStars = Math.min(5, Math.ceil(totalMark / 20))
+  const handleScoreChange = (id, val, max) => {
+    const num = parseInt(val)
+    if (val === '' || (num >= 0 && num <= max)) {
+      setScores(prev => ({ ...prev, [id]: val }))
+    }
+  }
 
-  const handleSave = () => {
-    onSave({
+  const handleFinalize = () => {
+    const finalScores = {}
+    criteria.forEach(c => {
+      finalScores[c.id] = parseInt(scores[c.id]) || 0
+    })
+    
+    onSave(task.id, {
       ...task,
-      performanceRating: autoStars,
-      incentivePoints: totalMark,
-      performanceNote: note,
       incentiveCheck: true,
-      contentCheck: false,
-      evaluationScores: {
-        speed: parseInt(scores.speed) || 0,
-        quality: parseInt(scores.quality) || 0,
-        creativity: parseInt(scores.creativity) || 0,
-        deadline: parseInt(scores.deadline) || 0
-      },
+      incentivePoints: totalMark,
+      performanceRating: Math.min(5, Math.ceil(totalMark / 20)),
+      performanceNote: note,
+      evaluationScores: finalScores,
       updatedDate: new Date().toISOString().split('T')[0]
     })
     onClose()
   }
 
-  const handleScoreChange = (key, value, max) => {
-    const val = parseInt(value)
-    if (value === '' || (val >= 0 && val <= max)) {
-      setScores(prev => ({ ...prev, [key]: value }))
-    }
-  }
-
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Developer Performance Evaluation" size="md">
-      <div className="space-y-6 mt-4">
-        <div className="bg-[#050505] p-3.5 rounded-xl border border-white/5 flex items-center justify-between">
-          <div className="min-w-0">
-            <p className="text-[9px] text-muted uppercase tracking-widest font-bold mb-0.5 opacity-50">Target Sprint/Project</p>
-            <p className="text-sm font-semibold text-white truncate">{task?.clientName}</p>
+    <Modal isOpen={isOpen} onClose={onClose} title="Performance Evaluation" size="md">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16 }}>
+        {/* Task Context */}
+        <div style={{ background: '#050505', padding: '14px 18px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'between', gap: 12 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 12, fontWeight: 500, color: '#fff', margin: 0 }}>{task?.clientName}</p>
+            <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', margin: 0 }}>{task?.task} · {role}</p>
           </div>
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold uppercase">Software</span>
-          </div>
+          <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 20, background: 'rgba(59,130,246,0.1)', border: '0.5px solid rgba(59,130,246,0.25)', color: '#60a5fa', fontWeight: 500, letterSpacing: '0.04em', flexShrink: 0 }}>
+            {task?.status}
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-2">
-          <div className="flex items-center justify-between text-[10px] text-muted uppercase tracking-widest mb-1 px-1">
-            <span>Criteria Question</span>
-            <span>Marks / Max</span>
+        {/* Evaluation Metrics */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 4px' }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Performance Indicator</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Score</span>
           </div>
 
-          <div className="space-y-2">
-            {[
-              { id: 'speed', label: 'Feature Delivery & Execution', max: 25 },
-              { id: 'quality', label: 'Code Quality (Bug-Free)', max: 25 },
-              { id: 'creativity', label: 'Architecture & Scalability', max: 25 },
-              { id: 'deadline', label: 'Sprint Discipline (On Time)', max: 25 }
-            ].map((c) => (
-              <div key={c.id} className="flex items-center gap-4 bg-sidebar/30 p-3 rounded-lg border border-white/[0.03]">
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-white/90">{c.label}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {criteria.map((c) => (
+              <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(255,255,255,0.02)', padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.03)' }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.9)', margin: 0 }}>{c.label}</p>
+                  <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', margin: '2px 0 0 0' }}>{c.sub}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <input
                     type="number"
-                    className="w-16 h-[34px] bg-[#0a0a0a] border border-white/10 rounded-md text-center text-sm font-bold text-blue-400 focus:border-blue-500/50 outline-none transition-all"
-                    placeholder="0"
-                    value={scores[c.id]}
+                    disabled={isReadOnly}
+                    value={scores[c.id] || ''}
                     onChange={(e) => handleScoreChange(c.id, e.target.value, c.max)}
+                    placeholder="0"
+                    style={{ width: 60, height: 34, background: '#000', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, textAlign: 'center', color: '#3b82f6', fontWeight: 700, fontSize: 14, outline: 'none' }}
                   />
-                  <span className="text-[10px] text-muted font-bold w-6">/{c.max}</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.2)', width: 24 }}>/{c.max}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-[#050505] p-5 rounded-2xl border border-white/5 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-2 h-full bg-blue-500/20" />
-
-          <div className="grid grid-cols-2 gap-8 items-center">
-            <div className="text-center sm:text-left">
-              <p className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1 opacity-50">Total Performance Score</p>
-              <div className="flex items-end gap-1 justify-center sm:justify-start">
-                <span className="text-4xl font-bold text-white leading-none">{totalMark}</span>
-                <span className="text-sm font-bold text-muted mb-1">/ 100</span>
+        {/* Summary Card */}
+        <div style={{ background: '#050505', padding: 20, borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'center' }}>
+            <div>
+              <p style={{ fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 4px 0' }}>Aggregate Points</p>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                <span style={{ fontSize: 36, fontWeight: 800, color: '#fff' }}>{totalMark}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.2)' }}>/ 100</span>
               </div>
             </div>
-
-            <div className={`p-4 rounded-xl ${performanceCategory.bg} border border-white/5 text-center`}>
-              <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${performanceCategory.color}`}>{performanceCategory.label}</p>
-              <p className="text-xs font-bold text-white">{performanceCategory.bonus}</p>
-              <div className="flex justify-center mt-2.5 gap-0.5">
-                {[1, 2, 3, 4, 5].map(s => (
-                  <Star key={s} size={10} fill={s <= autoStars ? "currentColor" : "none"} className={s <= autoStars ? performanceCategory.color : "text-white/10"} />
+            <div style={{ background: performanceCategory.bg, borderRadius: 12, padding: 12, textAlign: 'center', border: '1px solid rgba(255,255,255,0.03)' }}>
+              <p style={{ fontSize: 10, fontWeight: 800, color: performanceCategory.color, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 2px 0' }}>{performanceCategory.label}</p>
+              <p style={{ fontSize: 11, fontWeight: 600, color: '#fff', opacity: 0.8, margin: 0 }}>{performanceCategory.bonus}</p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 2, marginTop: 8 }}>
+                {[1, 2, 3, 4, 5].map(star => (
+                   <Star key={star} size={10} fill={star <= Math.ceil(totalMark / 20) ? performanceCategory.color : 'transparent'} stroke={star <= Math.ceil(totalMark / 20) ? performanceCategory.color : 'rgba(255,255,255,0.1)'} />
                 ))}
               </div>
             </div>
           </div>
         </div>
 
-        <FormField label="Internal Performance Review Note (Optional)">
-          <textarea
-            className="input min-h-[80px] py-3 h-auto resize-none bg-[#0a0a0a]/50 text-xs"
-            placeholder="Document any technical challenges or wins..."
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-          />
-        </FormField>
+        {!isReadOnly && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '0 4px' }}>Review Note</p>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Add internal feedback or observations..."
+              style={{ width: '100%', minHeight: 80, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: 12, color: '#fff', fontSize: 12, resize: 'none', outline: 'none' }}
+            />
+          </div>
+        )}
 
-        <div className="pt-2">
-          <button
-            disabled={totalMark === 0}
-            onClick={handleSave}
-            className="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-3 active:scale-95"
-          >
-            <CheckCircle2 size={16} />
-            Finalize Evaluation
+        <div style={{ display: 'flex', gap: 12, paddingTop: 8 }}>
+          <button onClick={onClose} style={{ flex: 1, height: 44, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+            {isReadOnly ? 'Close Report' : 'Cancel'}
           </button>
+          {!isReadOnly && (
+            <button
+              onClick={handleFinalize}
+              disabled={totalMark === 0}
+              style={{ flex: 2, height: 44, background: '#3b82f6', border: 'none', borderRadius: 10, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: totalMark === 0 ? 0.5 : 1 }}
+            >
+              <CheckCircle2 size={14} />
+              Finalize Assessment
+            </button>
+          )}
         </div>
       </div>
     </Modal>
@@ -800,51 +1089,115 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
   )
 }
 
+// --- PERFORMANCE EVALUATION SUMMARY POPUP ---
+function PerformanceEvaluationModal({ isOpen, onClose, date, tasks }) {
+  const dayIncentiveTasks = tasks.filter(t => t.incentiveCheck && (t.takenDate || t.scheduleDate || t.updatedDate) === date)
+  const totalPoints = dayIncentiveTasks.reduce((acc, t) => acc + (parseFloat(t.incentivePoints) || 1), 0)
 
-function CalendarView({ tasks, deleteTask }) {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Daily Performance" size="sm">
+      <div className="space-y-6">
+        <div className="bg-panel rounded-2xl p-8 text-center border border-border shadow-2xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-primary/5 blur-3xl opacity-30" />
+          <div className="relative z-10">
+            <p className="text-[10px] text-muted uppercase tracking-[0.2em] mb-4 font-semibold">Aggregate Incentive</p>
+            <div className="text-8xl font-black text-white leading-none tracking-tighter mb-2 animate-in zoom-in duration-500">
+              {totalPoints}
+            </div>
+            <div className="h-1.5 w-12 bg-white/20 mx-auto rounded-full mb-4" />
+            <p className="text-xs text-muted font-medium italic">{date ? formatDate(date) : ""}</p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h4 className="text-[10px] font-bold text-muted uppercase tracking-widest">Mark Details</h4>
+            <span className="text-[9px] text-muted-foreground/60 italic font-medium">Click to restricted view</span>
+          </div>
+          <div className="bg-panel border border-border rounded-xl divide-y divide-white/5 overflow-hidden">
+            {dayIncentiveTasks.length > 0 ? dayIncentiveTasks.map((t, idx) => (
+              <button 
+                key={idx} 
+                onClick={() => {
+                  onClose();
+                  if (typeof window !== 'undefined' && window.__onTaskClick) window.__onTaskClick(t);
+                }}
+                className="w-full text-left p-4 flex items-start gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] transition-all group"
+              >
+                <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-white truncate">{t.clientName}</p>
+                  <p className="text-[10px] text-muted truncate mt-0.5">{t.task}</p>
+                </div>
+                <div className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                  +{parseFloat(t.incentivePoints) || 1.0}
+                </div>
+              </button>
+            )) : (
+              <div className="p-8 text-center text-muted text-xs italic">
+                No evaluation marks found for this date.
+              </div>
+            )}
+          </div>
+        </div>
+
+        <button 
+          onClick={onClose}
+          className="w-full py-4 bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-xl text-xs font-bold text-white tracking-[0.3em] uppercase transition-all active:scale-95"
+        >
+          Dismiss View
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+function CalendarView({ tasks, deleteTask, onTaskClick }) {
   const { desktopCollapsed } = useData()
   const calendarRef = useRef(null)
   const containerRef = useRef(null)
-  const [selectedTasks, setSelectedTasks] = useState(null)
+  const [showEvalModal, setShowEvalModal] = useState(false)
+  const [evalDate, setEvalDate] = useState('')
+  
   const events = useMemo(() => {
-    // Group tasks by Date + ClientName to show only one entry per client per day in calendar
-    const grouped = [...tasks].reduce((acc, t) => {
+    const grouped = tasks.reduce((acc, t) => {
       const date = t.takenDate || t.scheduleDate || t.updatedDate;
-      const type = t.contentCheck ? 'work' : 'done';
-      const key = `${date}-${t.clientName}-${type}`;
-      if (!acc[key]) {
-        acc[key] = { ...t, date, count: 1, allCompleted: t.contentCheck };
-      } else {
-        acc[key].count++;
-        acc[key].allCompleted = acc[key].allCompleted || t.contentCheck;
-      }
+      if (!acc[date]) acc[date] = { count: 0, incentives: 0 };
+      if (t.incentiveCheck) acc[date].incentives += (parseFloat(t.incentivePoints) || 1);
+      acc[date].count++;
       return acc;
     }, {});
 
-    return Object.values(grouped).map(t => ({
-      id: t.id,
-      title: (t.allCompleted ? `WORK: ${t.clientName}` : `DONE: ${t.clientName}`) + ` (${t.count})`,
-      date: t.date,
-      extendedProps: { ...t },
-      backgroundColor: t.allCompleted ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.08)',
-      textColor: t.allCompleted ? '#34d399' : '#a1a1aa',
-      borderColor: t.allCompleted ? 'rgba(16, 185, 129, 0.6)' : 'rgba(255, 255, 255, 0.2)'
+    return Object.entries(grouped).map(([date, data]) => ({
+      id: date,
+      title: data.incentives > 0 ? data.incentives.toString() : "",
+      date: date,
+      extendedProps: { incentives: data.incentives, total: data.count }
     }));
   }, [tasks])
 
   const handleDateClick = (arg) => {
-    const api = calendarRef.current?.getApi()
-    if (api && api.view.type === 'multiMonthYear') {
-      api.changeView('dayGridMonth', arg.date)
-      return
+    const dayTasks = tasks.filter(t => t.incentiveCheck && (t.takenDate || t.scheduleDate || t.updatedDate) === arg.dateStr)
+    if (dayTasks.length === 1) {
+      if (onTaskClick) onTaskClick(dayTasks[0])
+    } else if (dayTasks.length > 1) {
+      setEvalDate(arg.dateStr)
+      setShowEvalModal(true)
     }
+  }
 
-    const dayTasks = tasks.filter(t => (t.takenDate || t.scheduleDate || t.updatedDate) === arg.dateStr)
-    if (dayTasks.length > 0) {
-      setSelectedTasks({ date: arg.dateStr, tasks: dayTasks })
-    } else {
-      setSelectedTasks(null)
-    }
+  const renderEventContent = (eventInfo) => {
+    const pts = parseInt(eventInfo.event.title)
+    if (!pts || isNaN(pts)) return null
+    return (
+      <div className="w-full h-full flex items-center justify-center py-2 group">
+        <span className="text-2xl sm:text-3xl font-black text-white/20 hover:text-white transition-colors cursor-pointer select-none">
+          {pts}
+        </span>
+      </div>
+    )
   }
 
   useEffect(() => {
@@ -870,14 +1223,15 @@ function CalendarView({ tasks, deleteTask }) {
   return (
     <div id="calendar-view" className="w-full flex-1 p-0 overflow-hidden flex flex-col bg-panel">
       <style>{`
-        .fc-theme-standard td, .fc-theme-standard th { border-color: var(--border) !important; }
-        .fc-scrollgrid { border-color: var(--border) !important; border-radius: 0.25rem !important; }
-        .fc-theme-standard .fc-scrollgrid { border: none !important; }
-        .fc-header-toolbar { margin: 0.75rem !important; flex-wrap: wrap; gap: 0.5rem; }
-        .fc-button-primary { background-color: var(--bg-card) !important; border-color: var(--border) !important; color: var(--text-primary) !important; text-transform: capitalize !important; border-radius: 0.25rem !important; padding: 0.3rem 0.5rem !important; font-size: 0.7rem !important; }
-        .fc-button-primary:hover { background-color: var(--border) !important; }
-        .fc-button-active { background-color: var(--text-primary) !important; color: var(--bg-primary) !important; }
-        .fc-day-today { background-color: rgba(255, 255, 255, 0.05) !important; }
+        .fc { background: transparent !important; }
+        .fc-theme-standard td, .fc-theme-standard th { border: none !important; }
+        .fc-col-header-cell { background: #080808 !important; font-size: 10px !important; font-weight: 500 !important; color: rgba(255,255,255,0.3) !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; padding: 12px 0 !important; border: none !important; }
+        .fc-header-toolbar { margin: 0 !important; padding: 1.25rem !important; border: none !important; background: #050505 !important; }
+        .fc-toolbar-title { color: #fff !important; font-size: 13px !important; font-weight: 600 !important; letter-spacing: 0.05em; }
+        .fc-button-primary { background: #0c0c0c !important; border: 1px solid rgba(255,255,255,0.08) !important; color: #fff !important; text-transform: capitalize !important; border-radius: 99px !important; padding: 5px 14px !important; font-size: 10px !important; font-weight: 600 !important; transition: all 0.2s !important; }
+        .fc-button-primary:hover { border-color: rgba(255,255,255,0.2) !important; background: #111 !important; }
+        .fc-button-active { background: #fff !important; color: #000 !important; border-color: #fff !important; }
+        .fc-day-today { background: rgba(255, 255, 255, 0.02) !important; }
         .fc-event { 
           border-radius: 9999px !important; 
           font-size: 8px !important; 
@@ -922,59 +1276,39 @@ function CalendarView({ tasks, deleteTask }) {
       `}</style>
 
       <div className="p-3 sm:p-5 border-b border-border bg-sidebar">
-        <h2 className="text-base sm:text-lg font-medium text-primary">Development Roadmap</h2>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-base sm:text-lg font-medium text-white flex items-center gap-2">
+              <Star size={18} className="text-white/40" />
+              Performance Calendar
+            </h2>
+            <p className="text-[10px] text-muted mt-0.5 uppercase tracking-widest">Total incentive points per day</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+            <span className="text-[10px] font-bold text-white/40 tracking-widest uppercase">Score Tracker</span>
+          </div>
+        </div>
       </div>
 
-      <div ref={containerRef} className="p-0 bg-panel flex-1 overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <div ref={containerRef} className="p-0 bg-panel flex-1 overflow-auto scrollbar-none">
         <FullCalendar
           ref={calendarRef}
-          plugins={[dayGridPlugin, interactionPlugin, multiMonthPlugin]}
-          initialView={window.innerWidth < 640 ? 'dayGridWeek' : 'dayGridMonth'}
-          initialDate={new Date().toISOString().split('T')[0]}
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
           events={events}
           dateClick={handleDateClick}
-          headerToolbar={{
-            left: window.innerWidth < 640 ? 'prev,next' : 'prev,next today',
-            center: 'title',
-            right: window.innerWidth < 640 ? 'today' : 'multiMonthYear,dayGridMonth,dayGridWeek'
-          }}
+          eventContent={renderEventContent}
+          headerToolbar={{ left: 'prev,next', center: 'title', right: 'today' }}
           height="auto"
-          contentHeight="auto"
-          handleWindowResize={true}
-          expandRows={true}
-          eventDisplay="block"
-          viewClassNames={window.innerWidth < 1200 ? "mobile-calendar" : ""}
         />
       </div>
 
-      <Modal isOpen={!!selectedTasks} onClose={() => setSelectedTasks(null)} title={`Tasks for ${selectedTasks?.date}`} size="md">
-        <div className="space-y-2 mt-4">
-          {selectedTasks?.tasks.map(t => (
-            <div key={t.id} className="p-3 border border-border rounded-md bg-sidebar flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col gap-1">
-                  <p className="font-medium text-sm text-white truncate">{t.clientName}</p>
-                  <p className="text-xs text-muted truncate max-w-[200px]">{t.task}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                <div className="flex flex-col items-end gap-1.5">
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-[#222] text-primary self-end">{t.status}</span>
-                  <div className="flex gap-1">
-                    {t.contentCheck && <span className="text-[8px] font-medium px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">WORK DONE</span>}
-                  </div>
-                </div>
-                <button
-                  onClick={() => { if (confirm('Decommission this asset?')) { deleteTask(t.id); setSelectedTasks(prev => ({ ...prev, tasks: prev.tasks.filter(x => x.id !== t.id) })); } }}
-                  className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-full transition-all"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Modal>
+      <PerformanceEvaluationModal
+        isOpen={showEvalModal}
+        onClose={() => setShowEvalModal(false)}
+        date={evalDate}
+        tasks={tasks}
+      />
     </div>
   )
 }
@@ -982,6 +1316,7 @@ function CalendarView({ tasks, deleteTask }) {
 function SoftwareDeveloperListView({ tasks, onSelect }) {
   const { workers } = useData()
   const [searchDev, setSearchDev] = useState('')
+  const today = new Date().toISOString().split('T')[0]
 
   const developers = useMemo(() => {
     const names = Array.from(new Set(workers.filter(w => w.role === 'Software Developer').map(w => w.name)))
@@ -994,6 +1329,16 @@ function SoftwareDeveloperListView({ tasks, onSelect }) {
       return a.localeCompare(b)
     })
   }, [workers, searchDev])
+
+  const getDeveloperStats = useCallback((name) => {
+    // Filter only today's tasks for this developer
+    const devTasks = tasks.filter(t => t.workerName === name && t.takenDate === today)
+    const doneCount = devTasks.filter(t => t.status === 'Done').length
+    const pendingCount = devTasks.filter(t => t.status !== 'Done').length
+    const totalCount = devTasks.length
+
+    return { total: totalCount, done: doneCount, pending: pendingCount }
+  }, [tasks, today])
 
   return (
     <div className="flex-1 p-4 sm:p-8 overflow-y-auto">
@@ -1015,12 +1360,8 @@ function SoftwareDeveloperListView({ tasks, onSelect }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {developers.map(name => {
-            const developerTasks = tasks.filter(t => t.workerName === name && t.workerRole === 'Software Developer')
-            const stats = {
-              total: developerTasks.length,
-              pending: developerTasks.filter(t => t.status !== 'Done').length,
-              done: developerTasks.filter(t => t.status === 'Done').length
-            }
+            const stats = getDeveloperStats(name)
+            const developerInfo = workers.find(w => w.name === name)
 
             return (
               <button
@@ -1030,19 +1371,24 @@ function SoftwareDeveloperListView({ tasks, onSelect }) {
               >
                 <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-medium text-base sm:text-lg overflow-hidden group-hover:scale-110 transition-transform">
-                    {workers.find(w => w.name === name)?.avatar?.startsWith('http') ? (
-                      <img src={workers.find(w => w.name === name).avatar} alt={name} className="w-full h-full object-cover" />
+                    {developerInfo?.avatar?.startsWith('http') ? (
+                      <img src={developerInfo.avatar} alt={name} className="w-full h-full object-cover" />
                     ) : (
-                      name.charAt(0)
+                      name.charAt(0).toUpperCase()
                     )}
                   </div>
                   <div>
                     <h3 className="text-base sm:text-lg font-medium text-white group-hover:text-primary transition-colors">{name}</h3>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-1">
                       <p className="text-[9px] sm:text-[10px] text-muted tracking-widest font-medium">Software Engineer</p>
-                      {workers.find(w => w.name === name)?.level && (
+                      {developerInfo?.isTeamLead && (
                         <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-medium">
-                          {workers.find(w => w.name === name).level}
+                          Team Lead
+                        </span>
+                      )}
+                      {developerInfo?.level && !developerInfo?.isTeamLead && (
+                        <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-medium">
+                          {developerInfo.level}
                         </span>
                       )}
                     </div>
@@ -1051,7 +1397,7 @@ function SoftwareDeveloperListView({ tasks, onSelect }) {
 
                 <div className="grid grid-cols-3 gap-2 mt-auto">
                   <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-medium mb-0.5">Projects</p>
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Jobs</p>
                     <p className="text-sm font-medium text-white">{stats.total}</p>
                   </div>
                   <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
@@ -1090,7 +1436,14 @@ export default function SoftwareDeveloperPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [activeFilter, setActiveFilter] = useState('All')
-  const [incentiveTask, setIncentiveTask] = useState(null) // 'All', 'WorkDone', 'Incentive'
+  const [activeTab, setActiveTab] = useState('shoots') // 'shoots', 'worklist', 'performance'
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     setHideHeader(!!selectedDeveloper)
@@ -1108,7 +1461,8 @@ export default function SoftwareDeveloperPage() {
     const matchesStatus = statusFilter === 'All' || t.status === statusFilter
 
     const matchesFilter = activeFilter === 'All' ||
-      (activeFilter === 'WorkDone' && t.contentCheck)
+      (activeFilter === 'WorkDone' && t.contentCheck) ||
+      (activeFilter === 'Incentive' && t.incentiveCheck)
 
     return matchesSearch && matchesStatus && matchesFilter
   }), [tasks, selectedDeveloper, search, statusFilter, activeFilter])
@@ -1134,6 +1488,20 @@ export default function SoftwareDeveloperPage() {
     setDesktopCollapsed(false) // Expand the sidebar
   }
 
+  // Performance View state
+  const [incentiveTask, setIncentiveTask] = useState(null)
+  const [viewOnlyIncentive, setViewOnlyIncentive] = useState(false)
+
+  const handleCalendarPerformanceClick = (task) => {
+    setIncentiveTask(task)
+    setViewOnlyIncentive(true)
+  }
+
+  useEffect(() => {
+    window.__onTaskClick = handleCalendarPerformanceClick;
+    return () => { delete window.__onTaskClick; };
+  }, [handleCalendarPerformanceClick]);
+
   if (!selectedDeveloper) {
     return <SoftwareDeveloperListView tasks={tasks} onSelect={setSelectedDeveloper} />
   }
@@ -1150,33 +1518,89 @@ export default function SoftwareDeveloperPage() {
 
       <div className="flex-1 overflow-y-auto">
         <div className="w-full flex flex-col px-0">
-          <div className="flex flex-col mb-0 flex-none border-b border-border">
-            <div className="w-full min-w-0 overflow-hidden">
-              <TaskTable
-                tasks={developerTasks}
-                onAdd={(task) => { setEditTask(task); setShowAddModal(true); }}
-                onUpdateTask={updateTask}
-                deleteTask={deleteTask}
-                search={search}
-                setSearch={setSearch}
-                statusFilter={statusFilter}
-                setStatusFilter={setStatusFilter}
-                activeFilter={activeFilter}
-                setActiveFilter={setActiveFilter}
-              />
+          {/* TABS NAVIGATION */}
+          {selectedDeveloper && isMobile && (
+            <div className="flex items-center bg-sidebar border-b border-border sticky top-0 z-30 overflow-x-auto scrollbar-none">
+              {[
+                { id: 'shoots', label: isMobile ? 'Projects' : 'Project Management', icon: <LayoutList size={14} /> },
+                { id: 'worklist', label: isMobile ? 'Work List' : 'Day-wise Work List', icon: <FileText size={14} /> },
+                { id: 'performance', label: 'Performance', icon: <BarChart3 size={14} /> }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-[10px] sm:text-[11px] font-bold transition-all whitespace-nowrap border-b-2 ${
+                    activeTab === tab.id 
+                    ? 'border-primary text-primary bg-primary/5' 
+                    : 'border-transparent text-muted hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
             </div>
-          </div>
-          <div className="min-h-[400px] sm:min-h-[500px] lg:h-[600px] border-b border-border flex flex-col">
-            <CalendarView
-              tasks={developerTasks.filter(t => {
-                if (activeFilter === 'WorkDone') return t.contentCheck;
-                return t.contentCheck || t.status === 'Done';
-              })}
-              deleteTask={deleteTask}
-            />
-          </div>
+          )}
 
-          <div className="p-6 sm:p-10 lg:p-20 flex justify-center bg-background">
+          {(!isMobile || activeTab === 'shoots') && (
+            <div className={`${!isMobile ? 'flex flex-col lg:grid lg:grid-cols-4' : 'flex flex-col'} gap-0 mb-0 flex-none border-b border-border`}>
+              {!isMobile && (
+                <div className="w-full lg:col-span-1 border-b lg:border-b-0 lg:border-r border-border bg-sidebar/50">
+                  <IncentiveCard />
+                </div>
+              )}
+              <div className={`w-full ${!isMobile ? 'lg:col-span-3' : ''} min-w-0 overflow-hidden`}>
+                <TaskTable
+                  tasks={developerTasks}
+                  onAdd={(task) => { setEditTask(task); setShowAddModal(true); }}
+                  onUpdateTask={updateTask}
+                  deleteTask={deleteTask}
+                  search={search}
+                  setSearch={setSearch}
+                  statusFilter={statusFilter}
+                  setStatusFilter={setStatusFilter}
+                  activeFilter={activeFilter}
+                  setActiveFilter={setActiveFilter}
+                  onIncentiveClick={(task) => { setIncentiveTask(task); setViewOnlyIncentive(false); }}
+                />
+              </div>
+            </div>
+          )}
+
+          {(!isMobile || activeTab === 'worklist') && (
+            <div className="w-full border-b border-border">
+              <DayWiseWorkList tasks={developerTasks} />
+            </div>
+          )}
+
+          {(!isMobile || activeTab === 'performance') && (
+            <div className="flex flex-col">
+              {isMobile && (
+                <div className="border-b border-border">
+                   <IncentiveCard />
+                </div>
+              )}
+              <div className="min-h-[400px] sm:min-h-[500px] h-[500px] sm:h-[600px] lg:h-[600px] flex flex-col">
+                <CalendarView
+                  tasks={developerTasks}
+                  deleteTask={deleteTask}
+                  onTaskClick={handleCalendarPerformanceClick}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* MOBILE FLOATING ACTION BUTTON */}
+          {isMobile && activeTab === 'shoots' && (
+            <button
+              onClick={() => { setEditTask(null); setShowAddModal(true); }}
+              className="fixed bottom-6 right-6 w-11 h-11 bg-primary text-black rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-50 animate-in zoom-in-50 duration-300"
+            >
+              <Plus size={22} />
+            </button>
+          )}
+
+          <div className={`p-10 ${isMobile ? 'pb-20' : 'lg:p-20'} flex justify-center bg-background`}>
             <button
               onClick={() => setSelectedDeveloper(null)}
               className="group flex items-center gap-2 sm:gap-4 pl-1.5 pr-4 sm:pr-8 py-1.5 bg-black/40 hover:bg-black/60 backdrop-blur-xl border border-white/10 rounded-full transition-all active:scale-95"
@@ -1200,9 +1624,10 @@ export default function SoftwareDeveloperPage() {
 
       <IncentiveModal
         isOpen={!!incentiveTask}
-        onClose={() => setIncentiveTask(null)}
+        onClose={() => { setIncentiveTask(null); setViewOnlyIncentive(false); }}
         onSave={updateTask}
         task={incentiveTask}
+        isReadOnly={viewOnlyIncentive}
       />
 
     </div>

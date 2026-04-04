@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useData } from '../context/DataContext'
 import { formatDate, cn } from '../lib/utils'
-import { Plus, Edit2, Filter, Search, Target, Move, Image as ImageIcon, Trash2, Calendar as CalendarIcon, MoreVertical, ArrowLeft, Menu, X, FileText, CheckCircle, Award, List, Grid, RefreshCw, ChevronRight, ChevronDown, LayoutList, BarChart3, Star } from 'lucide-react'
+import { Plus, Edit2, Filter, Search, Target, Move, Image as ImageIcon, Trash2, Calendar as CalendarIcon, MoreVertical, ArrowLeft, Menu, X, FileText, CheckCircle2, Award, List, Grid, RefreshCw, ChevronRight, ChevronDown, LayoutList, BarChart3, Star } from 'lucide-react'
 import { Modal, FormField, SearchBar, StatusSelect, CustomSelect } from '../components/ui/index'
 
 // FullCalendar imports
@@ -560,24 +560,24 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
     <div className="flex flex-col h-full overflow-hidden p-0 bg-panel">
       {/* Task Stats Row */}
       <div className="px-4 py-3 bg-[#050505] border-b border-white/5 overflow-x-auto scrollbar-none">
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 min-w-[400px]">
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+        <div className="flex sm:grid sm:grid-cols-5 gap-2 min-w-max sm:min-w-0">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-muted font-medium tracking-tighter">Total</p>
             <p className="text-sm font-medium text-white leading-none mt-1">{stats.total}</p>
           </div>
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-emerald-500/60 font-medium tracking-tighter">Completed</p>
             <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.completed}</p>
           </div>
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-blue-500/60 font-medium tracking-tighter">In Progress</p>
             <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.inProgress}</p>
           </div>
-          <div className="bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
             <p className="text-[10px] text-emerald-400/60 font-medium tracking-tighter">Work Done</p>
             <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.workDone}</p>
           </div>
-          <div className="bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
             <p className="text-[10px] text-blue-400/60 font-medium tracking-tighter">Incentives</p>
             <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.incentives}</p>
           </div>
@@ -980,46 +980,154 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
 }
 
 // --- DETAILED INCENTIVE EVALUATION (100 POINT SYSTEM) ---
-function IncentiveModal({ isOpen, onClose, task, isReadOnly = false }) {
-  const [marks, setMarks] = useState({
-    framing: 0, lighting: 0, focus: 0, steadiness: 0,
-    audio: 0, storytelling: 0, pacing: 0, technical: 0,
-    creativity: 0, completion: 0
-  })
+function IncentiveModal({ isOpen, onClose, onSave, task, isReadOnly }) {
+  const { evaluationCriteria } = useData()
+  const role = task?.workerRole || 'Editor'
+  const criteria = evaluationCriteria[role] || evaluationCriteria['Editor'] || []
+  
+  const [scores, setScores] = useState({})
+  const [note, setNote] = useState('')
 
   useEffect(() => {
-    if (task?.marks) setMarks(task.marks)
-    else setMarks({ framing: 0, lighting: 0, focus: 0, steadiness: 0, audio: 0, storytelling: 0, pacing: 0, technical: 0, creativity: 0, completion: 0 })
-  }, [task, isOpen])
+    if (task && criteria.length > 0) {
+      const initialScores = {}
+      criteria.forEach(c => {
+        initialScores[c.id] = (task.evaluationScores?.[c.id] || '').toString()
+      })
+      setScores(initialScores)
+      setNote(task.performanceNote || '')
+    }
+  }, [task, isOpen, criteria])
 
-  const total = Object.values(marks).reduce((a, b) => a + b, 0)
+  const totalMark = useMemo(() =>
+    Object.values(scores).reduce((acc, v) => acc + (parseInt(v) || 0), 0)
+  , [scores])
+
+  const performanceCategory = useMemo(() => {
+    if (totalMark >= 90) return { label: 'Top Performer', color: '#10b981', bg: 'rgba(16,185,129,0.1)', bonus: 'Eligible for Full Bonus' }
+    if (totalMark >= 75) return { label: 'Good', color: '#3b82f6', bg: 'rgba(59,130,246,0.1)', bonus: 'Eligible for Partial Bonus' }
+    if (totalMark >= 60) return { label: 'Average', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', bonus: 'No Bonus' }
+    return { label: 'Needs Improvement', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', bonus: 'No Bonus' }
+  }, [totalMark])
+
+  const handleScoreChange = (id, val, max) => {
+    const num = parseInt(val)
+    if (val === '' || (num >= 0 && num <= max)) {
+      setScores(prev => ({ ...prev, [id]: val }))
+    }
+  }
+
+  const handleFinalize = () => {
+    const finalScores = {}
+    criteria.forEach(c => {
+      finalScores[c.id] = parseInt(scores[c.id]) || 0
+    })
+    
+    onSave(task.id, {
+      ...task,
+      incentiveCheck: true,
+      incentivePoints: totalMark,
+      performanceRating: Math.min(5, Math.ceil(totalMark / 20)),
+      performanceNote: note,
+      evaluationScores: finalScores,
+      updatedDate: new Date().toISOString().split('T')[0]
+    })
+    onClose()
+  }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Performance Breakdown" size="sm">
-      <div className="space-y-6">
-        <div className="bg-panel rounded-2xl p-6 border border-border shadow-2xl relative overflow-hidden text-center">
-          <p className="text-[10px] text-muted uppercase tracking-[0.2em] mb-2 font-semibold">Asset Evaluation Score</p>
-          <div className="text-7xl font-black text-white leading-none tracking-tighter mb-2">{total}</div>
-          <div className="text-[10px] font-bold text-primary tracking-widest uppercase opacity-60">Scale 0 - 100</div>
+    <Modal isOpen={isOpen} onClose={onClose} title="Performance Evaluation" size="md">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24, marginTop: 16 }}>
+        {/* Task Context */}
+        <div style={{ background: '#050505', padding: '14px 18px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'between', gap: 12 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 12, fontWeight: 500, color: '#fff', margin: 0 }}>{task?.clientName}</p>
+            <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', margin: 0 }}>{task?.task} · {role}</p>
+          </div>
+          <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 20, background: 'rgba(59,130,246,0.1)', border: '0.5px solid rgba(59,130,246,0.25)', color: '#60a5fa', fontWeight: 500, letterSpacing: '0.04em', flexShrink: 0 }}>
+            {task?.status}
+          </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          {Object.entries(marks).map(([key, val]) => (
-            <div key={key} className="bg-white/5 border border-white/5 rounded-xl p-3">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[9px] text-muted font-bold uppercase tracking-widest truncate max-w-[80px]">{key}</span>
-                <span className="text-xs font-black text-white">{val}</span>
+        {/* Evaluation Metrics */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 4px' }}>
+            <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Performance Indicator</span>
+            <span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Score</span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {criteria.map((c) => (
+              <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(255,255,255,0.02)', padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.03)' }}>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.9)', margin: 0 }}>{c.label}</p>
+                  <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', margin: '2px 0 0 0' }}>{c.sub}</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <input
+                    type="number"
+                    disabled={isReadOnly}
+                    value={scores[c.id] || ''}
+                    onChange={(e) => handleScoreChange(c.id, e.target.value, c.max)}
+                    placeholder="0"
+                    style={{ width: 60, height: 34, background: '#000', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, textAlign: 'center', color: '#3b82f6', fontWeight: 700, fontSize: 14, outline: 'none' }}
+                  />
+                  <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,0.2)', width: 24 }}>/{c.max}</span>
+                </div>
               </div>
-              <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-primary" style={{ width: `${(val / 10) * 100}%` }} />
+            ))}
+          </div>
+        </div>
+
+        {/* Summary Card */}
+        <div style={{ background: '#050505', padding: 20, borderRadius: 16, border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'center' }}>
+            <div>
+              <p style={{ fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 4px 0' }}>Aggregate Points</p>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                <span style={{ fontSize: 36, fontWeight: 800, color: '#fff' }}>{totalMark}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.2)' }}>/ 100</span>
               </div>
             </div>
-          ))}
+            <div style={{ background: performanceCategory.bg, borderRadius: 12, padding: 12, textAlign: 'center', border: '1px solid rgba(255,255,255,0.03)' }}>
+              <p style={{ fontSize: 10, fontWeight: 800, color: performanceCategory.color, textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 2px 0' }}>{performanceCategory.label}</p>
+              <p style={{ fontSize: 11, fontWeight: 600, color: '#fff', opacity: 0.8, margin: 0 }}>{performanceCategory.bonus}</p>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 2, marginTop: 8 }}>
+                {[1, 2, 3, 4, 5].map(star => (
+                   <Star key={star} size={10} fill={star <= Math.ceil(totalMark / 20) ? performanceCategory.color : 'transparent'} stroke={star <= Math.ceil(totalMark / 20) ? performanceCategory.color : 'rgba(255,255,255,0.1)'} />
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
-        <button onClick={onClose} className="w-full py-4 bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-xl text-xs font-bold text-white tracking-[0.3em] uppercase">
-          Close Report
-        </button>
+        {!isReadOnly && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '0 4px' }}>Review Note</p>
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Add internal feedback or observations..."
+              style={{ width: '100%', minHeight: 80, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: 12, color: '#fff', fontSize: 12, resize: 'none', outline: 'none' }}
+            />
+          </div>
+        )}
+
+        <div style={{ display: 'flex', gap: 12, paddingTop: 8 }}>
+          <button onClick={onClose} style={{ flex: 1, height: 44, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#fff', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+            {isReadOnly ? 'Close Report' : 'Cancel'}
+          </button>
+          {!isReadOnly && (
+            <button
+              onClick={handleFinalize}
+              disabled={totalMark === 0}
+              style={{ flex: 2, height: 44, background: '#3b82f6', border: 'none', borderRadius: 10, color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: totalMark === 0 ? 0.5 : 1 }}
+            >
+              <CheckCircle2 size={14} />
+              Finalize Assessment
+            </button>
+          )}
+        </div>
       </div>
     </Modal>
   )
@@ -1530,10 +1638,11 @@ export default function EditorPage() {
       />
 
       <IncentiveModal
-        isOpen={viewOnlyIncentive}
+        isOpen={!!incentiveTask}
         onClose={() => { setIncentiveTask(null); setViewOnlyIncentive(false); }}
+        onSave={updateTask}
         task={incentiveTask}
-        isReadOnly={true}
+        isReadOnly={viewOnlyIncentive}
       />
 
     </div>

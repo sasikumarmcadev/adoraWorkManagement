@@ -35,6 +35,7 @@ import Incentives from './pages/Incentives'
 import SOPLibrary from './pages/SOPLibrary'
 import Settings from './pages/Settings'
 import WorkProgress from './pages/WorkProgress'
+import WorkerPerformance from './pages/WorkerPerformance'
 
 import './index.css'
 
@@ -86,6 +87,7 @@ function AppRoutes() {
         <Route path="/dashboard/workers" element={<Workers />} />
         <Route path="/dashboard/revenue" element={<Revenue />} />
         <Route path="/dashboard/work-progress" element={<WorkProgress />} />
+        <Route path="/dashboard/worker-progress" element={<WorkerPerformance />} />
 
         {/* Clients */}
         <Route path="/clients/details" element={<ClientsDetails />} />

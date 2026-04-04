@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 import {
   CLIENTS, ENQUIRIES, TASKS, PAYMENTS, SALARIES,
-  EXPENSES, HIRING, INCENTIVES, INCENTIVE_PROTOCOLS, SOP_LIBRARY, USERS, ACTIVITY_LOG
+  EXPENSES, HIRING, INCENTIVES, INCENTIVE_PROTOCOLS, SOP_LIBRARY, USERS, ACTIVITY_LOG, EVALUATION_CRITERIA
 } from '../lib/data'
 
 const DataContext = createContext(null)
@@ -49,6 +49,7 @@ export function DataProvider({ children }) {
   const [incentives, setIncentives] = useState(INCENTIVES)
   const [incentiveProtocols, setIncentiveProtocols] = useState(INCENTIVE_PROTOCOLS)
   const [sopLibrary, setSopLibrary] = useState(SOP_LIBRARY)
+  const [evaluationCriteria, setEvaluationCriteria] = useState(EVALUATION_CRITERIA)
   const [workers, setWorkers] = useState(() => {
     const initialWorkers = USERS.filter(u => u.access === 'Worker')
     const processed = []
@@ -151,6 +152,14 @@ export function DataProvider({ children }) {
   const updateSop = (id, data) => setSopLibrary(prev => prev.map(s => s.id === id ? { ...s, ...data } : s))
   const deleteSop = (id) => setSopLibrary(prev => prev.filter(s => s.id !== id))
 
+  // EVALUATION CRITERIA
+  const updateEvaluationCriteria = (role, criteria) => {
+    setEvaluationCriteria(prev => ({
+      ...prev,
+      [role]: criteria
+    }))
+  }
+
   // WORKERS (user accounts)
   const addWorker = (w) => setWorkers(prev => {
     const roleForID = w.role || w.access
@@ -192,6 +201,7 @@ export function DataProvider({ children }) {
       incentives, addIncentive, deleteIncentive,
       incentiveProtocols, addIncentiveProtocol, updateIncentiveProtocol, deleteIncentiveProtocol,
       sopLibrary, addSop, updateSop, deleteSop,
+      evaluationCriteria, updateEvaluationCriteria,
       workers, addWorker, updateWorker, deleteWorker,
       activityLog, addActivity,
       notifications, markNotifRead, markAllRead,

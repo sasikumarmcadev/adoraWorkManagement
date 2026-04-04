@@ -166,6 +166,7 @@ export default function Sidebar({ mobileOpen, setMobileOpen, collapsed, setColla
             
             <SidebarItem path="/dashboard/revenue" label="Revenue" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
             <SidebarItem path="/dashboard/work-progress" label="Work Progress" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
+            <SidebarItem path="/dashboard/worker-progress" label="Worker Progress" isChild onClick={() => setMobileOpen(false)} collapsed={collapsed && !mobileOpen} />
           </SidebarGroup>
 
           <SidebarGroup title="Team Board" icon={Users} isOpen={openGroups['Team Board']} onToggle={() => toggleGroup('Team Board')} collapsed={collapsed && !mobileOpen}>

@@ -285,24 +285,24 @@ function VideoGrapherTaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search,
   return (
     <div className="flex-1 flex flex-col h-full overflow-hidden p-0 bg-panel">
       <div className="px-4 py-3 bg-[#050505] border-b border-white/5 overflow-x-auto scrollbar-none">
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 min-w-[400px]">
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+        <div className="flex sm:grid sm:grid-cols-5 gap-2 min-w-max sm:min-w-0">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-muted font-medium tracking-tighter">Total</p>
             <p className="text-sm font-medium text-white leading-none mt-1">{stats.total}</p>
           </div>
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-emerald-500/60 font-medium tracking-tighter">Completed</p>
             <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.done}</p>
           </div>
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-blue-500/60 font-medium tracking-tighter">In Progress</p>
             <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.progress}</p>
           </div>
-          <div className="bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
             <p className="text-[10px] text-emerald-400/60 font-medium tracking-tighter">Work Done</p>
             <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.workDone}</p>
           </div>
-          <div className="bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
+          <div className="flex-1 min-w-[100px] sm:min-w-0 bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
             <p className="text-[10px] text-blue-400/60 font-medium tracking-tighter">Incentives</p>
             <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.incentive}</p>
           </div>
@@ -588,27 +588,23 @@ function VideoGrapherTaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search,
 }
 
 function IncentiveModal({ isOpen, onClose, onSave, task, isReadOnly }) {
-  const [scores, setScores] = useState({ speed: '', quality: '', creativity: '', deadline: '' })
+  const { evaluationCriteria } = useData()
+  const role = task?.workerRole || 'Video Grapher'
+  const criteria = evaluationCriteria[role] || evaluationCriteria['Video Grapher'] || []
+  
+  const [scores, setScores] = useState({})
   const [note, setNote] = useState('')
 
   useEffect(() => {
-    if (task) {
-      setScores({
-        speed: (task.evaluationScores?.speed || '').toString(),
-        quality: (task.evaluationScores?.quality || '').toString(),
-        creativity: (task.evaluationScores?.creativity || '').toString(),
-        deadline: (task.evaluationScores?.deadline || '').toString(),
+    if (task && criteria.length > 0) {
+      const initialScores = {}
+      criteria.forEach(c => {
+        initialScores[c.id] = (task.evaluationScores?.[c.id] || '').toString()
       })
+      setScores(initialScores)
       setNote(task.performanceNote || '')
     }
-  }, [task, isOpen])
-
-  const criteria = [
-    { id: 'speed',      label: 'Speed & Productivity', sub: 'Reels count',      max: 25 },
-    { id: 'quality',    label: 'Quality of Capture',   sub: 'Static / Reels',   max: 25 },
-    { id: 'creativity', label: 'Creativity & Trends',  sub: 'Trend selection',  max: 25 },
-    { id: 'deadline',   label: 'Deadline Discipline',  sub: 'On-time delivery', max: 25 },
-  ]
+  }, [task, isOpen, criteria])
 
   const totalMark = useMemo(() =>
     Object.values(scores).reduce((acc, v) => acc + (parseInt(v) || 0), 0)
@@ -683,7 +679,7 @@ function IncentiveModal({ isOpen, onClose, onSave, task, isReadOnly }) {
             </div>
             <div>
               <p style={{ fontSize: 12, fontWeight: 500, color: '#fff', margin: 0 }}>{task?.clientName}</p>
-              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', margin: 0 }}>Capture Specialist · Video Grapher</p>
+              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', margin: 0 }}>{task?.task} · {role}</p>
             </div>
           </div>
           <span style={{ fontSize: 10, padding: '3px 8px', borderRadius: 20, background: 'rgba(59,130,246,0.1)', border: '0.5px solid rgba(59,130,246,0.25)', color: '#60a5fa', fontWeight: 500, letterSpacing: '0.04em', flexShrink: 0 }}>

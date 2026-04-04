@@ -3,7 +3,7 @@ import { useData } from '../context/DataContext'
 import { useAuth } from '../context/AuthContext'
 import { cn, formatCurrency, formatDate } from '../lib/utils'
 import {
-  Users, IndianRupee, Briefcase, CheckCircle, TrendingUp,
+  Users, IndianRupee, Briefcase, CheckCircle2, TrendingUp,
   ShoppingBag, AlertCircle, UserCheck, Gift, Activity,
   ArrowRight, Clock, Zap
 } from 'lucide-react'
@@ -62,7 +62,7 @@ export default function Dashboard() {
              <StatBox title="Active Clients" value={stats.totalClients} icon={ShoppingBag} />
              <StatBox title="Total Revenue" value={formatCurrency(stats.totalRevenue)} icon={TrendingUp} isCurrency />
              <StatBox title="Pending" value={stats.pendingTasks} icon={AlertCircle} color="text-orange-400" />
-             <StatBox title="Completed" value={stats.completedTasks} icon={CheckCircle} color="text-emerald-400" />
+             <StatBox title="Completed" value={stats.completedTasks} icon={CheckCircle2} color="text-emerald-400" />
              <StatBox title="Personnel" value={stats.activeWorkers} icon={UserCheck} />
              <StatBox title="Op. Cost" value={formatCurrency(stats.totalExpenses + stats.totalSalaries)} icon={IndianRupee} isCurrency />
              <StatBox title="Net Profit" value={formatCurrency(stats.profit)} icon={Gift} isCurrency highlight />
@@ -148,7 +148,7 @@ export default function Dashboard() {
                              "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-all duration-500",
                              t.status === 'Done' ? "bg-emerald-500/10 text-emerald-400" : "bg-primary/10 text-primary animate-pulse"
                            )}>
-                              {t.status === 'Done' ? <CheckCircle size={14} /> : <Zap size={14} />}
+                              {t.status === 'Done' ? <CheckCircle2 size={14} /> : <Zap size={14} />}
                            </div>
                            <div className="min-w-0 flex-1">
                               <p className="text-[12px] font-normal text-white tracking-tight truncate line-clamp-1">{t.task}</p>

@@ -8,7 +8,7 @@ export default function SidebarItem({ label, path, isChild = false, onClick, col
         onClick={onClick}
         title={collapsed ? label : undefined}
         className={({ isActive }) => `
-          flex items-center gap-3 w-full px-5 py-3 text-sm font-medium transition-all
+          flex items-center gap-3 w-full px-5 py-3 text-[13px] font-medium transition-all
           ${isActive
             ? 'text-black bg-primary border-l-4 border-l-black/20'
             : 'text-gray-400 hover:bg-panel hover:text-white border-l-4 border-transparent'}

@@ -3,6 +3,39 @@
 
 export const ROLES = ['Content Specialist', 'Editor', 'Video Grapher', 'Meta Ads', 'Software Developer']
 
+export const EVALUATION_CRITERIA = {
+  'Video Grapher': [
+    { id: 'speed',      label: 'Speed & Productivity', sub: 'Reels count',      max: 25 },
+    { id: 'quality',    label: 'Quality of Capture',   sub: 'Static / Reels',   max: 25 },
+    { id: 'creativity', label: 'Creativity & Trends',  sub: 'Trend selection',  max: 25 },
+    { id: 'deadline',   label: 'Deadline Discipline',  sub: 'On-time delivery', max: 25 },
+  ],
+  'Editor': [
+    { id: 'speed',      label: 'Editing Speed',         sub: 'Turnaround time',  max: 25 },
+    { id: 'technical',  label: 'Technical Precision',   sub: 'Color/Audio',      max: 25 },
+    { id: 'narrative',  label: 'Narrative Flow',        sub: 'Engagement',       max: 25 },
+    { id: 'revisions',  label: 'Revision Count',        sub: 'Efficiency',       max: 25 },
+  ],
+  'Content Specialist': [
+    { id: 'script',     label: 'Script Quality',        sub: 'Messaging',        max: 25 },
+    { id: 'research',   label: 'Market Research',       sub: 'Accuracy',         max: 25 },
+    { id: 'hooks',      label: 'Hooks & CTA',           sub: 'Performance',      max: 25 },
+    { id: 'value',      label: 'Strategy Alignment',    sub: 'Value',            max: 25 },
+  ],
+  'Meta Ads': [
+    { id: 'roas',       label: 'ROAS Optimization',     sub: 'Performance',      max: 25 },
+    { id: 'copy',       label: 'Ad Copy Clarity',       sub: 'Conversion',       max: 25 },
+    { id: 'creative',   label: 'Creative Testing',      sub: 'Iteration',        max: 25 },
+    { id: 'budget',     label: 'Budget Management',     sub: 'Efficiency',       max: 25 },
+  ],
+  'Software Developer': [
+    { id: 'code',       label: 'Code Quality',          sub: 'Maintainability',  max: 25 },
+    { id: 'speed',      label: 'Feature Velocity',      sub: 'Delivery Speed',   max: 25 },
+    { id: 'bugs',       label: 'Bug Frequency',         sub: 'Stability',        max: 25 },
+    { id: 'docs',       label: 'Documentation',         sub: 'Clarity',          max: 25 },
+  ]
+}
+
 export const USERS = [
   { id: 'u1', name: 'Adora Manager', role: 'Manager', username: 'manager', password: 'manager123', access: 'Manager', avatar: 'AM' },
   { id: 'u2', name: 'Jeevan', role: 'Jeevan', username: 'jeevan', password: 'jeevan123', access: 'Jeevan', avatar: 'JV' },
