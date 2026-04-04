@@ -83,7 +83,7 @@ export default function EnquiriesDashboard() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white truncate tracking-tighter">
+              <h1 className="page-heading truncate">
                 Enquiries <span className="text-primary/50">Details</span>
               </h1>
             </div>
@@ -271,3 +271,4 @@ export default function EnquiriesDashboard() {
     </div>
   )
 }
+

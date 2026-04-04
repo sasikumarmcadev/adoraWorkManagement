@@ -161,10 +161,10 @@ export default function SOPLibrary() {
         <div className="w-full relative z-20 px-4 sm:px-8 lg:px-12 mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="text-center sm:text-left">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate leading-none">
+              <h1 className="page-heading truncate leading-none">
                 SOP <span className="text-primary/50">Library</span>
               </h1>
-              <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-2 opacity-60 leading-none tracking-widest">
+              <p className="page-subheading">
                 Workflow Protocols • Professional Operational Logic
               </p>
             </div>
@@ -242,3 +242,4 @@ export default function SOPLibrary() {
     </div>
   );
 }
+

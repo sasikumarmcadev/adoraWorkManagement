@@ -154,6 +154,30 @@
     color: var(--text-muted);
   }
 
+  .page-heading {
+    @apply text-xl sm:text-2xl md:text-3xl font-medium tracking-tighter leading-none;
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .page-heading-lg {
+    @apply text-2xl sm:text-3xl font-medium tracking-tight leading-none;
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .page-heading-xl {
+    @apply text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight leading-none;
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .page-subheading {
+    @apply text-[10px] sm:text-[12px] font-medium mt-2 opacity-60 leading-none tracking-widest;
+    color: var(--text-muted);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
   .divider {
     @apply border-t my-4;
     border-color: var(--border);
@@ -188,3 +212,4 @@
     @apply badge bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400;
   }
 }
+

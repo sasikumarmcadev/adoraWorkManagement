@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useData } from '../context/DataContext'
 import { formatDate, cn } from '../lib/utils'
-import { Plus, Edit2, Filter, Search, Target, Move, Image as ImageIcon, Trash2, Calendar as CalendarIcon, MoreVertical, ArrowLeft, Menu, X, FileText, CheckCircle, Award, List, Grid, RefreshCw, Eye, ChevronRight, ChevronDown, LayoutList, BarChart3 } from 'lucide-react'
+import { Plus, Edit2, Filter, Search, Target, Move, Image as ImageIcon, Trash2, Calendar as CalendarIcon, MoreVertical, ArrowLeft, Menu, X, FileText, CheckCircle, Award, List, Grid, RefreshCw, ChevronRight, ChevronDown, LayoutList, BarChart3, Star } from 'lucide-react'
 import { Modal, FormField, SearchBar, StatusSelect, CustomSelect } from '../components/ui/index'
 
 // FullCalendar imports
@@ -262,6 +262,244 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
   )
 }
 
+function DayWiseWorkList({ tasks }) {
+  const now = new Date()
+  const [viewYear, setViewYear] = useState(now.getFullYear())
+  const [viewMonth, setViewMonth] = useState(now.getMonth())
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const workDoneTasks = useMemo(() => {
+    return tasks.filter(task => task.contentCheck === true)
+  }, [tasks])
+
+  const allDatesInMonth = useMemo(() => {
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
+    const dates = []
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(viewYear, viewMonth, d)
+      dates.push(date.toISOString().split('T')[0])
+    }
+    return dates
+  }, [viewYear, viewMonth])
+
+  const groupedByDate = useMemo(() => {
+    const grouped = new Map()
+    workDoneTasks.forEach(task => {
+      const date = task.takenDate || task.scheduleDate || task.updatedDate
+      if (!date) return
+      if (!grouped.has(date)) grouped.set(date, [])
+      grouped.get(date).push(task)
+    })
+    return allDatesInMonth.map(date => ({
+      date,
+      tasks: grouped.get(date) || []
+    }))
+  }, [workDoneTasks, allDatesInMonth])
+
+  const clientColorMap = useMemo(() => {
+    const palette = [
+      { bg: '#DBEAFE', text: '#1E40AF' },
+      { bg: '#DCFCE7', text: '#15803D' },
+      { bg: '#FEF3C7', text: '#92400E' },
+      { bg: '#FCE7F3', text: '#9D174D' },
+      { bg: '#EDE9FE', text: '#5B21B6' },
+      { bg: '#CFFAFE', text: '#155E75' },
+      { bg: '#FFEDD5', text: '#9A3412' },
+      { bg: '#ECFCCB', text: '#3F6212' },
+    ]
+    const map = new Map()
+    let idx = 0
+    workDoneTasks.forEach(task => {
+      if (task.clientName && !map.has(task.clientName)) {
+        map.set(task.clientName, palette[idx % palette.length])
+        idx++
+      }
+    })
+    return map
+  }, [workDoneTasks])
+
+  const getClientColor = (name) =>
+    clientColorMap.get(name) || { bg: '#4B5563', text: '#ffffff' }
+
+  const monthLabel = new Date(viewYear, viewMonth, 1).toLocaleString('default', { month: 'long', year: 'numeric' })
+  const todayStr = now.toISOString().split('T')[0]
+  const isCurrentMonth = viewYear === now.getFullYear() && viewMonth === now.getMonth()
+
+  const monthWorkCount = useMemo(() =>
+    groupedByDate.reduce((acc, g) => acc + g.tasks.length, 0)
+  , [groupedByDate])
+
+  const goToPrev = () => {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) }
+    else setViewMonth(m => m - 1)
+  }
+
+  const goToNext = () => {
+    if (isCurrentMonth) return
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1) }
+    else setViewMonth(m => m + 1)
+  }
+
+  const goToCurrentMonth = () => {
+    setViewYear(now.getFullYear())
+    setViewMonth(now.getMonth())
+  }
+
+  const renderClientBadges = (group) => {
+    const clientGroups = new Map()
+    group.tasks.forEach(task => {
+      if (!clientGroups.has(task.clientName)) clientGroups.set(task.clientName, [])
+      clientGroups.get(task.clientName).push(task)
+    })
+    return Array.from(clientGroups.entries()).map(([clientName]) => {
+      const color = getClientColor(clientName)
+      return (
+        <span
+          key={clientName}
+          className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap"
+          style={{ backgroundColor: color.bg, color: color.text }}
+        >
+          {clientName}
+        </span>
+      )
+    })
+  }
+
+  return (
+    <div className="w-full bg-panel">
+      <div className="px-3 sm:px-4 py-3 bg-sidebar border-b border-border">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex-shrink-0 w-1 h-5 bg-emerald-500 rounded-full" />
+            <h2 className="text-xs sm:text-sm font-semibold text-white tracking-wide truncate">
+              DAY WISE WORK LIST
+            </h2>
+          </div>
+          <div className="flex-shrink-0 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+            <span className="text-[10px] font-medium text-emerald-400 whitespace-nowrap">
+              {monthWorkCount} Completed
+            </span>
+          </div>
+        </div>
+        <p className="text-[10px] text-muted mt-1 ml-3">Work completed tasks grouped by date</p>
+      </div>
+
+      <div className="px-3 sm:px-4 py-2 bg-[#0a0a0a] border-b border-border">
+        <div className="flex items-center justify-between gap-2">
+          <button
+            onClick={goToPrev}
+            className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] font-medium text-muted hover:text-white hover:bg-white/5 border border-white/10 hover:border-white/20 transition-all active:scale-95"
+          >
+            <ArrowLeft size={11} />
+            <span className="hidden sm:inline">Prev</span>
+          </button>
+
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide text-center">
+              {monthLabel}
+            </span>
+            {!isCurrentMonth && (
+              <button
+                onClick={goToCurrentMonth}
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all whitespace-nowrap active:scale-95"
+              >
+                <CalendarIcon size={9} />
+                <span>Today</span>
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={goToNext}
+            disabled={isCurrentMonth}
+            className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] font-medium border transition-all active:scale-95 ${
+              isCurrentMonth
+                ? 'text-muted/20 border-white/5 cursor-not-allowed'
+                : 'text-muted hover:text-white hover:bg-white/5 border-white/10 hover:border-white/20'
+            }`}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ArrowLeft size={11} className="rotate-180" />
+          </button>
+        </div>
+      </div>
+
+      {isMobile ? (
+        <div className="divide-y divide-border/40">
+          {groupedByDate.map((group) => {
+            const isToday = group.date === todayStr
+            if (group.tasks.length === 0) {
+              return (
+                <div key={group.date} className={`flex items-center justify-between px-4 py-3 ${isToday ? 'bg-blue-500/5' : ''}`}>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-medium ${isToday ? 'text-blue-400' : 'text-white/60'}`}>{formatDate(group.date)}</span>
+                    {isToday && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">Today</span>}
+                  </div>
+                  <span className="text-muted/40 text-sm leading-none">—</span>
+                </div>
+              )
+            }
+            return (
+              <div key={group.date} className={`${isToday ? 'bg-blue-500/5' : ''}`}>
+                <div className="flex items-center px-4 py-3 border-b border-white/[0.04]">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-semibold ${isToday ? 'text-blue-400' : 'text-white'}`}>{formatDate(group.date)}</span>
+                    {isToday && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">Today</span>}
+                  </div>
+                </div>
+                <div className="px-4 py-2.5 flex flex-wrap gap-2">{renderClientBadges(group)}</div>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-[10px] text-muted font-semibold bg-[#0a0a0a] border-b border-border">
+              <tr>
+                <th className="px-4 py-2.5 font-medium uppercase tracking-wider w-[140px]">Date</th>
+                <th className="px-4 py-2.5 font-medium uppercase tracking-wider">Category</th>
+                <th className="px-4 py-2.5 font-medium uppercase tracking-wider text-center w-[80px]">Count</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/50">
+              {groupedByDate.map((group) => {
+                const isToday = group.date === todayStr
+                return (
+                  <tr key={group.date} className={`transition-colors ${isToday ? 'bg-blue-500/5' : 'hover:bg-white/[0.02]'}`}>
+                    <td className="px-4 py-2.5 text-xs font-medium align-middle w-[140px]">
+                      <div className="flex items-center gap-2">
+                        <span className={isToday ? 'text-blue-400 font-semibold' : 'text-white'}>{formatDate(group.date)}</span>
+                        {isToday && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">Today</span>}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2.5 align-middle">
+                      <div className="flex flex-wrap gap-2">
+                        {group.tasks.length === 0 ? <span className="text-muted/40 text-xs">—</span> : renderClientBadges(group)}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2.5 text-center align-middle">
+                      <span className={cn("inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full border text-[10px] font-semibold", group.tasks.length > 0 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-white/5 border-white/10 text-muted/40")}>
+                        {group.tasks.length}
+                      </span>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function IncentiveCard() {
   return (
     <div className="h-full flex flex-col gap-3 sm:gap-4 p-4 sm:p-5 bg-panel">
@@ -289,88 +527,9 @@ function IncentiveCard() {
 }
 
 // --- DATE WISE TASK MODAL - CLIENT BADGES DESIGN ---
-function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
-  const sortedDates = Object.keys(tasksByDate).sort((a, b) => new Date(b) - new Date(a))
-  const totalTasks = Object.values(tasksByDate).reduce((sum, tasks) => sum + tasks.length, 0)
-
-  if (!tasksByDate) return null
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Date Wise Task Overview" size="lg">
-      <div className="max-h-[70vh] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        {/* Header Section */}
-        <div className="mb-6 pb-3 border-b border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg sm:text-xl font-medium text-white tracking-tight"># Total task</h2>
-              <p className="text-xs text-muted mt-0.5">Complete task breakdown by date</p>
-            </div>
-            <div className="bg-primary/10 px-2.5 py-1 rounded-md border border-primary/20">
-              <span className="text-primary font-medium text-xs">{totalTasks}</span>
-              <span className="text-muted text-[9px] ml-1">tasks</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Table Headers - Date and Category */}
-        <div className="mb-3 pb-2 border-b border-white/10">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="text-[10px] font-medium text-muted  tracking-wider">Date</div>
-            <div className="text-[10px] font-medium text-muted  tracking-wider">Category</div>
-          </div>
-        </div>
-
-        {/* Task List - Client Badges Only */}
-        <div className="space-y-4">
-          {sortedDates.map((date, index) => {
-            const tasks = tasksByDate[date]
-            
-            return (
-              <div key={date} className="space-y-2">
-                {/* Date Row */}
-                <div className="pt-1">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="text-white font-medium text-sm sm:text-base">
-                      {formatDate(date)}
-                    </div>
-                    <div className="flex flex-wrap gap-2 items-center">
-                      {tasks.map((task) => (
-                        <div key={task.id} className="inline-flex items-center">
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-all duration-200">
-                            {task.clientName}
-                            {task.contentCheck && (
-                              <WorkDoneIcon size={10} className="text-emerald-400" />
-                            )}
-                            {task.incentiveCheck && (
-                              <IncentiveIcon size={10} className="text-blue-400" />
-                            )}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                {index < sortedDates.length - 1 && (
-                  <div className="my-3 border-b border-white/10"></div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-
-        {sortedDates.length === 0 && (
-          <div className="text-center py-12">
-            <CalendarIcon size={48} className="mx-auto text-muted mb-3 opacity-30" />
-            <p className="text-muted">No tasks available</p>
-          </div>
-        )}
-      </div>
-    </Modal>
-  )
-}
 
 // --- ENHANCED TASK TABLE ---
-function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, statusFilter, setStatusFilter, activeFilter, setActiveFilter, onViewDateWise }) {
+function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, statusFilter, setStatusFilter, activeFilter, setActiveFilter, onIncentiveClick }) {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Done': return 'text-emerald-400 bg-[#062016] border-[#0a3622]'
@@ -399,82 +558,89 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
 
   return (
     <div className="flex flex-col h-full overflow-hidden p-0 bg-panel">
-      <div className="p-3 sm:p-4 border-b border-border flex flex-col gap-3 bg-sidebar">
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+      {/* Task Stats Row */}
+      <div className="px-4 py-3 bg-[#050505] border-b border-white/5 overflow-x-auto scrollbar-none">
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 min-w-[400px]">
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted font-medium">Total</p>
-            <p className="text-sm font-medium text-white">{stats.total}</p>
-          </div>
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted font-medium">Completed</p>
-            <p className="text-sm font-medium text-emerald-400">{stats.completed}</p>
+            <p className="text-[10px] text-muted font-medium tracking-tighter">Total</p>
+            <p className="text-sm font-medium text-white leading-none mt-1">{stats.total}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
-            <p className="text-[10px] text-muted font-medium">In Progress</p>
-            <p className="text-sm font-medium text-blue-400">{stats.inProgress}</p>
+            <p className="text-[10px] text-emerald-500/60 font-medium tracking-tighter">Completed</p>
+            <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.completed}</p>
           </div>
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5 hidden sm:block">
-            <p className="text-[10px] text-muted font-medium">Work Done</p>
-            <p className="text-sm font-medium text-emerald-400">{stats.workDone}</p>
+          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
+            <p className="text-[10px] text-blue-500/60 font-medium tracking-tighter">In Progress</p>
+            <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.inProgress}</p>
           </div>
-          <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5 hidden sm:block">
-            <p className="text-[10px] text-muted font-medium">Incentives</p>
-            <p className="text-sm font-medium text-blue-400">{stats.incentives}</p>
+          <div className="bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
+            <p className="text-[10px] text-emerald-400/60 font-medium tracking-tighter">Work Done</p>
+            <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.workDone}</p>
           </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
-          <div className="w-full sm:w-[400px] flex items-center gap-2">
-            <SearchBar value={search} onChange={setSearch} placeholder="Search tasks by client or description..." />
-          </div>
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start flex-wrap">
-            <select
-              value={activeFilter}
-              onChange={(e) => setActiveFilter(e.target.value)}
-              className="bg-[#0a0a0a] border border-white/10 rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-primary/50"
-            >
-              <option value="All">All Tasks</option>
-              <option value="WorkDone">Work Done</option>
-              <option value="Incentive">Incentive</option>
-            </select>
-            <button
-              onClick={onAdd}
-              className="group flex-1 md:flex-none flex items-center justify-center gap-3 pl-1.5 pr-6 py-1.5 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all"
-            >
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
-                <Plus size={18} />
-              </div>
-              <span className="text-[12px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Task</span>
-            </button>
-            <select
-              value={statusFilter === 'All' ? 'All Status' : statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value === 'All Status' ? 'All' : e.target.value)}
-              className="bg-[#0a0a0a] border border-white/10 rounded-lg px-2 sm:px-3 py-1.5 text-xs sm:text-sm text-white focus:outline-none focus:border-primary/50"
-            >
-              <option>All Status</option>
-              <option>Not Started</option>
-              <option>In Progress</option>
-              <option>Done</option>
-            </select>
-            <button 
-              onClick={onViewDateWise}
-              className="btn-ghost py-1.5 px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap flex items-center gap-1"
-            >
-              <Eye size={12} /> Date Wise
-            </button>
-            <a href="#calendar-view" className="btn-ghost py-1.5 px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap">
-              <CalendarIcon size={12} /> Calendar
-            </a>
+          <div className="bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
+            <p className="text-[10px] text-blue-400/60 font-medium tracking-tighter">Incentives</p>
+            <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.incentives}</p>
           </div>
         </div>
       </div>
+
+      <div className="p-3 sm:p-4 border-b border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 bg-sidebar">
+          <div className="w-full sm:flex-1 flex items-center gap-2">
+            <div className="flex-1 max-w-[400px] h-[38px]">
+              <div className="h-full [&>div]:h-full [&_input]:h-full [&_input]:py-0">
+                <SearchBar value={search} onChange={setSearch} placeholder="Search tasks by client or description..." />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 h-[38px]">
+              <StatusSelect
+                value={activeFilter}
+                options={[
+                  { value: 'All', label: 'All Tasks' },
+                  { value: 'WorkDone', label: 'Work Done' },
+                  { value: 'Incentive', label: 'Incentive' }
+                ]}
+                onChange={setActiveFilter}
+                isFilter
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+            <div className="h-[38px]">
+              <StatusSelect
+                value={statusFilter === 'All' ? 'All Status' : statusFilter}
+                options={['All Status', 'Not Started', 'In Progress', 'Done']}
+                onChange={(val) => setStatusFilter(val === 'All Status' ? 'All' : val)}
+                isFilter
+              />
+            </div>
+            <button
+              onClick={onAdd}
+              className="h-[38px] group flex-1 md:flex-none flex items-center justify-center gap-3 pl-1.5 pr-6 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all"
+            >
+              <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
+                <Plus size={16} />
+              </div>
+              <span className="text-[12px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Task</span>
+            </button>
+            <a href="#calendar-view" className="btn-ghost py-1.5 px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap sm:hidden">
+              <CalendarIcon size={12} />
+            </a>
+          </div>
+        </div>
 
       <div className="flex-1 overflow-x-auto overflow-y-auto max-h-[400px] scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         {mobileView ? (
           <div className="p-3 space-y-3">
             {(() => {
               let lastDate = '';
-              return [...tasks].sort((a, b) => (b.takenDate || '').localeCompare(a.takenDate || '')).map((task) => {
+              return [...tasks].sort((a, b) => {
+                const dateA = a.takenDate || '';
+                const dateB = b.takenDate || '';
+                if (dateA === dateB) return (b.id || '').localeCompare(a.id || '');
+                if (!dateA) return -1;
+                if (!dateB) return 1;
+                return dateB.localeCompare(dateA);
+              }).map((task) => {
                 const showDate = task.takenDate !== lastDate;
                 lastDate = task.takenDate;
 
@@ -482,7 +648,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                   <div key={task.id} className="bg-panel border border-border rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col">
-                        <span className="text-secondary font-medium text-[10px] tracking-wider opacity-50 whitespace-nowrap">Task Date</span>
+                        <span className="text-secondary font-medium text-[10px] tracking-wider opacity-50 whitespace-nowrap">Taken Date</span>
                         <span className="text-white font-medium text-sm leading-none mt-1">{showDate ? formatDate(task.takenDate) : <span className="opacity-0">---</span>}</span>
                       </div>
                       <StatusSelect
@@ -508,43 +674,43 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                     <div className="flex items-center justify-between text-[10px] text-muted pt-3 border-t border-white/5">
                       <div className="flex items-center gap-4">
                         <div className="flex flex-col">
-                          <span className="opacity-40  font-medium text-[8px]">Index</span>
+                          <span className="opacity-40 font-medium text-[8px]">Edit Date</span>
+                          <span className="text-white/60 font-medium">{formatDate(task.editDate) || '—'}</span>
+                        </div>
+                        <div className="flex flex-col text-center">
+                          <span className="opacity-40 font-medium text-[8px]">Index</span>
                           <span className="text-white/60 font-medium">1</span>
                         </div>
-                        <div className="flex flex-col items-center">
-                          <span className="opacity-40  font-medium text-[8px]">Work Done</span>
-                          <button
-                            onClick={() => onUpdateTask(task.id, {
-                              contentCheck: !task.contentCheck,
-                              incentiveCheck: false,
-                              updatedDate: new Date().toISOString().split('T')[0],
-                            })}
-                            className={cn(
-                              "w-4 h-4 rounded-full border flex items-center justify-center transition-all mt-1",
-                              task.contentCheck ? "bg-emerald-600 border-emerald-600" : "border-white/10"
-                            )}
-                          >
-                            <div className={cn("w-1 h-1 rounded-full bg-white", task.contentCheck ? "scale-100" : "scale-0")} />
-                          </button>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <span className="opacity-40  font-medium text-[8px]">Incentive</span>
-                          <button
-                            onClick={() => onUpdateTask(task.id, {
-                              incentiveCheck: !task.incentiveCheck,
-                              contentCheck: false,
-                              updatedDate: new Date().toISOString().split('T')[0],
-                            })}
-                            className={cn(
-                              "w-4 h-4 rounded-full border flex items-center justify-center transition-all mt-1",
-                              task.incentiveCheck ? "bg-blue-600 border-blue-600" : "border-white/10"
-                            )}
-                          >
-                            <div className={cn("w-1 h-1 rounded-full bg-white", task.incentiveCheck ? "scale-100" : "scale-0")} />
-                          </button>
-                        </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 items-center">
+                        <button
+                          onClick={() => onUpdateTask(task.id, {
+                            contentCheck: !task.contentCheck,
+                            incentiveCheck: false,
+                            updatedDate: new Date().toISOString().split('T')[0],
+                          })}
+                          className={cn(
+                            "w-6 h-6 rounded-full border flex items-center justify-center transition-all cursor-pointer active:scale-90",
+                            task.contentCheck
+                              ? "bg-emerald-600 border-emerald-600 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+                              : "border-white/10 bg-white/[0.02]"
+                          )}
+                        >
+                          <div className={cn(
+                            "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
+                            task.contentCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                          )} />
+                        </button>
+                        <div className="w-px h-5 bg-white/5 mx-0.5" />
+                        <button
+                          onClick={() => onIncentiveClick(task)}
+                          className={cn(
+                            "p-2 rounded-full transition-all",
+                            task.incentiveCheck ? "text-blue-400 bg-blue-400/10" : "text-muted hover:text-blue-400"
+                          )}
+                        >
+                          <Star size={14} fill={task.incentiveCheck ? "currentColor" : "none"} />
+                        </button>
                         <button
                           onClick={() => onAdd(task)}
                           className="p-2 text-muted hover:text-primary hover:bg-primary/5 rounded-full transition-all"
@@ -552,7 +718,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                           <Edit2 size={14} />
                         </button>
                         <button
-                          onClick={() => { if (confirm('Delete this task?')) deleteTask(task.id); }}
+                          onClick={() => { if (confirm('Decommission this asset?')) deleteTask(task.id); }}
                           className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-full transition-all"
                         >
                           <Trash2 size={14} />
@@ -654,23 +820,15 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                       <td className="px-4 py-4 text-center border-r border-border">
                         <div className="flex justify-center">
                           <button
-                            onClick={() => onUpdateTask(task.id, {
-                              ...task,
-                              incentiveCheck: !task.incentiveCheck,
-                              contentCheck: false,
-                              updatedDate: new Date().toISOString().split('T')[0]
-                            })}
+                            onClick={() => onIncentiveClick(task)}
                             className={cn(
-                              "w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90",
+                              "flex items-center justify-center transition-all cursor-pointer active:scale-90 p-2 rounded-full",
                               task.incentiveCheck
-                                ? "bg-blue-600 border-blue-600 shadow-[0_0_10px_rgba(59,130,246,0.2)]"
-                                : "border-white/10 hover:border-white/30 bg-white/[0.02]"
+                                ? "text-blue-400 bg-blue-400/10"
+                                : "text-muted hover:text-blue-400"
                             )}
                           >
-                            <div className={cn(
-                              "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
-                              task.incentiveCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                            )} />
+                            <Star size={16} fill={task.incentiveCheck ? "currentColor" : "none"} />
                           </button>
                         </div>
                       </td>
@@ -821,54 +979,162 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
   )
 }
 
-// --- ENHANCED CALENDAR VIEW ---
-function CalendarView({ tasks, deleteTask, activeFilter }) {
+// --- DETAILED INCENTIVE EVALUATION (100 POINT SYSTEM) ---
+function IncentiveModal({ isOpen, onClose, task, isReadOnly = false }) {
+  const [marks, setMarks] = useState({
+    framing: 0, lighting: 0, focus: 0, steadiness: 0,
+    audio: 0, storytelling: 0, pacing: 0, technical: 0,
+    creativity: 0, completion: 0
+  })
+
+  useEffect(() => {
+    if (task?.marks) setMarks(task.marks)
+    else setMarks({ framing: 0, lighting: 0, focus: 0, steadiness: 0, audio: 0, storytelling: 0, pacing: 0, technical: 0, creativity: 0, completion: 0 })
+  }, [task, isOpen])
+
+  const total = Object.values(marks).reduce((a, b) => a + b, 0)
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Performance Breakdown" size="sm">
+      <div className="space-y-6">
+        <div className="bg-panel rounded-2xl p-6 border border-border shadow-2xl relative overflow-hidden text-center">
+          <p className="text-[10px] text-muted uppercase tracking-[0.2em] mb-2 font-semibold">Asset Evaluation Score</p>
+          <div className="text-7xl font-black text-white leading-none tracking-tighter mb-2">{total}</div>
+          <div className="text-[10px] font-bold text-primary tracking-widest uppercase opacity-60">Scale 0 - 100</div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          {Object.entries(marks).map(([key, val]) => (
+            <div key={key} className="bg-white/5 border border-white/5 rounded-xl p-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[9px] text-muted font-bold uppercase tracking-widest truncate max-w-[80px]">{key}</span>
+                <span className="text-xs font-black text-white">{val}</span>
+              </div>
+              <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-primary" style={{ width: `${(val / 10) * 100}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button onClick={onClose} className="w-full py-4 bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-xl text-xs font-bold text-white tracking-[0.3em] uppercase">
+          Close Report
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+// --- PERFORMANCE EVALUATION SUMMARY POPUP ---
+function PerformanceEvaluationModal({ isOpen, onClose, date, tasks }) {
+  const dayIncentiveTasks = tasks.filter(t => t.incentiveCheck && (t.takenDate || t.scheduleDate || t.updatedDate) === date)
+  const totalPoints = dayIncentiveTasks.reduce((acc, t) => acc + (parseFloat(t.incentivePoints) || 1), 0)
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Daily Performance" size="sm">
+      <div className="space-y-6">
+        <div className="bg-panel rounded-2xl p-8 text-center border border-border shadow-2xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-primary/5 blur-3xl opacity-30" />
+          <div className="relative z-10">
+            <p className="text-[10px] text-muted uppercase tracking-[0.2em] mb-4 font-semibold">Aggregate Incentive</p>
+            <div className="text-8xl font-black text-white leading-none tracking-tighter mb-2 animate-in zoom-in duration-500">
+              {totalPoints}
+            </div>
+            <div className="h-1.5 w-12 bg-white/20 mx-auto rounded-full mb-4" />
+            <p className="text-xs text-muted font-medium italic">{date ? formatDate(date) : ""}</p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h4 className="text-[10px] font-bold text-muted uppercase tracking-widest">Mark Details</h4>
+            <span className="text-[9px] text-muted-foreground/60 italic font-medium">Click to restricted view</span>
+          </div>
+          <div className="bg-panel border border-border rounded-xl divide-y divide-white/5 overflow-hidden">
+            {dayIncentiveTasks.length > 0 ? dayIncentiveTasks.map((t, idx) => (
+              <button 
+                key={idx} 
+                onClick={() => {
+                  onClose();
+                  if (typeof window !== 'undefined' && window.__onTaskClick) window.__onTaskClick(t);
+                }}
+                className="w-full text-left p-4 flex items-start gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] transition-all group"
+              >
+                <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-white truncate">{t.clientName}</p>
+                  <p className="text-[10px] text-muted truncate mt-0.5">{t.task}</p>
+                </div>
+                <div className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                  +{parseFloat(t.incentivePoints) || 1.0}
+                </div>
+              </button>
+            )) : (
+              <div className="p-8 text-center text-muted text-xs italic">
+                No evaluation marks found for this date.
+              </div>
+            )}
+          </div>
+        </div>
+
+        <button 
+          onClick={onClose}
+          className="w-full py-4 bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-xl text-xs font-bold text-white tracking-[0.3em] uppercase transition-all active:scale-95"
+        >
+          Dismiss View
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+// --- STANDARD CALENDAR VIEW ---
+function CalendarView({ tasks, deleteTask, onTaskClick }) {
   const { desktopCollapsed } = useData()
   const calendarRef = useRef(null)
   const containerRef = useRef(null)
-  const [selectedTasks, setSelectedTasks] = useState(null)
-
+  const [showEvalModal, setShowEvalModal] = useState(false)
+  const [evalDate, setEvalDate] = useState('')
+  
   const events = useMemo(() => {
-    // Group tasks by Date + ClientName to show only one entry per client per day in calendar
-    const grouped = [...tasks].reduce((acc, t) => {
+    const grouped = tasks.reduce((acc, t) => {
       const date = t.takenDate || t.scheduleDate || t.updatedDate;
-      const type = t.incentiveCheck ? 'inc' : t.contentCheck ? 'work' : 'done';
-      const key = `${date}-${t.clientName}-${type}`;
-      if (!acc[key]) {
-        acc[key] = { ...t, date, count: 1, allCompleted: t.contentCheck, isIncentive: t.incentiveCheck, tasks: [t] };
-      } else {
-        acc[key].count++;
-        acc[key].isIncentive = acc[key].isIncentive || t.incentiveCheck;
-        acc[key].allCompleted = acc[key].allCompleted || t.contentCheck;
-        acc[key].tasks.push(t);
-      }
+      if (!acc[date]) acc[date] = { count: 0, incentives: 0 };
+      if (t.incentiveCheck) acc[date].incentives += (parseFloat(t.incentivePoints) || 1);
+      acc[date].count++;
       return acc;
     }, {});
 
-    return Object.values(grouped).map(t => ({
-      id: t.id,
-      title: (t.isIncentive ? `INC: ${t.clientName}` : t.allCompleted ? `WORK: ${t.clientName}` : `DONE: ${t.clientName}`) + ` (${t.count})`,
-      date: t.date,
-      extendedProps: { ...t },
-      backgroundColor: t.isIncentive ? '#2563eb' : t.allCompleted ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.08)',
-      textColor: t.isIncentive ? '#ffffff' : t.allCompleted ? '#34d399' : '#a1a1aa',
-      borderColor: t.isIncentive ? '#3b82f6' : t.allCompleted ? 'rgba(16, 185, 129, 0.6)' : 'rgba(255, 255, 255, 0.2)'
+    return Object.entries(grouped).map(([date, data]) => ({
+      id: date,
+      title: data.incentives > 0 ? data.incentives.toString() : "",
+      date: date,
+      extendedProps: { incentives: data.incentives, total: data.count }
     }));
   }, [tasks])
 
   const handleDateClick = (arg) => {
-    const api = calendarRef.current?.getApi()
-    if (api && api.view.type === 'multiMonthYear') {
-      api.changeView('dayGridMonth', arg.date)
-      return
+    const dayTasks = tasks.filter(t => t.incentiveCheck && (t.takenDate || t.scheduleDate || t.updatedDate) === arg.dateStr)
+    if (dayTasks.length === 1) {
+      if (onTaskClick) onTaskClick(dayTasks[0])
+    } else if (dayTasks.length > 1) {
+      setEvalDate(arg.dateStr)
+      setShowEvalModal(true)
     }
+  }
 
-    const dayTasks = tasks.filter(t => (t.takenDate || t.scheduleDate || t.updatedDate) === arg.dateStr)
-    if (dayTasks.length > 0) {
-      setSelectedTasks({ date: arg.dateStr, tasks: dayTasks })
-    } else {
-      setSelectedTasks(null)
-    }
+  const renderEventContent = (eventInfo) => {
+    const pts = parseInt(eventInfo.event.title)
+    if (!pts || isNaN(pts)) return null
+    return (
+      <div className="w-full h-full flex items-center justify-center py-2 group">
+        <span className="text-2xl sm:text-3xl font-black text-white/20 hover:text-white transition-colors cursor-pointer select-none">
+          {pts}
+        </span>
+      </div>
+    )
   }
 
   useEffect(() => {
@@ -881,135 +1147,64 @@ function CalendarView({ tasks, deleteTask, activeFilter }) {
     }
   }, [desktopCollapsed])
 
-  useEffect(() => {
-    if (!containerRef.current) return
-    const resizeObserver = new ResizeObserver(() => {
-      const api = calendarRef.current?.getApi()
-      if (api) api.updateSize()
-    })
-    resizeObserver.observe(containerRef.current)
-    return () => resizeObserver.disconnect()
-  }, [])
-
   return (
     <div id="calendar-view" className="w-full flex-1 p-0 overflow-hidden flex flex-col bg-panel">
       <style>{`
-        .fc-theme-standard td, .fc-theme-standard th { border-color: var(--border) !important; }
-        .fc-scrollgrid { border-color: var(--border) !important; border-radius: 0.25rem !important; }
-        .fc-theme-standard .fc-scrollgrid { border: none !important; }
-        .fc-header-toolbar { margin: 0.75rem !important; flex-wrap: wrap; gap: 0.5rem; }
-        .fc-button-primary { background-color: var(--bg-card) !important; border-color: var(--border) !important; color: var(--text-primary) !important; text-transform: capitalize !important; border-radius: 0.25rem !important; padding: 0.3rem 0.5rem !important; font-size: 0.7rem !important; }
-        .fc-button-primary:hover { background-color: var(--border) !important; }
-        .fc-button-active { background-color: var(--text-primary) !important; color: var(--bg-primary) !important; }
-        .fc-day-today { background-color: rgba(255, 255, 255, 0.05) !important; }
-        .fc-event { 
-          border-radius: 9999px !important; 
-          font-size: 8px !important; 
-          padding: 3px 6px !important; 
-          cursor: pointer !important; 
-          white-space: nowrap; 
-          overflow: hidden; 
-          text-overflow: ellipsis; 
-          font-weight: 800 !important;
-          text-transform:  !important;
-          letter-spacing: 0.02em !important;
-          border-width: 1px !important;
-          margin: 1px 2px !important;
-          transition: all 0.2s ease !important;
-        }
-        .fc-event:hover {
-          filter: brightness(1.2);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
-        .fc-col-header-cell { background-color: #111111 !important; border-bottom: 2px solid var(--border) !important; }
-        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; text-transform: ; padding: 0.6rem !important; display: block !important; }
-        .fc-daygrid-day-number { color: var(--text-primary) !important; font-size: 0.7rem; padding: 0.3rem !important; }
-        .fc-toolbar-title { color: var(--text-primary) !important; font-size: 0.9rem !important; font-weight: 700 !important; }
-        
-        .fc-theme-standard .fc-list, .fc-theme-standard .fc-list-day-cushion { background: transparent !important; }
-        .fc-multimonth { background: transparent !important; }
-        .fc-multimonth-month { border: none !important; transition: all 0.2s ease; border-radius: 0.5rem; }
-        .fc-multimonth-month:hover { background: rgba(255, 255, 255, 0.05) !important; cursor: pointer; transform: scale(1.02); }
-        .fc-multimonth-title { color: var(--text-primary) !important; font-size: 0.8rem !important; font-weight: 700 !important; background: transparent !important; padding: 0.75rem 0 !important; }
-        .fc-multimonth-daygrid-table { background: transparent !important; }
-        .fc-multimonth-daygrid-table td { pointer-events: none !important; }
-        .fc-multimonth-month { pointer-events: auto !important; }
-        
+        .fc { background: transparent !important; }
+        .fc-theme-standard td, .fc-theme-standard th { border: none !important; }
+        .fc-col-header-cell { background: #080808 !important; font-size: 10px !important; font-weight: 500 !important; color: rgba(255,255,255,0.3) !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; padding: 12px 0 !important; border: none !important; }
+        .fc-header-toolbar { margin: 0 !important; padding: 1.25rem !important; border: none !important; background: #050505 !important; }
+        .fc-toolbar-title { color: #fff !important; font-size: 13px !important; font-weight: 600 !important; letter-spacing: 0.05em; }
+        .fc-button-primary { background: #0c0c0c !important; border: 1px solid rgba(255,255,255,0.08) !important; color: #fff !important; text-transform: capitalize !important; border-radius: 99px !important; padding: 5px 14px !important; font-size: 10px !important; font-weight: 600 !important; transition: all 0.2s !important; }
+        .fc-button-primary:hover { border-color: rgba(255,255,255,0.2) !important; background: #111 !important; }
+        .fc-button-active { background: #fff !important; color: #000 !important; border-color: #fff !important; }
+        .fc-day-today { background: rgba(255, 255, 255, 0.02) !important; }
+        .fc-day-today .fc-daygrid-day-number { color: #fff !important; font-weight: 800 !important; opacity: 1 !important; }
+        .fc-daygrid-day-number { font-size: 11px !important; font-weight: 500 !important; opacity: 0.2 !important; padding: 10px !important; }
+        .fc-scrollgrid { border: none !important; }
+        .fc-daygrid-day { border: none !important; }
+        .fc-scroller { scrollbar-width: none !important; }
+        .fc-scroller::-webkit-scrollbar { display: none !important; }
+
         @media (max-width: 768px) {
-          .fc-header-toolbar { flex-direction: column; align-items: center; }
-          .fc-toolbar-chunk { margin-bottom: 0.25rem; }
-          .fc-event { font-size: 0.55rem !important; }
-          .fc-button-primary { padding: 0.25rem 0.4rem !important; font-size: 0.65rem !important; }
-          .fc-col-header-cell-cushion { font-size: 0.6rem !important; padding: 0.4rem !important; }
+          .fc-daygrid-day-frame { min-height: 80px !important; }
         }
       `}</style>
 
       <div className="p-3 sm:p-5 border-b border-border bg-sidebar">
-        <h2 className="text-base sm:text-lg font-medium text-primary">Work Calendar Overview</h2>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-base sm:text-lg font-medium text-white flex items-center gap-2">
+              <Star size={18} className="text-white/40" />
+              Performance Calendar
+            </h2>
+            <p className="text-[10px] text-muted mt-0.5 uppercase tracking-widest">Total incentive points per day</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+            <span className="text-[10px] font-bold text-white/40 tracking-widest uppercase">Score Tracker</span>
+          </div>
+        </div>
       </div>
 
-      <div ref={containerRef} className="p-0 bg-panel flex-1 overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <div ref={containerRef} className="p-0 bg-panel flex-1 overflow-auto scrollbar-none">
         <FullCalendar
           ref={calendarRef}
-          plugins={[dayGridPlugin, interactionPlugin, multiMonthPlugin]}
-          initialView={window.innerWidth < 640 ? 'dayGridWeek' : 'dayGridMonth'}
-          initialDate={new Date().toISOString().split('T')[0]}
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
           events={events}
           dateClick={handleDateClick}
-          eventClick={(info) => {
-            const tasks = info.event.extendedProps.tasks
-            setSelectedTasks({ date: info.event.startStr, tasks: tasks || [info.event.extendedProps] })
-          }}
-          headerToolbar={{
-            left: window.innerWidth < 640 ? 'prev,next' : 'prev,next today',
-            center: 'title',
-            right: window.innerWidth < 640 ? 'today' : 'multiMonthYear,dayGridMonth,dayGridWeek'
-          }}
+          eventContent={renderEventContent}
+          headerToolbar={{ left: 'prev,next', center: 'title', right: 'today' }}
           height="auto"
-          contentHeight="auto"
-          handleWindowResize={true}
-          expandRows={true}
-          eventDisplay="block"
-          viewClassNames={window.innerWidth < 640 ? "mobile-calendar" : ""}
         />
       </div>
 
-      <Modal isOpen={!!selectedTasks} onClose={() => setSelectedTasks(null)} title={`Tasks for ${selectedTasks?.date}`} size="md">
-        <div className="space-y-2 mt-4 max-h-[60vh] overflow-y-auto">
-          {selectedTasks?.tasks.map(t => (
-            <div key={t.id} className="p-3 border border-border rounded-md bg-sidebar flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="font-medium text-sm text-white truncate">{t.clientName}</p>
-                    {t.contentCheck && (
-                      <span className="text-[8px] font-medium  px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                        <WorkDoneIcon size={8} /> Work Done
-                      </span>
-                    )}
-                    {t.incentiveCheck && (
-                      <span className="text-[8px] font-medium  px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1">
-                        <IncentiveIcon size={8} /> Incentive
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted">{t.task}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] font-medium  px-2 py-0.5 rounded bg-[#222] text-primary">{t.status}</span>
-                <button
-                  onClick={() => { if (confirm('Delete this task?')) { deleteTask(t.id); setSelectedTasks(prev => ({ ...prev, tasks: prev.tasks.filter(x => x.id !== t.id) })); } }}
-                  className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-full transition-all"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Modal>
+      <PerformanceEvaluationModal
+        isOpen={showEvalModal}
+        onClose={() => setShowEvalModal(false)}
+        date={evalDate}
+        tasks={tasks}
+      />
     </div>
   )
 }
@@ -1019,7 +1214,7 @@ function EditorListView({ tasks, onSelect }) {
   const { workers } = useData()
   const [searchEditor, setSearchEditor] = useState('')
   const today = new Date().toISOString().split('T')[0]
-  
+
   const editors = useMemo(() => {
     const names = Array.from(new Set(workers.filter(w => w.role === 'Editor').map(w => w.name)))
     const filtered = names.filter(name => name.toLowerCase().includes(searchEditor.toLowerCase()))
@@ -1038,7 +1233,7 @@ function EditorListView({ tasks, onSelect }) {
     const doneCount = editorTasks.filter(t => t.status === 'Done').length
     const pendingCount = editorTasks.filter(t => t.status !== 'Done').length
     const totalCount = editorTasks.length
-    
+
     return { total: totalCount, done: doneCount, pending: pendingCount }
   }, [tasks, today])
 
@@ -1047,7 +1242,7 @@ function EditorListView({ tasks, onSelect }) {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 border-b border-border pb-4 gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-medium text-white tracking-tight">Editor Management</h1>
+            <h1 className="page-heading-lg">Editor Management</h1>
             <p className="text-xs sm:text-sm text-muted mt-1">Select an editor to view their dashboard and tasks</p>
           </div>
           <div className="flex items-center gap-3">
@@ -1066,7 +1261,7 @@ function EditorListView({ tasks, onSelect }) {
           {editors.map(name => {
             const stats = getEditorStats(name)
             const editorInfo = workers.find(w => w.name === name)
-            
+
 
             return (
               <button
@@ -1141,8 +1336,20 @@ export default function EditorPage() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [activeFilter, setActiveFilter] = useState('All')
-  const [showDateWiseModal, setShowDateWiseModal] = useState(false)
-  const [tasksByDate, setTasksByDate] = useState({})
+
+  // Performance View state
+  const [incentiveTask, setIncentiveTask] = useState(null)
+  const [viewOnlyIncentive, setViewOnlyIncentive] = useState(false)
+
+  // Mobile navigation state
+  const [activeTab, setActiveTab] = useState('shoots') // 'shoots', 'analytics', 'performance'
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     setHideHeader(!!selectedEditor)
@@ -1160,7 +1367,7 @@ export default function EditorPage() {
 
       const matchesStatus = statusFilter === 'All' || t.status === statusFilter
 
-      const matchesFilter = activeFilter === 'All' || 
+      const matchesFilter = activeFilter === 'All' ||
         (activeFilter === 'WorkDone' && t.contentCheck) ||
         (activeFilter === 'Incentive' && t.incentiveCheck)
 
@@ -1168,18 +1375,6 @@ export default function EditorPage() {
     })
   }, [tasks, selectedEditor, search, statusFilter, activeFilter])
 
-  // Prepare date-wise tasks for modal
-  useEffect(() => {
-    const grouped = editorTasks.reduce((acc, task) => {
-      const date = task.takenDate
-      if (date) {
-        if (!acc[date]) acc[date] = []
-        acc[date].push(task)
-      }
-      return acc
-    }, {})
-    setTasksByDate(grouped)
-  }, [editorTasks])
 
   const handleAddTask = useCallback((form) => {
     if (form.id) {
@@ -1197,6 +1392,16 @@ export default function EditorPage() {
     setShowAddModal(false)
     setEditTask(null)
   }, [selectedEditor, addTask, updateTask])
+
+  const handleCalendarPerformanceClick = (task) => {
+    setIncentiveTask(task)
+    setViewOnlyIncentive(true)
+  }
+
+  useEffect(() => {
+    window.__onTaskClick = handleCalendarPerformanceClick;
+    return () => { delete window.__onTaskClick; };
+  }, [handleCalendarPerformanceClick]);
 
   const handleExpandSidebar = useCallback(() => {
     setDesktopCollapsed(false)
@@ -1216,37 +1421,93 @@ export default function EditorPage() {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto relative">
         <div className="w-full flex flex-col px-0">
-          <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 mb-0 flex-none border-b border-border">
-            <div className="w-full lg:col-span-1 border-b lg:border-b-0 lg:border-r border-border bg-sidebar/50">
-              <IncentiveCard />
+          
+          {/* MOBILE TABS SWITCHER */}
+          {isMobile && (
+            <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-white/5 p-1 flex items-center gap-1 overflow-x-auto scrollbar-none no-scrollbar">
+              {[
+                { id: 'shoots', label: 'Daily Tasks', icon: <LayoutList size={14} /> },
+                { id: 'worklist', label: 'Work List', icon: <FileText size={14} /> },
+                { id: 'performance', label: 'Performance', icon: <Target size={14} /> }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-[10px] font-semibold transition-all whitespace-nowrap ${
+                    activeTab === tab.id 
+                    ? 'bg-primary text-black shadow-lg shadow-primary/20' 
+                    : 'text-muted hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            <div className="w-full lg:col-span-3 min-w-0 overflow-hidden">
-              <TaskTable
-                tasks={editorTasks}
-                onAdd={(task) => { setEditTask(task); setShowAddModal(true); }}
-                onUpdateTask={updateTask}
-                deleteTask={deleteTask}
-                search={search}
-                setSearch={setSearch}
-                statusFilter={statusFilter}
-                setStatusFilter={setStatusFilter}
-                activeFilter={activeFilter}
-                setActiveFilter={setActiveFilter}
-                onViewDateWise={() => setShowDateWiseModal(true)}
-              />
-            </div>
-          </div>
-          <div className="min-h-[400px] sm:min-h-[500px] lg:h-[600px] border-b border-border flex flex-col">
-            <CalendarView
-              tasks={editorTasks}
-              deleteTask={deleteTask}
-              activeFilter={activeFilter}
-            />
-          </div>
+          )}
 
-          <div className="p-6 sm:p-10 lg:p-20 flex justify-center bg-background">
+          {(!isMobile || activeTab === 'shoots') && (
+            <div className={`${!isMobile ? 'flex flex-col lg:grid lg:grid-cols-4' : 'flex flex-col'} gap-0 mb-0 flex-none border-b border-border`}>
+              {!isMobile && (
+                <div className="w-full lg:col-span-1 border-b lg:border-b-0 lg:border-r border-border bg-sidebar/50">
+                  <IncentiveCard />
+                </div>
+              )}
+              <div className={`w-full ${!isMobile ? 'lg:col-span-3' : ''} min-w-0 overflow-hidden`}>
+                <TaskTable
+                  tasks={editorTasks}
+                  onAdd={(task) => { setEditTask(task); setShowAddModal(true); }}
+                  onUpdateTask={updateTask}
+                  deleteTask={deleteTask}
+                  search={search}
+                  setSearch={setSearch}
+                  statusFilter={statusFilter}
+                  setStatusFilter={setStatusFilter}
+                  activeFilter={activeFilter}
+                  setActiveFilter={setActiveFilter}
+                  onIncentiveClick={(task) => { setIncentiveTask(task); setViewOnlyIncentive(false); }}
+                />
+              </div>
+            </div>
+          )}
+          
+          {(!isMobile || activeTab === 'worklist') && (
+            <div className="w-full border-b border-border">
+              <DayWiseWorkList tasks={editorTasks} />
+            </div>
+          )}
+          
+          {(!isMobile || activeTab === 'performance') && (
+            <div className="flex flex-col">
+              {isMobile && (
+                <div className="border-b border-border">
+                   <IncentiveCard />
+                </div>
+              )}
+              <div className="min-h-[400px] sm:min-h-[500px] h-[500px] sm:h-[600px] lg:h-[600px] flex flex-col">
+                <CalendarView
+                  tasks={editorTasks}
+                  deleteTask={deleteTask}
+                  activeFilter={activeFilter}
+                  onTaskClick={handleCalendarPerformanceClick}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* MOBILE FLOATING ACTION BUTTON */}
+          {isMobile && activeTab === 'shoots' && (
+            <button
+              onClick={() => { setEditTask(null); setShowAddModal(true); }}
+              className="fixed bottom-6 right-6 w-11 h-11 bg-primary text-black rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-50 animate-in zoom-in-50 duration-300"
+            >
+              <Plus size={22} />
+            </button>
+          )}
+
+          <div className={`p-10 ${isMobile ? 'pb-20' : 'lg:p-20'} flex justify-center bg-background`}>
             <button
               onClick={() => setSelectedEditor(null)}
               className="group flex items-center gap-2 sm:gap-4 pl-1.5 pr-4 sm:pr-8 py-1.5 bg-black/40 hover:bg-black/60 backdrop-blur-xl border border-white/10 rounded-full transition-all"
@@ -1268,11 +1529,14 @@ export default function EditorPage() {
         editTask={editTask}
       />
 
-      <DateWiseTaskModal
-        isOpen={showDateWiseModal}
-        onClose={() => setShowDateWiseModal(false)}
-        tasksByDate={tasksByDate}
+      <IncentiveModal
+        isOpen={viewOnlyIncentive}
+        onClose={() => { setIncentiveTask(null); setViewOnlyIncentive(false); }}
+        task={incentiveTask}
+        isReadOnly={true}
       />
+
     </div>
   )
 }
+

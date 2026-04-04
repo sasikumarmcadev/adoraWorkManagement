@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { useData } from '../context/DataContext'
 import { formatDate, cn } from '../lib/utils'
-import { Plus, Edit2, Filter, Search, Target, Move, Image as ImageIcon, Trash2, Calendar as CalendarIcon, MoreVertical, ArrowLeft, Menu, X, FileText, Eye } from 'lucide-react'
+import { Plus, Edit2, Filter, Search, Target, Move, Image as ImageIcon, Trash2, Calendar as CalendarIcon, MoreVertical, ArrowLeft, Menu, X, FileText, CheckCircle, Award, List, Grid, RefreshCw, ChevronRight, ChevronDown, LayoutList, BarChart3, Star } from 'lucide-react'
 import { Modal, FormField, SearchBar, StatusSelect, CustomSelect } from '../components/ui/index'
 
 // FullCalendar imports
@@ -9,9 +9,6 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import multiMonthPlugin from '@fullcalendar/multimonth'
-
-// --- HANDWRITTEN TICK COMPONENT ---
-
 
 // --- CUSTOM SIDEBAR ICON ---
 const SidebarIcon = ({ className, size = 18 }) => (
@@ -62,10 +59,9 @@ const IncentiveIcon = ({ size = 12, className = "" }) => (
   </svg>
 )
 
-// --- COVER UPLOADER (Helper Component) ---
+// --- COVER UPLOADER ---
 function CoverUploader({ onUpload, isNav }) {
   const fileInputRef = useRef(null)
-
   const handleFileChange = (e) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -73,7 +69,6 @@ function CoverUploader({ onUpload, isNav }) {
       onUpload(url)
     }
   }
-
   if (isNav) {
     return (
       <>
@@ -87,7 +82,6 @@ function CoverUploader({ onUpload, isNav }) {
       </>
     )
   }
-
   return (
     <>
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
@@ -98,7 +92,7 @@ function CoverUploader({ onUpload, isNav }) {
   )
 }
 
-// --- COVER HEADER SECTION ---
+// --- COVER HEADER ---
 function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
   const [coverData, setCoverData] = useState(() => {
     const saved = localStorage.getItem('contentSpecialistCover')
@@ -107,11 +101,8 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
       positionY: 50
     }
   })
-
   const [showOptions, setShowOptions] = useState(false)
   const menuRef = useRef(null)
-
-  // Close menu on click outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setShowOptions(false)
@@ -119,26 +110,22 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
-
   const saveCover = (data) => {
     setCoverData(data)
     localStorage.setItem('contentSpecialistCover', JSON.stringify(data))
     setShowOptions(false)
   }
-
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState(0)
   const [startY, setStartY] = useState(0)
   const [currentY, setCurrentY] = useState(coverData.positionY)
   const containerRef = useRef(null)
-
   const handlePointerDown = (e) => {
     if (!isDragging) return
     e.target.setPointerCapture(e.pointerId)
     setDragStart(e.clientY)
     setStartY(currentY)
   }
-
   const handlePointerMove = (e) => {
     if (!isDragging || !e.target.hasPointerCapture(e.pointerId)) return
     const containerHeight = containerRef.current.clientHeight
@@ -149,17 +136,14 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
     if (newY > 100) newY = 100
     setCurrentY(newY)
   }
-
   const handlePointerUp = (e) => {
     if (!isDragging) return
     e.target.releasePointerCapture(e.pointerId)
   }
-
   const handleSavePosition = () => {
     setIsDragging(false)
     saveCover({ ...coverData, positionY: currentY })
   }
-
   if (!coverData.img) {
     return (
       <div className="h-[140px] sm:h-[200px] w-full bg-panel relative flex items-center justify-center group border-b border-border">
@@ -167,7 +151,6 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
       </div>
     )
   }
-
   return (
     <div
       ref={containerRef}
@@ -186,25 +169,22 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
           filter: showOptions || isDragging ? 'brightness(0.6)' : 'brightness(1)'
         }}
       />
-
       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
-
-      <div className={`absolute top-4 right-6 z-30 transition-opacity duration-300 ${isDragging || showOptions ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} ref={menuRef}>
+      <div className={`absolute top-3 right-3 sm:top-4 sm:right-6 z-30 transition-opacity duration-300 ${isDragging || showOptions ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} ref={menuRef}>
         {isDragging ? (
-          <button onClick={handleSavePosition} className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-hover text-black text-xs font-medium rounded-full shadow-lg transition-all scale-105">
+          <button onClick={handleSavePosition} className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-primary hover:bg-hover text-black text-[10px] sm:text-xs font-medium rounded-full shadow-lg transition-all scale-105">
             Save New Position
           </button>
         ) : (
           <div className="relative">
             <button
               onClick={() => setShowOptions(!showOptions)}
-              className="p-2 bg-black/40 hover:bg-black/80 text-white rounded-full backdrop-blur-md border border-white/10 transition-all shadow-xl"
+              className="p-1.5 sm:p-2 bg-black/40 hover:bg-black/80 text-white rounded-full backdrop-blur-md border border-white/10 transition-all shadow-xl"
             >
-              <MoreVertical size={20} />
+              <MoreVertical size={16} className="sm:w-5 sm:h-5" />
             </button>
-
             {showOptions && (
-              <div className="absolute right-0 mt-2 w-48 bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2">
+              <div className="absolute right-0 mt-2 w-44 sm:w-48 bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
                 <div className="p-1.5 flex flex-col gap-1">
                   <CoverUploader onUpload={(url) => saveCover({ ...coverData, img: url, positionY: 50 })} isNav />
                   <button
@@ -226,7 +206,6 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
           </div>
         )}
       </div>
-
       {!isDragging && (
         <div className="absolute top-4 left-4 sm:top-6 sm:left-8 flex items-center gap-3 sm:gap-6 z-50 animate-in fade-in slide-in-from-left-4 duration-700">
           {isSidebarCollapsed && (
@@ -248,20 +227,595 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
               </div>
             </div>
           )}
-
           <div className="flex flex-col gap-0">
             <h2 className="text-xl sm:text-2xl font-medium text-white leading-none drop-shadow-2xl tracking-tight">{title}</h2>
           </div>
         </div>
       )}
-
       {isDragging && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-          <div className="bg-black/60 backdrop-blur px-5 py-2.5 rounded-full text-white text-sm font-medium border border-white/20 shadow-2xl">
+          <div className="bg-black/60 backdrop-blur px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-full text-white text-xs sm:text-sm font-medium border border-white/20 shadow-2xl">
             Drag image vertically to reposition
           </div>
         </div>
       )}
+    </div>
+  )
+}
+function DayWiseWorkList({ tasks }) {
+  const now = new Date()
+  const [viewYear, setViewYear] = useState(now.getFullYear())
+  const [viewMonth, setViewMonth] = useState(now.getMonth())
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const workDoneTasks = useMemo(() => {
+    return tasks.filter(task => task.contentCheck === true)
+  }, [tasks])
+
+  const allDatesInMonth = useMemo(() => {
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
+    const dates = []
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(viewYear, viewMonth, d)
+      dates.push(date.toISOString().split('T')[0])
+    }
+    return dates
+  }, [viewYear, viewMonth])
+
+  const groupedByDate = useMemo(() => {
+    const grouped = new Map()
+    workDoneTasks.forEach(task => {
+      const date = task.takenDate || task.scheduleDate || task.updatedDate
+      if (!date) return
+      if (!grouped.has(date)) grouped.set(date, [])
+      grouped.get(date).push(task)
+    })
+    return allDatesInMonth.map(date => ({
+      date,
+      tasks: grouped.get(date) || []
+    }))
+  }, [workDoneTasks, allDatesInMonth])
+
+  const clientColorMap = useMemo(() => {
+    const palette = [
+      { bg: '#DBEAFE', text: '#1E40AF' },
+      { bg: '#DCFCE7', text: '#15803D' },
+      { bg: '#FEF3C7', text: '#92400E' },
+      { bg: '#FCE7F3', text: '#9D174D' },
+      { bg: '#EDE9FE', text: '#5B21B6' },
+      { bg: '#CFFAFE', text: '#155E75' },
+      { bg: '#FFEDD5', text: '#9A3412' },
+      { bg: '#ECFCCB', text: '#3F6212' },
+    ]
+    const map = new Map()
+    let idx = 0
+    workDoneTasks.forEach(task => {
+      if (task.clientName && !map.has(task.clientName)) {
+        map.set(task.clientName, palette[idx % palette.length])
+        idx++
+      }
+    })
+    return map
+  }, [workDoneTasks])
+
+  const getClientColor = (name) =>
+    clientColorMap.get(name) || { bg: '#4B5563', text: '#ffffff' }
+
+  const monthLabel = new Date(viewYear, viewMonth, 1).toLocaleString('default', { month: 'long', year: 'numeric' })
+  const todayStr = now.toISOString().split('T')[0]
+  const isCurrentMonth = viewYear === now.getFullYear() && viewMonth === now.getMonth()
+
+  const monthWorkCount = useMemo(() =>
+    groupedByDate.reduce((acc, g) => acc + g.tasks.length, 0)
+  , [groupedByDate])
+
+  const goToPrev = () => {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) }
+    else setViewMonth(m => m - 1)
+  }
+
+  const goToNext = () => {
+    if (isCurrentMonth) return
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1) }
+    else setViewMonth(m => m + 1)
+  }
+
+  const goToCurrentMonth = () => {
+    setViewYear(now.getFullYear())
+    setViewMonth(now.getMonth())
+  }
+
+  const renderClientBadges = (group) => {
+    const clientGroups = new Map()
+    group.tasks.forEach(task => {
+      if (!clientGroups.has(task.clientName)) clientGroups.set(task.clientName, [])
+      clientGroups.get(task.clientName).push(task)
+    })
+    return Array.from(clientGroups.entries()).map(([clientName]) => {
+      const color = getClientColor(clientName)
+      return (
+        <span
+          key={clientName}
+          className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap"
+          style={{ backgroundColor: color.bg, color: color.text }}
+        >
+          {clientName}
+        </span>
+      )
+    })
+  }
+
+  return (
+    <div className="w-full bg-panel">
+      <div className="px-3 sm:px-4 py-3 bg-sidebar border-b border-border">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex-shrink-0 w-1 h-5 bg-emerald-500 rounded-full" />
+            <h2 className="text-xs sm:text-sm font-semibold text-white tracking-wide truncate">
+              DAY WISE WORK LIST
+            </h2>
+          </div>
+          <div className="flex-shrink-0 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+            <span className="text-[10px] font-medium text-emerald-400 whitespace-nowrap">
+              {monthWorkCount} Completed
+            </span>
+          </div>
+        </div>
+        <p className="text-[10px] text-muted mt-1 ml-3">Work completed tasks grouped by date</p>
+      </div>
+
+      <div className="px-3 sm:px-4 py-2 bg-[#0a0a0a] border-b border-border">
+        <div className="flex items-center justify-between gap-2">
+          <button
+            onClick={goToPrev}
+            className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] font-medium text-muted hover:text-white hover:bg-white/5 border border-white/10 hover:border-white/20 transition-all active:scale-95"
+          >
+            <ArrowLeft size={11} />
+            <span className="hidden sm:inline">Prev</span>
+          </button>
+
+          <div className="flex items-center gap-2 flex-1 justify-center">
+            <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide text-center">
+              {monthLabel}
+            </span>
+            {!isCurrentMonth && (
+              <button
+                onClick={goToCurrentMonth}
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 transition-all whitespace-nowrap active:scale-95"
+              >
+                <CalendarIcon size={9} />
+                <span>Today</span>
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={goToNext}
+            disabled={isCurrentMonth}
+            className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] font-medium border transition-all active:scale-95 ${
+              isCurrentMonth
+                ? 'text-muted/20 border-white/5 cursor-not-allowed'
+                : 'text-muted hover:text-white hover:bg-white/5 border-white/10 hover:border-white/20'
+            }`}
+          >
+            <span className="hidden sm:inline">Next</span>
+            <ArrowLeft size={11} className="rotate-180" />
+          </button>
+        </div>
+      </div>
+
+      {isMobile ? (
+        <div className="divide-y divide-border/40">
+          {groupedByDate.map((group) => {
+            const isToday = group.date === todayStr
+            if (group.tasks.length === 0) {
+              return (
+                <div key={group.date} className={`flex items-center justify-between px-4 py-3 ${isToday ? 'bg-blue-500/5' : ''}`}>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-medium ${isToday ? 'text-blue-400' : 'text-white/60'}`}>{formatDate(group.date)}</span>
+                    {isToday && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">Today</span>}
+                  </div>
+                  <span className="text-muted/40 text-sm leading-none">—</span>
+                </div>
+              )
+            }
+            return (
+              <div key={group.date} className={`${isToday ? 'bg-blue-500/5' : ''}`}>
+                <div className="flex items-center px-4 py-3 border-b border-white/[0.04]">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-semibold ${isToday ? 'text-blue-400' : 'text-white'}`}>{formatDate(group.date)}</span>
+                    {isToday && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">Today</span>}
+                  </div>
+                </div>
+                <div className="px-4 py-2.5 flex flex-wrap gap-2">{renderClientBadges(group)}</div>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-[10px] text-muted font-semibold bg-[#0a0a0a] border-b border-border">
+              <tr>
+                <th className="px-4 py-2.5 font-medium uppercase tracking-wider w-[140px]">Date</th>
+                <th className="px-4 py-2.5 font-medium uppercase tracking-wider">Category</th>
+                <th className="px-4 py-2.5 font-medium uppercase tracking-wider text-center w-[80px]">Count</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/50">
+              {groupedByDate.map((group) => {
+                const isToday = group.date === todayStr
+                return (
+                  <tr key={group.date} className={`transition-colors ${isToday ? 'bg-blue-500/5' : 'hover:bg-white/[0.02]'}`}>
+                    <td className="px-4 py-2.5 text-xs font-medium align-middle w-[140px]">
+                      <div className="flex items-center gap-2">
+                        <span className={isToday ? 'text-blue-400 font-semibold' : 'text-white'}>{formatDate(group.date)}</span>
+                        {isToday && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">Today</span>}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2.5 align-middle">
+                      <div className="flex flex-wrap gap-2">
+                        {group.tasks.length === 0 ? <span className="text-muted/40 text-xs">—</span> : renderClientBadges(group)}
+                      </div>
+                    </td>
+                    <td className="px-4 py-2.5 text-center align-middle">
+                      <span className={cn("inline-flex items-center justify-center min-w-[24px] h-5 px-1.5 rounded-full border text-[10px] font-semibold", group.tasks.length > 0 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "bg-white/5 border-white/10 text-muted/40")}>
+                        {group.tasks.length}
+                      </span>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// --- SPECIALIST LIST VIEW ---
+function SpecialistListView({ tasks, onSelect }) {
+  const { workers } = useData()
+  const [searchSpecialist, setSearchSpecialist] = useState('')
+  const today = new Date().toISOString().split('T')[0]
+
+  const specialists = useMemo(() => {
+    const names = Array.from(new Set(workers.filter(w => w.role === 'Content Specialist').map(w => w.name)))
+    const filtered = names.filter(name => name.toLowerCase().includes(searchSpecialist.toLowerCase()))
+    return filtered.sort((a, b) => {
+      const wA = workers.find(w => w.name === a)
+      const wB = workers.find(w => w.name === b)
+      if (wA?.isTeamLead && !wB?.isTeamLead) return -1
+      if (!wA?.isTeamLead && wB?.isTeamLead) return 1
+      return a.localeCompare(b)
+    })
+  }, [workers, searchSpecialist])
+
+  const getSpecialistStats = useCallback((name) => {
+    const specialistTasks = tasks.filter(t => t.workerName === name && t.takenDate === today)
+    const doneCount = specialistTasks.filter(t => t.status === 'Done').length
+    const pendingCount = specialistTasks.filter(t => t.status !== 'Done').length
+    return { total: specialistTasks.length, done: doneCount, pending: pendingCount }
+  }, [tasks, today])
+
+  return (
+    <div className="flex-1 p-4 sm:p-8 overflow-y-auto">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 border-b border-border pb-4 gap-3">
+          <div>
+            <h1 className="page-heading-lg">Content Specialist Management</h1>
+            <p className="text-xs sm:text-sm text-muted mt-1">Select a specialist to view their dashboard and performance</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 border border-primary/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md">
+              <span className="text-primary font-medium text-sm sm:text-base">{specialists.length}</span>
+              <span className="text-muted text-[10px] sm:text-xs ml-2 tracking-wider">Active Specialists</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <SearchBar value={searchSpecialist} onChange={setSearchSpecialist} placeholder="Search specialists by name..." />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          {specialists.map(name => {
+            const stats = getSpecialistStats(name)
+            const workerInfo = workers.find(w => w.name === name)
+
+            return (
+              <button
+                key={name}
+                onClick={() => onSelect(name)}
+                className="group flex flex-col p-4 sm:p-6 bg-panel border border-border hover:border-primary/50 transition-all text-left rounded-lg hover:shadow-xl hover:scale-[1.02] duration-200"
+              >
+                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-medium text-base sm:text-lg overflow-hidden group-hover:scale-110 transition-transform">
+                    {workerInfo?.avatar?.startsWith('http') ? (
+                      <img src={workerInfo.avatar} alt={name} className="w-full h-full object-cover" />
+                    ) : (
+                      name.charAt(0).toUpperCase()
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base sm:text-lg font-medium text-white group-hover:text-primary transition-colors">{name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-[9px] sm:text-[10px] text-muted tracking-widest font-medium">Narrative Architect</p>
+                      {workerInfo?.isTeamLead && (
+                        <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-medium">
+                          Team Lead
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 mt-auto">
+                  <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Tasks</p>
+                    <p className="text-sm font-medium text-white">{stats.total}</p>
+                  </div>
+                  <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Pending</p>
+                    <p className="text-sm font-medium text-orange-400">{stats.pending}</p>
+                  </div>
+                  <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
+                    <p className="text-[8px] text-muted font-medium mb-0.5">Done</p>
+                    <p className="text-sm font-medium text-emerald-400">{stats.done}</p>
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-end text-[10px] text-muted">
+                  <span className="group-hover:translate-x-1 transition-transform text-primary text-[10px] font-medium">View Dashboard →</span>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+
+        {specialists.length === 0 && (
+          <div className="text-center py-12 text-muted">
+            No specialists found matching your search
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// --- DETAILED INCENTIVE EVALUATION (100 POINT SYSTEM) ---
+function IncentiveModal({ isOpen, onClose, task, isReadOnly = false }) {
+  const [marks, setMarks] = useState({
+    framing: 0, lighting: 0, focus: 0, steadiness: 0,
+    audio: 0, storytelling: 0, pacing: 0, technical: 0,
+    creativity: 0, completion: 0
+  })
+
+  useEffect(() => {
+    if (task?.marks) setMarks(task.marks)
+    else setMarks({ framing: 0, lighting: 0, focus: 0, steadiness: 0, audio: 0, storytelling: 0, pacing: 0, technical: 0, creativity: 0, completion: 0 })
+  }, [task, isOpen])
+
+  const total = Object.values(marks).reduce((a, b) => a + b, 0)
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Performance Breakdown" size="sm">
+      <div className="space-y-6">
+        <div className="bg-panel rounded-2xl p-6 border border-border shadow-2xl relative overflow-hidden text-center">
+          <p className="text-[10px] text-muted uppercase tracking-[0.2em] mb-2 font-semibold">Asset Evaluation Score</p>
+          <div className="text-7xl font-black text-white leading-none tracking-tighter mb-2">{total}</div>
+          <div className="text-[10px] font-bold text-primary tracking-widest uppercase opacity-60">Scale 0 - 100</div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          {Object.entries(marks).map(([key, val]) => (
+            <div key={key} className="bg-white/5 border border-white/5 rounded-xl p-3">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[9px] text-muted font-bold uppercase tracking-widest truncate max-w-[80px]">{key}</span>
+                <span className="text-xs font-black text-white">{val}</span>
+              </div>
+              <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-primary" style={{ width: `${(val / 10) * 100}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button onClick={onClose} className="w-full py-4 bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-xl text-xs font-bold text-white tracking-[0.3em] uppercase">
+          Close Report
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+// --- PERFORMANCE EVALUATION SUMMARY POPUP ---
+function PerformanceEvaluationModal({ isOpen, onClose, date, tasks }) {
+  const dayIncentiveTasks = tasks.filter(t => t.incentiveCheck && (t.takenDate || t.scheduleDate || t.updatedDate) === date)
+  const totalPoints = dayIncentiveTasks.reduce((acc, t) => acc + (parseFloat(t.incentivePoints) || 1), 0)
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Daily Performance" size="sm">
+      <div className="space-y-6">
+        <div className="bg-panel rounded-2xl p-8 text-center border border-border shadow-2xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-primary/5 blur-3xl opacity-30" />
+          <div className="relative z-10">
+            <p className="text-[10px] text-muted uppercase tracking-[0.2em] mb-4 font-semibold">Aggregate Incentive</p>
+            <div className="text-8xl font-black text-white leading-none tracking-tighter mb-2 animate-in zoom-in duration-500">
+              {totalPoints}
+            </div>
+            <div className="h-1.5 w-12 bg-white/20 mx-auto rounded-full mb-4" />
+            <p className="text-xs text-muted font-medium italic">{date ? (date.length === 10 ? formatDate(date) : date) : ""}</p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <h4 className="text-[10px] font-bold text-muted uppercase tracking-widest">Mark Details</h4>
+            <span className="text-[9px] text-muted-foreground/60 italic font-medium">Click to restricted view</span>
+          </div>
+          <div className="bg-panel border border-border rounded-xl divide-y divide-white/5 overflow-hidden">
+            {dayIncentiveTasks.length > 0 ? dayIncentiveTasks.map((t, idx) => (
+              <button 
+                key={idx} 
+                onClick={() => {
+                  onClose();
+                  if (typeof window !== 'undefined' && window.__onTaskClick) window.__onTaskClick(t);
+                }}
+                className="w-full text-left p-4 flex items-start gap-4 hover:bg-white/[0.04] active:bg-white/[0.08] transition-all group"
+              >
+                <div className="w-5 h-5 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-white truncate">{t.clientName}</p>
+                  <p className="text-[10px] text-muted truncate mt-0.5">{t.task}</p>
+                </div>
+                <div className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                  +{parseFloat(t.incentivePoints) || 1.0}
+                </div>
+              </button>
+            )) : (
+              <div className="p-8 text-center text-muted text-xs italic">
+                No evaluation marks found for this date.
+              </div>
+            )}
+          </div>
+        </div>
+
+        <button 
+          onClick={onClose}
+          className="w-full py-4 bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 rounded-xl text-xs font-bold text-white tracking-[0.3em] uppercase transition-all active:scale-95"
+        >
+          Dismiss View
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
+
+function CalendarView({ tasks, deleteTask, onTaskClick }) {
+  const { desktopCollapsed } = useData()
+  const calendarRef = useRef(null)
+  const containerRef = useRef(null)
+  const [showEvalModal, setShowEvalModal] = useState(false)
+  const [evalDate, setEvalDate] = useState('')
+  
+  const events = useMemo(() => {
+    const grouped = tasks.reduce((acc, t) => {
+      const date = t.takenDate || t.scheduleDate || t.updatedDate;
+      if (!acc[date]) acc[date] = { count: 0, incentives: 0 };
+      if (t.incentiveCheck) acc[date].incentives += (parseFloat(t.incentivePoints) || 1);
+      acc[date].count++;
+      return acc;
+    }, {});
+
+    return Object.entries(grouped).map(([date, data]) => ({
+      id: date,
+      title: data.incentives > 0 ? data.incentives.toString() : "",
+      date: date,
+      extendedProps: { incentives: data.incentives, total: data.count }
+    }));
+  }, [tasks])
+
+  const handleDateClick = (arg) => {
+    const dayTasks = tasks.filter(t => t.incentiveCheck && (t.takenDate || t.scheduleDate || t.updatedDate) === arg.dateStr)
+    if (dayTasks.length === 1) {
+      if (onTaskClick) onTaskClick(dayTasks[0])
+    } else if (dayTasks.length > 1) {
+      setEvalDate(arg.dateStr)
+      setShowEvalModal(true)
+    }
+  }
+
+  const renderEventContent = (eventInfo) => {
+    const pts = parseInt(eventInfo.event.title)
+    if (!pts || isNaN(pts)) return null
+    return (
+      <div className="w-full h-full flex items-center justify-center py-2 group">
+        <span className="text-2xl sm:text-3xl font-black text-white/20 hover:text-white transition-colors cursor-pointer select-none">
+          {pts}
+        </span>
+      </div>
+    )
+  }
+
+  useEffect(() => {
+    const api = calendarRef.current?.getApi()
+    if (api) {
+      const timer = setTimeout(() => {
+        api.updateSize()
+      }, 350)
+      return () => clearTimeout(timer)
+    }
+  }, [desktopCollapsed])
+
+  return (
+    <div id="calendar-view" className="w-full flex-1 p-0 overflow-hidden flex flex-col bg-panel">
+      <style>{`
+        .fc { background: transparent !important; }
+        .fc-theme-standard td, .fc-theme-standard th { border: none !important; }
+        .fc-col-header-cell { background: #080808 !important; font-size: 10px !important; font-weight: 500 !important; color: rgba(255,255,255,0.3) !important; text-transform: uppercase !important; letter-spacing: 0.1em !important; padding: 12px 0 !important; border: none !important; }
+        .fc-header-toolbar { margin: 0 !important; padding: 1.25rem !important; border: none !important; background: #050505 !important; }
+        .fc-toolbar-title { color: #fff !important; font-size: 13px !important; font-weight: 600 !important; letter-spacing: 0.05em; }
+        .fc-button-primary { background: #0c0c0c !important; border: 1px solid rgba(255,255,255,0.08) !important; color: #fff !important; text-transform: capitalize !important; border-radius: 99px !important; padding: 5px 14px !important; font-size: 10px !important; font-weight: 600 !important; transition: all 0.2s !important; }
+        .fc-button-primary:hover { border-color: rgba(255,255,255,0.2) !important; background: #111 !important; }
+        .fc-button-active { background: #fff !important; color: #000 !important; border-color: #fff !important; }
+        .fc-day-today { background: rgba(255, 255, 255, 0.02) !important; }
+        .fc-day-today .fc-daygrid-day-number { color: #fff !important; font-weight: 800 !important; opacity: 1 !important; }
+        .fc-daygrid-day-number { font-size: 11px !important; font-weight: 500 !important; opacity: 0.2 !important; padding: 10px !important; }
+        .fc-scrollgrid { border: none !important; }
+        .fc-daygrid-day { border: none !important; }
+        .fc-scroller { scrollbar-width: none !important; }
+        .fc-scroller::-webkit-scrollbar { display: none !important; }
+
+        @media (max-width: 768px) {
+          .fc-daygrid-day-frame { min-height: 80px !important; }
+        }
+      `}</style>
+
+      <div className="p-3 sm:p-5 border-b border-border bg-sidebar">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-base sm:text-lg font-medium text-white flex items-center gap-2">
+              <Star size={18} className="text-white/40" />
+              Performance Calendar
+            </h2>
+            <p className="text-[10px] text-muted mt-0.5 uppercase tracking-widest">Total incentive points per day</p>
+          </div>
+          <div className="bg-white/5 border border-white/10 px-3 py-1 rounded-full">
+            <span className="text-[10px] font-bold text-white/40 tracking-widest uppercase">Score Tracker</span>
+          </div>
+        </div>
+      </div>
+
+      <div ref={containerRef} className="p-0 bg-panel flex-1 overflow-auto scrollbar-none">
+        <FullCalendar
+          ref={calendarRef}
+          plugins={[dayGridPlugin, interactionPlugin]}
+          initialView="dayGridMonth"
+          events={events}
+          dateClick={handleDateClick}
+          eventContent={renderEventContent}
+          headerToolbar={{ left: 'prev,next', center: 'title', right: 'today' }}
+          height="auto"
+        />
+      </div>
+
+      <PerformanceEvaluationModal
+        isOpen={showEvalModal}
+        onClose={() => setShowEvalModal(false)}
+        date={evalDate}
+        tasks={tasks}
+      />
     </div>
   )
 }
@@ -282,33 +836,17 @@ function IncentiveCard() {
       <div className="bg-surface-800/30 p-3 sm:p-4 rounded-md border border-border flex-1">
         <p className="text-[10px] sm:text-xs text-muted tracking-widest mb-2 sm:mb-3 font-medium">Notes</p>
         <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-300">
-          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> High engagement content</li>
-          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> Creativity first</li>
-          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> Timely delivery</li>
-          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> Strategic brilliance</li>
+          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> No shortcuts</li>
+          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> Just standards</li>
+          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> Deliver excellence</li>
+          <li className="flex items-center gap-2"><span className="w-1.5 h-1.5 rounded-full bg-border" /> Earn more</li>
         </ul>
       </div>
     </div>
   )
 }
 
-function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, statusFilter, setStatusFilter, activeFilter, setActiveFilter, onViewDateWise }) {
-  const stats = useMemo(() => ({
-    total: tasks.length,
-    done: tasks.filter(t => t.status === 'Done').length,
-    progress: tasks.filter(t => t.status === 'In Progress').length,
-    workDone: tasks.filter(t => t.contentCheck).length,
-    incentive: tasks.filter(t => t.incentiveCheck).length
-  }), [tasks])
-
-  const [mobileView, setMobileView] = useState(window.innerWidth < 768)
-
-  useEffect(() => {
-    const handleResize = () => setMobileView(window.innerWidth < 768)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
-
+function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, statusFilter, setStatusFilter, activeFilter, setActiveFilter, onIncentiveClick }) {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Done': return 'text-emerald-400 bg-[#062016] border-[#0a3622]'
@@ -318,8 +856,26 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
     }
   }
 
+  const [mobileView, setMobileView] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const handleResize = () => setMobileView(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const stats = useMemo(() => {
+    const total = tasks.length
+    const completed = tasks.filter(t => t.status === 'Done').length
+    const inProgress = tasks.filter(t => t.status === 'In Progress').length
+    const workDone = tasks.filter(t => t.contentCheck).length
+    const incentives = tasks.filter(t => t.incentiveCheck).length
+    return { total, completed, inProgress, workDone, incentives }
+  }, [tasks])
+
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden p-0 bg-panel">
+    <>
+      <div className="flex flex-col h-full overflow-hidden p-0 bg-panel">
       {/* Task Stats Row */}
       <div className="px-4 py-3 bg-[#050505] border-b border-white/5 overflow-x-auto scrollbar-none">
         <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 min-w-[400px]">
@@ -329,11 +885,11 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-emerald-500/60 font-medium tracking-tighter">Completed</p>
-            <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.done}</p>
+            <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.completed}</p>
           </div>
           <div className="bg-[#0a0a0a] rounded-lg p-2 text-center border border-white/5">
             <p className="text-[10px] text-blue-500/60 font-medium tracking-tighter">In Progress</p>
-            <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.progress}</p>
+            <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.inProgress}</p>
           </div>
           <div className="bg-emerald-500/5 rounded-lg p-2 text-center border border-emerald-500/10">
             <p className="text-[10px] text-emerald-400/60 font-medium tracking-tighter">Work Done</p>
@@ -341,56 +897,51 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
           </div>
           <div className="bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
             <p className="text-[10px] text-blue-400/60 font-medium tracking-tighter">Incentives</p>
-            <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.incentive}</p>
+            <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.incentives}</p>
           </div>
         </div>
       </div>
-
+      
       <div className="p-3 sm:p-4 border-b border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 bg-sidebar">
-        <div className="w-full sm:flex-1 flex items-center gap-2">
-          <div className="flex-1 max-w-[400px]">
-            <SearchBar value={search} onChange={setSearch} placeholder="Search tasks..." />
-          </div>
-          <div className="flex items-center gap-2">
-            <select
-              value={activeFilter}
-              onChange={(e) => setActiveFilter(e.target.value)}
-              className="bg-sidebar border border-white/10 rounded-md py-2 px-3 text-xs font-medium text-white outline-none focus:border-primary/40 transition-all h-[38px] appearance-none"
-              style={{ backgroundImage: 'linear-gradient(45deg, transparent 50%, #444 50%), linear-gradient(135deg, #444 50%, transparent 50%)', backgroundPosition: 'calc(100% - 15px) center, calc(100% - 10px) center', backgroundSize: '5px 5px, 5px 5px', backgroundRepeat: 'no-repeat' }}
-            >
-              <option value="All">All Tasks</option>
-              <option value="WorkDone">Work Done</option>
-              <option value="Incentive">Incentive</option>
-            </select>
-
-            <button 
-              onClick={onViewDateWise}
-              className="btn-ghost py-1.5 px-3 text-xs sm:text-sm whitespace-nowrap border border-white/10 hover:border-white/30 text-secondary h-[38px] flex items-center gap-2 transition-all"
-            >
-              <Eye size={12} /> Date Wise
-            </button>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
-          <button
-            onClick={onAdd}
-            className="group flex-1 md:flex-none flex items-center justify-center gap-3 pl-1.5 pr-6 py-1.5 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all"
-          >
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
-              <Plus size={18} />
+          <div className="w-full sm:flex-1 flex items-center gap-2">
+            <div className="flex-1 max-w-[400px] h-[38px]">
+              <div className="h-full [&>div]:h-full [&_input]:h-full [&_input]:py-0">
+                <SearchBar value={search} onChange={setSearch} placeholder="Search tasks by client or description..." />
+              </div>
             </div>
-            <span className="text-[12px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Content</span>
-          </button>
-          <div className="relative">
-            <StatusSelect
-              value={statusFilter === 'All' ? 'All Status' : statusFilter}
-              options={['All Status', 'Not Started', 'In Progress', 'Done']}
-              onChange={(val) => setStatusFilter(val === 'All Status' ? 'All' : val)}
-              isFilter
-            />
+            <div className="flex items-center gap-2 h-[38px]">
+              <StatusSelect
+                value={activeFilter}
+                options={[
+                  { value: 'All', label: 'All Tasks' },
+                  { value: 'WorkDone', label: 'Work Done' },
+                  { value: 'Incentive', label: 'Incentive' }
+                ]}
+                onChange={setActiveFilter}
+                isFilter
+              />
+            </div>
           </div>
-          <a href="#calendar-view" className="btn-ghost py-1.5 px-3 text-xs sm:text-sm whitespace-nowrap">
-            <CalendarIcon size={12} className="sm:w-[14px] sm:h-[14px]" /> Calendar View
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+            <div className="h-[38px]">
+              <StatusSelect
+                value={statusFilter === 'All' ? 'All Status' : statusFilter}
+                options={['All Status', 'Not Started', 'In Progress', 'Done']}
+                onChange={(val) => setStatusFilter(val === 'All Status' ? 'All' : val)}
+                isFilter
+              />
+            </div>
+            <button
+              onClick={onAdd}
+              className="h-[38px] group flex-1 md:flex-none flex items-center justify-center gap-3 pl-1.5 pr-6 bg-black/40 hover:bg-black/60 border border-white/10 rounded-full transition-all"
+            >
+              <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-black group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
+                <Plus size={16} />
+              </div>
+              <span className="text-[12px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity whitespace-nowrap">Add Task</span>
+            </button>
+            <a href="#calendar-view" className="btn-ghost py-1.5 px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap sm:hidden">
+              <CalendarIcon size={12} />
           </a>
         </div>
       </div>
@@ -400,7 +951,14 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
           <div className="p-3 space-y-3">
             {(() => {
               let lastDate = '';
-              return [...tasks].sort((a, b) => (b.takenDate || '').localeCompare(a.takenDate || '')).map((task) => {
+              return [...tasks].sort((a, b) => {
+                const dateA = a.takenDate || '';
+                const dateB = b.takenDate || '';
+                if (dateA === dateB) return (b.id || '').localeCompare(a.id || '');
+                if (!dateA) return -1;
+                if (!dateB) return 1;
+                return dateB.localeCompare(dateA);
+              }).map((task) => {
                 const showDate = task.takenDate !== lastDate;
                 lastDate = task.takenDate;
 
@@ -408,7 +966,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                   <div key={task.id} className="bg-panel border border-border rounded-lg p-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col">
-                        <span className="text-secondary font-medium text-[10px]  tracking-wider opacity-50 whitespace-nowrap">Taken Date</span>
+                        <span className="text-secondary font-medium text-[10px] tracking-wider opacity-50 whitespace-nowrap">Taken Date</span>
                         <span className="text-white font-medium text-sm leading-none mt-1">{showDate ? formatDate(task.takenDate) : <span className="opacity-0">---</span>}</span>
                       </div>
                       <StatusSelect
@@ -434,43 +992,43 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                     <div className="flex items-center justify-between text-[10px] text-muted pt-3 border-t border-white/5">
                       <div className="flex items-center gap-4">
                         <div className="flex flex-col">
-                          <span className="opacity-40  font-medium text-[8px]">Decline</span>
-                          <span className="text-red-400/60 font-medium">{formatDate(task.editDate) || '—'}</span>
+                          <span className="opacity-40 font-medium text-[8px]">Edit Date</span>
+                          <span className="text-white/60 font-medium">{formatDate(task.editDate) || '—'}</span>
                         </div>
-                        <div className="flex flex-col items-center">
-                          <span className="opacity-40  font-medium text-[8px]">Work Done</span>
-                          <button
-                            onClick={() => onUpdateTask(task.id, {
-                              contentCheck: !task.contentCheck,
-                              incentiveCheck: false,
-                              updatedDate: new Date().toISOString().split('T')[0],
-                            })}
-                            className={cn(
-                              "w-4 h-4 rounded-full border flex items-center justify-center transition-all mt-1",
-                              task.contentCheck ? "bg-emerald-600 border-emerald-600" : "border-white/10"
-                            )}
-                          >
-                            <div className={cn("w-1 h-1 rounded-full bg-white", task.contentCheck ? "scale-100" : "scale-0")} />
-                          </button>
-                        </div>
-                        <div className="flex flex-col items-center">
-                          <span className="opacity-40 font-medium text-[8px]">Incentive</span>
-                          <button
-                            onClick={() => onUpdateTask(task.id, {
-                              incentiveCheck: !task.incentiveCheck,
-                              contentCheck: false,
-                              updatedDate: new Date().toISOString().split('T')[0]
-                            })}
-                            className={cn(
-                              "w-4 h-4 rounded-full border flex items-center justify-center transition-all mt-1",
-                              task.incentiveCheck ? "bg-blue-600 border-blue-600" : "border-white/10"
-                            )}
-                          >
-                            <div className={cn("w-1 h-1 rounded-full bg-white", task.incentiveCheck ? "scale-100" : "scale-0")} />
-                          </button>
+                        <div className="flex flex-col text-center">
+                          <span className="opacity-40 font-medium text-[8px]">Index</span>
+                          <span className="text-white/60 font-medium">1</span>
                         </div>
                       </div>
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 items-center">
+                        <button
+                          onClick={() => onUpdateTask(task.id, {
+                            contentCheck: !task.contentCheck,
+                            incentiveCheck: false,
+                            updatedDate: new Date().toISOString().split('T')[0],
+                          })}
+                          className={cn(
+                            "w-6 h-6 rounded-full border flex items-center justify-center transition-all cursor-pointer active:scale-90",
+                            task.contentCheck
+                              ? "bg-emerald-600 border-emerald-600 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+                              : "border-white/10 bg-white/[0.02]"
+                          )}
+                        >
+                          <div className={cn(
+                            "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
+                            task.contentCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                          )} />
+                        </button>
+                        <div className="w-px h-5 bg-white/5 mx-0.5" />
+                        <button
+                          onClick={() => onIncentiveClick(task)}
+                          className={cn(
+                            "p-2 rounded-full transition-all",
+                            task.incentiveCheck ? "text-blue-400 bg-blue-400/10" : "text-muted hover:text-blue-400"
+                          )}
+                        >
+                          <Star size={14} fill={task.incentiveCheck ? "currentColor" : "none"} />
+                        </button>
                         <button
                           onClick={() => onAdd(task)}
                           className="p-2 text-muted hover:text-primary hover:bg-primary/5 rounded-full transition-all"
@@ -489,15 +1047,15 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                 );
               })
             })()}
-            {tasks.length === 0 && <div className="py-12 text-center text-muted">No content found...</div>}
+            {tasks.length === 0 && <div className="py-12 text-center text-muted">No tasks found...</div>}
           </div>
         ) : (
           <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="text-xs text-muted font-medium bg-sidebar border-b border-border">
+            <thead className="text-xs text-muted font-medium bg-sidebar border-b border-border sticky top-0 z-10">
               <tr>
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Client Name</th>
-                <th className="px-4 py-3 font-medium">Content</th>
+                <th className="px-4 py-3 font-medium">Task</th>
                 <th className="px-4 py-3 font-medium">Decline Date</th>
                 <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium text-center">Approval</th>
@@ -514,12 +1072,11 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                   lastDate = task.takenDate;
 
                   return (
-                    <tr key={task.id} className="hover:bg-panel transition-colors border-b border-border last:border-0 group/row">
+                    <tr key={task.id} className="hover:bg-panel/50 transition-colors border-b border-border last:border-0 group/row">
                       <td className="px-4 py-4 text-secondary font-medium min-w-[120px]">
                         {showDate ? (
                           <div className="flex flex-col">
                             <span className="text-white">{formatDate(task.takenDate)}</span>
-                            {showDate && <div className="h-px w-full bg-border/50 mt-2 block sm:hidden" />}
                           </div>
                         ) : (
                           <span className="opacity-0 pointer-events-none hidden sm:inline">{formatDate(task.takenDate)}</span>
@@ -535,10 +1092,8 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                           • {task.task || 'No description'}
                         </div>
                       </td>
-                      <td className="px-4 py-4 text-xs tabular-nums text-secondary font-medium">
-                        {formatDate(task.declineDate) || '—'}
-                      </td>
-                      <td className="px-4 py-4 text-center">
+                      <td className="px-4 py-4 text-secondary text-xs">{formatDate(task.declineDate)}</td>
+                      <td className="px-4 py-4">
                         <StatusSelect
                           value={task.status}
                           options={['Not Started', 'In Progress', 'Done']}
@@ -583,29 +1138,26 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
                       <td className="px-4 py-4 text-center border-r border-border">
                         <div className="flex justify-center">
                           <button
-                            onClick={() => onUpdateTask(task.id, {
-                              incentiveCheck: !task.incentiveCheck,
-                              contentCheck: false,
-                              updatedDate: new Date().toISOString().split('T')[0],
-                            })}
+                            onClick={() => onIncentiveClick(task)}
                             className={cn(
-                              "w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-90",
+                              "flex items-center justify-center transition-all cursor-pointer active:scale-90 p-2 rounded-full",
                               task.incentiveCheck
-                                ? "bg-blue-600 border-blue-600 shadow-[0_0_10px_rgba(59,130,246,0.2)]"
-                                : "border-white/10 hover:border-white/30 bg-white/[0.02]"
+                                ? "text-blue-400 bg-blue-400/10"
+                                : "text-muted hover:text-blue-400"
                             )}
                           >
-                            <div className={cn(
-                              "w-1.5 h-1.5 rounded-full bg-white transition-all duration-300",
-                              task.incentiveCheck ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                            )} />
+                            <Star size={16} fill={task.incentiveCheck ? "currentColor" : "none"} />
                           </button>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-right">
                         <div className="flex items-center gap-1 justify-end">
-                          <button onClick={() => onAdd(task)} className="p-1.5 text-muted hover:text-white hover:bg-white/5 rounded transition-all"><Plus size={14} /></button>
-                          <button onClick={() => { if (confirm('Decommission this asset?')) deleteTask(task.id); }} className="p-1.5 text-muted hover:text-red-500 hover:bg-red-500/5 rounded transition-all"><Trash2 size={14} /></button>
+                          <button onClick={() => onAdd(task)} className="p-1.5 text-muted hover:text-white hover:bg-white/5 rounded transition-all" title="Edit">
+                            <Edit2 size={14} />
+                          </button>
+                          <button onClick={() => { if (confirm('Delete this task?')) deleteTask(task.id); }} className="p-1.5 text-muted hover:text-red-500 hover:bg-red-500/5 rounded transition-all" title="Delete">
+                            <Trash2 size={14} />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -614,8 +1166,8 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
               })()}
               {tasks.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-muted">
-                    No content found...
+                  <td colSpan={9} className="py-12 text-center text-muted">
+                    No tasks found...
                   </td>
                 </tr>
               )}
@@ -624,91 +1176,53 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
         )}
       </div>
     </div>
-  )
+  </>
+)
 }
+
 
 function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
   const [form, setForm] = useState({
     takenDate: new Date().toISOString().split('T')[0],
     status: 'Not Started',
-    taskCount: 1,
-    selectedClients: []
+    selectedClient: null
   })
 
   useEffect(() => {
     if (editTask) {
-      if (Array.isArray(editTask)) {
-        const first = editTask[0];
-        setForm({
-          ...first,
-          selectedClient: { id: first.clientId, name: first.clientName }
-        });
-      } else {
-        setForm({
-          ...editTask,
-          selectedClient: { id: editTask.clientId, name: editTask.clientName }
-        });
-      }
+      setForm({ ...editTask, selectedClient: clients.find(c => c.name === editTask.clientName) })
     } else {
-      setForm({
-        takenDate: new Date().toISOString().split('T')[0],
-        status: 'Not Started',
-        taskCount: 1,
-        selectedClient: null
-      })
+      setForm({ takenDate: new Date().toISOString().split('T')[0], status: 'Not Started', selectedClient: null })
     }
-  }, [editTask, isOpen])
+  }, [editTask, isOpen, clients])
 
   const f = (k, v) => setForm(prev => ({ ...prev, [k]: v }))
 
-  const selectClient = (client) => {
-    setForm(prev => ({ ...prev, selectedClient: client }))
-  }
-
   const handleSave = () => {
-    if (!form.selectedClient) {
-      alert('Please select a client')
-      return
-    }
-
-    onSave({
-      ...form,
-      clientId: form.selectedClient.id,
-      clientName: form.selectedClient.name,
-      taskCount: 1
-    })
-
-    setForm({
-      takenDate: new Date().toISOString().split('T')[0],
-      status: 'Not Started',
-      taskCount: 1,
-      selectedClient: null
-    })
+    if (!form.selectedClient) return alert('Select client')
+    onSave({ ...form, clientName: form.selectedClient.name })
     onClose()
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add Content Specialist Task" size="md">
+    <Modal isOpen={isOpen} onClose={onClose} title={editTask ? "Edit Content" : "Add Content"} size="md">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
         <FormField label="Date">
           <input type="date" className="input" value={form.takenDate || ''} onChange={e => f('takenDate', e.target.value)} />
         </FormField>
         <div className="md:col-span-2">
           <FormField label="Select Client">
-            <CustomSelect
-              value={form.selectedClient?.id || ''}
-              options={clients.map(c => ({ label: c.name, value: c.id }))}
-              onChange={(val) => {
-                const client = clients.find(c => c.id === val)
-                if (client) selectClient({ id: client.id, name: client.name })
-              }}
-              placeholder="Choose a client..."
+            <CustomSelect 
+              value={form.selectedClient?.id || ''} 
+              options={clients.map(c => ({ label: c.name, value: c.id }))} 
+              onChange={(val) => setForm({...form, selectedClient: clients.find(c => c.id === val)})}
+              placeholder="Search clients..."
               isFilter
             />
           </FormField>
           {form.selectedClient && (
             <div className="mt-2 flex flex-wrap gap-2">
-              <span className="text-[10px] text-muted  font-medium w-full mb-1">Targeting Asset for:</span>
+              <span className="text-[10px] text-muted  font-medium w-full mb-1">Targeting Content for:</span>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary text-[10px] font-medium">
                 {form.selectedClient.name}
               </span>
@@ -716,8 +1230,8 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
           )}
         </div>
         <div className="md:col-span-2">
-          <FormField label="Content Details">
-            <input className="input" value={form.task || ''} onChange={e => f('task', e.target.value)} placeholder="Task details" />
+          <FormField label="Description">
+            <textarea className="textarea min-h-[100px]" value={form.task || ''} onChange={e => f('task', e.target.value)} placeholder="What's the narrative?" />
           </FormField>
         </div>
         <FormField label="Status">
@@ -734,344 +1248,32 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
       </div>
       <div className="flex flex-col sm:flex-row gap-3 justify-end mt-6 border-t border-white/5 pt-5">
         <button className="btn-secondary w-full sm:w-auto order-1 sm:order-none" onClick={onClose}>Cancel</button>
-        <button className="btn-primary w-full sm:w-auto" onClick={handleSave}>{editTask ? 'Add Task' : 'Deploy Asset'}</button>
+        <button className="btn-primary w-full sm:w-auto px-8" onClick={handleSave}>Save Item</button>
       </div>
     </Modal>
-  )
-}
-
-function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
-  const sortedDates = useMemo(() => Object.keys(tasksByDate).sort((a, b) => b.localeCompare(a)), [tasksByDate])
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Date Wise Task Overview" size="lg">
-      <div className="space-y-6 mt-4 max-h-[70vh] overflow-y-auto px-1 pr-2 scrollbar-thin scrollbar-thumb-white/10">
-        {sortedDates.map(date => (
-          <div key={date} className="space-y-3">
-            <div className="flex items-center gap-3 sticky top-0 bg-[#0a0a0a] py-2 z-10">
-              <div className="h-px flex-1 bg-border/50" />
-              <span className="text-[11px] font-medium text-primary  tracking-[0.2em]">{formatDate(date)}</span>
-              <div className="h-px flex-1 bg-border/50" />
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              {tasksByDate[date].map(t => (
-                <div key={t.id} className="p-3 bg-sidebar border border-border rounded-lg flex items-center justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-medium text-white bg-white/5 px-2 py-0.5 rounded border border-white/10">{t.clientName}</span>
-                      {t.contentCheck && <span className="text-[8px] font-medium text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20 ">Work Done</span>}
-                      {t.incentiveCheck && <span className="text-[8px] font-medium text-blue-400 bg-blue-400/10 px-1.5 py-0.5 rounded border border-blue-400/20 ">Incentive</span>}
-                    </div>
-                    <p className="text-xs text-muted truncate">{t.task}</p>
-                  </div>
-                  <span className={cn(
-                    "text-[8px] font-medium  px-2 py-1 rounded border",
-                    t.status === 'Done' ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" :
-                    t.status === 'In Progress' ? "text-blue-400 bg-blue-400/10 border-blue-400/20" :
-                    "text-white/40 bg-white/5 border-white/10"
-                  )}>{t.status}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-        {sortedDates.length === 0 && <div className="text-center py-20 text-muted">No date-wise data available</div>}
-      </div>
-    </Modal>
-  )
-}
-
-function CalendarView({ tasks, deleteTask }) {
-  const { desktopCollapsed } = useData()
-  const calendarRef = useRef(null)
-  const containerRef = useRef(null)
-  const [selectedTasks, setSelectedTasks] = useState(null)
-
-  const events = useMemo(() => {
-    // Group tasks by Date + ClientName to show only one entry per client per day in calendar
-    const grouped = [...tasks].reduce((acc, t) => {
-      const date = t.takenDate || t.scheduleDate || t.updatedDate;
-      const type = t.incentiveCheck ? 'inc' : t.contentCheck ? 'work' : 'done';
-      const key = `${date}-${t.clientName}-${type}`;
-      if (!acc[key]) {
-        acc[key] = { ...t, date, count: 1, allCompleted: t.contentCheck, isIncentive: t.incentiveCheck };
-      } else {
-        acc[key].count++;
-        acc[key].isIncentive = acc[key].isIncentive || t.incentiveCheck;
-        acc[key].allCompleted = acc[key].allCompleted || t.contentCheck;
-      }
-      return acc;
-    }, {});
-
-    return Object.values(grouped).map(t => ({
-      id: t.id,
-      title: (t.isIncentive ? `INC: ${t.clientName}` : t.allCompleted ? `WORK: ${t.clientName}` : `DONE: ${t.clientName}`) + ` (${t.count})`,
-      date: t.date,
-      extendedProps: { ...t },
-      backgroundColor: t.isIncentive ? '#2563eb' : t.allCompleted ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.08)',
-      textColor: t.isIncentive ? '#ffffff' : t.allCompleted ? '#34d399' : '#a1a1aa',
-      borderColor: t.isIncentive ? '#3b82f6' : t.allCompleted ? 'rgba(16, 185, 129, 0.6)' : 'rgba(255, 255, 255, 0.2)'
-    }));
-  }, [tasks])
-
-  const handleDateClick = (arg) => {
-    const api = calendarRef.current?.getApi()
-    if (api && api.view.type === 'multiMonthYear') {
-      api.changeView('dayGridMonth', arg.date)
-      return
-    }
-
-    const dayTasks = tasks.filter(t => (t.takenDate || t.scheduleDate || t.updatedDate) === arg.dateStr)
-    if (dayTasks.length > 0) {
-      setSelectedTasks({ date: arg.dateStr, tasks: dayTasks })
-    }
-  }
-
-  useEffect(() => {
-    const api = calendarRef.current?.getApi()
-    if (api) {
-      const timer = setTimeout(() => {
-        api.updateSize()
-      }, 350)
-      return () => clearTimeout(timer)
-    }
-  }, [desktopCollapsed])
-
-  useEffect(() => {
-    if (!containerRef.current) return
-    const resizeObserver = new ResizeObserver(() => {
-      const api = calendarRef.current?.getApi()
-      if (api) api.updateSize()
-    })
-    resizeObserver.observe(containerRef.current)
-    return () => resizeObserver.disconnect()
-  }, [])
-
-  return (
-    <div id="calendar-view" className="w-full flex-1 p-0 overflow-hidden flex flex-col bg-panel">
-      <style>{`
-        .fc-theme-standard td, .fc-theme-standard th { border-color: var(--border) !important; }
-        .fc-scrollgrid { border-color: var(--border) !important; border-radius: 0.25rem !important; }
-        .fc-theme-standard .fc-scrollgrid { border: none !important; }
-        .fc-header-toolbar { margin: 0.75rem !important; flex-wrap: wrap; gap: 0.5rem; }
-        .fc-button-primary { background-color: var(--bg-card) !important; border-color: var(--border) !important; color: var(--text-primary) !important; text-transform: capitalize !important; border-radius: 0.25rem !important; padding: 0.3rem 0.5rem !important; font-size: 0.7rem !important; }
-        .fc-button-primary:hover { background-color: var(--border) !important; }
-        .fc-button-active { background-color: var(--text-primary) !important; color: var(--bg-primary) !important; }
-        .fc-day-today { background-color: rgba(255, 255, 255, 0.05) !important; }
-        .fc-event { 
-          border-radius: 9999px !important; 
-          font-size: 8px !important; 
-          padding: 3px 6px !important; 
-          cursor: pointer !important; 
-          white-space: nowrap; 
-          overflow: hidden; 
-          text-overflow: ellipsis; 
-          font-weight: 800 !important;
-          text-transform:  !important;
-          letter-spacing: 0.02em !important;
-          border-width: 1px !important;
-          margin: 1px 2px !important;
-          transition: all 0.2s ease !important;
-        }
-        .fc-event:hover {
-          filter: brightness(1.2);
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        }
-        .fc-col-header-cell { background-color: #111111 !important; border-bottom: 2px solid var(--border) !important; }
-        .fc-col-header-cell-cushion { color: var(--text-primary) !important; font-weight: 800 !important; font-size: 0.7rem; text-transform: ; padding: 0.6rem !important; display: block !important; }
-        .fc-daygrid-day-number { color: var(--text-primary) !important; font-size: 0.7rem; padding: 0.3rem !important; }
-        .fc-toolbar-title { color: var(--text-primary) !important; font-size: 0.9rem !important; font-weight: 700 !important; }
-        
-        .fc-theme-standard .fc-list, .fc-theme-standard .fc-list-day-cushion { background: transparent !important; }
-        .fc-multimonth { background: transparent !important; }
-        .fc-multimonth-month { border: none !important; transition: all 0.2s ease; border-radius: 0.5rem; }
-        .fc-multimonth-month:hover { background: rgba(255, 255, 255, 0.05) !important; cursor: pointer; transform: scale(1.02); }
-        .fc-multimonth-title { color: var(--text-primary) !important; font-size: 0.8rem !important; font-weight: 700 !important; background: transparent !important; padding: 0.75rem 0 !important; }
-        .fc-multimonth-daygrid-table { background: transparent !important; }
-        .fc-multimonth-daygrid-table td { pointer-events: none !important; }
-        .fc-multimonth-month { pointer-events: auto !important; }
-        
-        @media (max-width: 768px) {
-          .fc-header-toolbar { flex-direction: column; align-items: center; }
-          .fc-toolbar-chunk { margin-bottom: 0.25rem; }
-          .fc-event { font-size: 0.55rem !important; }
-          .fc-button-primary { padding: 0.25rem 0.4rem !important; font-size: 0.65rem !important; }
-          .fc-col-header-cell-cushion { font-size: 0.6rem !important; padding: 0.4rem !important; }
-        }
-      `}</style>
-
-      <div className="p-3 sm:p-5 border-b border-border bg-sidebar">
-        <h2 className="text-base sm:text-lg font-medium text-primary">Work Calendar Overview</h2>
-      </div>
-
-      <div ref={containerRef} className="p-0 bg-panel flex-1 overflow-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        <FullCalendar
-          ref={calendarRef}
-          plugins={[dayGridPlugin, interactionPlugin, multiMonthPlugin]}
-          initialView={window.innerWidth < 640 ? 'dayGridWeek' : 'dayGridMonth'}
-          initialDate={new Date().toISOString().split('T')[0]}
-          events={events}
-          dateClick={handleDateClick}
-          headerToolbar={{
-            left: window.innerWidth < 640 ? 'prev,next' : 'prev,next today',
-            center: 'title',
-            right: window.innerWidth < 640 ? 'today' : 'multiMonthYear,dayGridMonth,dayGridWeek'
-          }}
-          height="auto"
-          contentHeight="auto"
-          handleWindowResize={true}
-          expandRows={true}
-          eventDisplay="block"
-          viewClassNames={window.innerWidth < 640 ? "mobile-calendar" : ""}
-        />
-      </div>
-
-      <Modal isOpen={!!selectedTasks} onClose={() => setSelectedTasks(null)} title={`Content for ${selectedTasks?.date}`} size="md">
-        <div className="space-y-2 mt-4">
-          {selectedTasks?.tasks.map(t => (
-            <div key={t.id} className="p-3 border border-border rounded-md bg-sidebar flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col gap-1">
-                  <p className="font-medium text-sm text-white truncate">{t.clientName}</p>
-                  <p className="text-xs text-muted truncate max-w-[200px]">{t.task}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                <div className="flex flex-col items-end gap-1.5">
-                  <span className="text-[10px] font-medium  px-2 py-0.5 rounded bg-[#222] text-primary self-end">{t.status}</span>
-                  <div className="flex gap-1">
-                    {t.contentCheck && <span className="text-[8px] font-medium  px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">WORK DONE</span>}
-                    {t.incentiveCheck && <span className="text-[8px] font-medium  px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">INCENTIVE</span>}
-                  </div>
-                </div>
-                <button
-                  onClick={() => { if (confirm('Decommission this asset?')) { deleteTask(t.id); setSelectedTasks(prev => ({ ...prev, tasks: prev.tasks.filter(x => x.id !== t.id) })); } }}
-                  className="p-2 text-muted hover:text-red-500 hover:bg-red-500/5 rounded-full transition-all"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Modal>
-    </div>
-  )
-}
-
-function SpecialistListView({ tasks, onSelect }) {
-  const { workers } = useData()
-  const [searchSpecialist, setSearchSpecialist] = useState('')
-
-  const specialists = useMemo(() => {
-    const names = Array.from(new Set(workers.filter(w => w.role === 'Content Specialist').map(w => w.name)))
-    const filtered = names.filter(name => name.toLowerCase().includes(searchSpecialist.toLowerCase()))
-    return filtered.sort((a, b) => {
-      const wA = workers.find(w => w.name === a)
-      const wB = workers.find(w => w.name === b)
-      if (wA?.isTeamLead && !wB?.isTeamLead) return -1
-      if (!wA?.isTeamLead && wB?.isTeamLead) return 1
-      return a.localeCompare(b)
-    })
-  }, [workers, searchSpecialist])
-
-  return (
-    <div className="flex-1 p-4 sm:p-8 overflow-y-auto">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 border-b border-border pb-4 gap-3">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-medium text-white tracking-tight">Content Specialist Management</h1>
-            <p className="text-xs sm:text-sm text-muted mt-1">Select a specialist to view their pipeline and content</p>
-          </div>
-          <div className="bg-primary/10 border border-primary/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md">
-            <span className="text-primary font-medium text-sm sm:text-base">{specialists.length}</span>
-            <span className="text-muted text-[10px] sm:text-xs ml-2 tracking-wider">Active Specialists</span>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <SearchBar value={searchSpecialist} onChange={setSearchSpecialist} placeholder="Search specialists by name..." />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {specialists.map(name => {
-            const specialistTasks = tasks.filter(t => t.workerName === name && t.workerRole === 'Content Specialist')
-            const stats = {
-              total: specialistTasks.length,
-              pending: specialistTasks.filter(t => t.status !== 'Done').length,
-              done: specialistTasks.filter(t => t.status === 'Done').length
-            }
-
-            return (
-              <button
-                key={name}
-                onClick={() => onSelect(name)}
-                className="group flex flex-col p-4 sm:p-6 bg-panel border border-border hover:border-primary/50 transition-all text-left rounded-lg hover:shadow-xl hover:scale-[1.02] duration-200"
-              >
-                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface-800 border border-border flex items-center justify-center text-primary font-medium text-base sm:text-lg overflow-hidden group-hover:scale-110 transition-transform">
-                    {workers.find(w => w.name === name)?.avatar?.startsWith('http') ? (
-                      <img src={workers.find(w => w.name === name).avatar} alt={name} className="w-full h-full object-cover" />
-                    ) : (
-                      name.charAt(0)
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="text-base sm:text-lg font-medium text-white group-hover:text-primary transition-colors">{name}</h3>
-                    <div className="flex items-center gap-2">
-                      <p className="text-[9px] sm:text-[10px] text-muted tracking-widest font-medium">Engagement Architect</p>
-                      {workers.find(w => w.name === name)?.level && (
-                        <span className="text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-medium">
-                          {workers.find(w => w.name === name).level}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 mt-auto">
-                  <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-medium mb-0.5">Pieces</p>
-                    <p className="text-sm font-medium text-white">{stats.total}</p>
-                  </div>
-                  <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-medium mb-0.5">Pending</p>
-                    <p className="text-sm font-medium text-orange-400">{stats.pending}</p>
-                  </div>
-                  <div className="bg-[#111] p-2 rounded border border-white/5 text-center">
-                    <p className="text-[8px] text-muted font-medium mb-0.5">Done</p>
-                    <p className="text-sm font-medium text-emerald-400">{stats.done}</p>
-                  </div>
-                </div>
-
-                <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-end text-[10px] text-muted">
-                  <span className="group-hover:translate-x-1 transition-transform text-primary text-[10px] font-medium">View Dashboard →</span>
-                </div>
-              </button>
-            )
-          })}
-        </div>
-
-        {specialists.length === 0 && (
-          <div className="text-center py-12 text-muted">
-            No specialists found matching your search
-          </div>
-        )}
-      </div>
-    </div>
   )
 }
 
 export default function ContentSpecialistPage() {
   const { tasks, addTask, updateTask, deleteTask, clients, setHideHeader, setDesktopCollapsed, desktopCollapsed } = useData()
   const [selectedSpecialist, setSelectedSpecialist] = useState(null)
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [editTask, setEditTask] = useState(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
-  const [activeFilter, setActiveFilter] = useState('All') // 'All', 'WorkDone', 'Incentive'
-  const [showDateWiseModal, setShowDateWiseModal] = useState(false)
-  const [tasksByDate, setTasksByDate] = useState({})
+  const [activeFilter, setActiveFilter] = useState('All')
+  const [activeTab, setActiveTab] = useState('shoots')
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [editTask, setEditTask] = useState(null)
+
+  // Performance View state
+  const [incentiveTask, setIncentiveTask] = useState(null)
+  const [viewOnlyIncentive, setViewOnlyIncentive] = useState(false)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     setHideHeader(!!selectedSpecialist)
@@ -1081,128 +1283,130 @@ export default function ContentSpecialistPage() {
   const specialistTasks = useMemo(() => tasks.filter(t => {
     const isOwner = (t.workerRole === 'Content Specialist' || t.workerName === selectedSpecialist) && (!selectedSpecialist || t.workerName === selectedSpecialist)
     if (!isOwner) return false
-
-    const matchesSearch = !search ||
-      t.clientName?.toLowerCase().includes(search.toLowerCase()) ||
-      t.task?.toLowerCase().includes(search.toLowerCase())
-
+    const matchesSearch = !search || t.clientName?.toLowerCase().includes(search.toLowerCase()) || t.task?.toLowerCase().includes(search.toLowerCase())
     const matchesStatus = statusFilter === 'All' || t.status === statusFilter
-
-    const matchesFilter = activeFilter === 'All' || 
-      (activeFilter === 'WorkDone' && t.contentCheck) ||
-      (activeFilter === 'Incentive' && t.incentiveCheck)
-
+    const matchesFilter = activeFilter === 'All' || (activeFilter === 'WorkDone' && t.contentCheck) || (activeFilter === 'Incentive' && t.incentiveCheck)
     return matchesSearch && matchesStatus && matchesFilter
   }), [tasks, selectedSpecialist, search, statusFilter, activeFilter])
 
-  // Prepare date-wise tasks for modal
-  useEffect(() => {
-    const grouped = specialistTasks.reduce((acc, task) => {
-      const date = task.takenDate
-      if (date) {
-        if (!acc[date]) acc[date] = []
-        acc[date].push(task)
-      }
-      return acc
-    }, {})
-    setTasksByDate(grouped)
-  }, [specialistTasks])
-
-  const handleAddTask = (form) => {
-    if (form.id) {
-      updateTask(form.id, form)
-    } else {
-      addTask({
-        ...form,
-        workerRole: 'Content Specialist',
-        workerName: selectedSpecialist,
-        clientName: form.clientName,
-        clientApproval: 'Approval',
-        updatedDate: new Date().toISOString().split('T')[0]
-      })
-    }
-    setShowAddModal(false)
-    setEditTask(null)
-  }
-
-  const handleExpandSidebar = () => {
+  const handleExpandSidebar = useCallback(() => {
     setDesktopCollapsed(false)
+  }, [setDesktopCollapsed])
+
+  const handleCalendarPerformanceClick = (task) => {
+    setIncentiveTask(task)
+    setViewOnlyIncentive(true)
   }
 
-  if (!selectedSpecialist) {
-    return <SpecialistListView tasks={tasks} onSelect={setSelectedSpecialist} />
-  }
+  useEffect(() => {
+    window.__onTaskClick = handleCalendarPerformanceClick;
+    return () => { delete window.__onTaskClick; };
+  }, [handleCalendarPerformanceClick]);
+
+  if (!selectedSpecialist) return <SpecialistListView tasks={tasks} onSelect={setSelectedSpecialist} />
 
   return (
     <div className={`w-full flex-1 flex flex-col p-0 m-0 overflow-hidden ${selectedSpecialist ? 'h-screen' : ''}`}>
       <div className="flex-none sticky top-0 z-40 bg-background shadow-2xl">
-        <CoverHeader
-          title={selectedSpecialist}
+        <CoverHeader 
+          title={selectedSpecialist} 
           onExpandSidebar={handleExpandSidebar}
           isSidebarCollapsed={desktopCollapsed}
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto relative">
         <div className="w-full flex flex-col px-0">
-          <div className="flex flex-col lg:grid lg:grid-cols-4 gap-0 mb-0 flex-none border-b border-border">
-            <div className="w-full lg:col-span-1 border-b lg:border-b-0 lg:border-r border-border bg-sidebar/50">
-              <IncentiveCard />
+          
+          {/* MOBILE TABS SWITCHER */}
+          {isMobile && (
+            <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-white/5 p-1 flex items-center gap-1 overflow-x-auto scrollbar-none no-scrollbar">
+              {[
+                { id: 'shoots', label: 'Daily Tasks', icon: <LayoutList size={14} /> },
+                { id: 'worklist', label: 'Work List', icon: <FileText size={14} /> },
+                { id: 'performance', label: 'Performance', icon: <Target size={14} /> }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-[10px] font-semibold transition-all whitespace-nowrap ${
+                    activeTab === tab.id 
+                    ? 'bg-primary text-black shadow-lg shadow-primary/20' 
+                    : 'text-muted hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {tab.icon}
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            <div className="w-full lg:col-span-3 min-w-0 overflow-hidden">
-              <TaskTable
-                tasks={specialistTasks}
-                onAdd={(task) => { setEditTask(task); setShowAddModal(true); }}
-                onUpdateTask={updateTask}
-                deleteTask={deleteTask}
-                search={search}
-                setSearch={setSearch}
-                statusFilter={statusFilter}
-                setStatusFilter={setStatusFilter}
-                activeFilter={activeFilter}
-                setActiveFilter={setActiveFilter}
-                onViewDateWise={() => setShowDateWiseModal(true)}
-              />
+          )}
+          {(!isMobile || activeTab === 'shoots') && (
+            <div className={`${!isMobile ? 'flex flex-col lg:grid lg:grid-cols-4' : 'flex flex-col'} gap-0 mb-0 flex-none border-b border-border`}>
+              {!isMobile && (
+                <div className="w-full lg:col-span-1 border-b lg:border-b-0 lg:border-r border-border bg-sidebar/50">
+                  <IncentiveCard />
+                </div>
+              )}
+              <div className={`w-full ${!isMobile ? 'lg:col-span-3' : ''} min-w-0 overflow-hidden`}>
+                <TaskTable tasks={specialistTasks} onAdd={(t) => { setEditTask(t); setShowAddModal(true); }} onUpdateTask={updateTask} deleteTask={deleteTask} search={search} setSearch={setSearch} statusFilter={statusFilter} setStatusFilter={setStatusFilter} activeFilter={activeFilter} setActiveFilter={setActiveFilter} onIncentiveClick={(task) => { setIncentiveTask(task); setViewOnlyIncentive(false); }} />
+              </div>
             </div>
-          </div>
-          <div className="min-h-[400px] sm:min-h-[500px] h-[500px] sm:h-[600px] border-b border-border bg-background flex flex-col">
-            <CalendarView
-              tasks={specialistTasks.filter(t => {
-                if (activeFilter === 'Incentive') return t.incentiveCheck;
-                if (activeFilter === 'WorkDone') return t.contentCheck;
-                return t.contentCheck || t.incentiveCheck || t.status === 'Done';
-              })}
-              deleteTask={deleteTask}
-            />
-          </div>
+          )}
+          
+          {(!isMobile || activeTab === 'worklist') && (
+            <div className="w-full border-b border-border">
+              <DayWiseWorkList tasks={specialistTasks} />
+            </div>
+          )}
+          
+          {(!isMobile || activeTab === 'performance') && (
+            <div className="flex flex-col">
+              {isMobile && (
+                <div className="border-b border-border">
+                   <IncentiveCard />
+                </div>
+              )}
+              <div className="min-h-[400px] sm:min-h-[500px] h-[500px] sm:h-[600px] lg:h-[600px] flex flex-col">
+                <CalendarView 
+                  tasks={specialistTasks} 
+                  deleteTask={deleteTask} 
+                  onTaskClick={handleCalendarPerformanceClick}
+                />
+              </div>
+            </div>
+          )}
 
-          {/* BACK BUTTON AT BOTTOM */}
-          <div className="p-6 sm:p-10 lg:p-20 flex justify-center bg-background">
+          {/* MOBILE FLOATING ACTION BUTTON */}
+          {isMobile && activeTab === 'shoots' && (
+            <button
+              onClick={() => { setEditTask(null); setShowAddModal(true); }}
+              className="fixed bottom-6 right-6 w-11 h-11 bg-primary text-black rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-50 animate-in zoom-in-50 duration-300"
+            >
+              <Plus size={22} />
+            </button>
+          )}
+
+          <div className={`p-10 ${isMobile ? 'pb-20' : 'lg:p-20'} flex justify-center bg-background`}>
             <button
               onClick={() => setSelectedSpecialist(null)}
-              className="group flex items-center gap-2 sm:gap-4 pl-1.5 pr-4 sm:pr-8 py-1.5 bg-black/40 hover:bg-black/60 backdrop-blur-xl border border-white/10 rounded-full transition-all active:scale-95"
+              className="group flex items-center gap-2 sm:gap-4 pl-1.5 pr-4 sm:pr-8 py-1.5 bg-black/40 hover:bg-black/60 backdrop-blur-xl border border-white/10 rounded-full transition-all"
             >
               <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-primary transition-colors">
                 <ArrowLeft size={14} className="sm:w-[18px] sm:h-[18px] text-black" />
               </div>
-              <span className="text-[11px] sm:text-[13px] font-medium text-white opacity-80 group-hover:opacity-100 transition-opacity">Return to Workspace</span>
+              <span className="text-[10px] sm:text-xs font-medium text-white tracking-tight opacity-80 group-hover:opacity-100 transition-opacity">Back</span>
             </button>
           </div>
         </div>
       </div>
-
-      <AddTaskModal
-        isOpen={showAddModal}
-        onClose={() => { setShowAddModal(false); setEditTask(null); }}
-        onSave={handleAddTask}
-        clients={clients}
-        editTask={editTask}
-      />
-
-      <DateWiseTaskModal
-        isOpen={showDateWiseModal}
-        onClose={() => setShowDateWiseModal(false)}
-        tasksByDate={tasksByDate}
+      <AddTaskModal isOpen={showAddModal} onClose={() => { setShowAddModal(false); setEditTask(null); }} onSave={(form) => editTask ? updateTask(editTask.id, form) : addTask({ ...form, workerRole: 'Content Specialist', workerName: selectedSpecialist, updatedDate: new Date().toISOString().split('T')[0] })} clients={clients} editTask={editTask} />
+      
+      <IncentiveModal
+        isOpen={viewOnlyIncentive}
+        onClose={() => { setIncentiveTask(null); setViewOnlyIncentive(false); }}
+        task={incentiveTask}
+        isReadOnly={true}
       />
     </div>
   )

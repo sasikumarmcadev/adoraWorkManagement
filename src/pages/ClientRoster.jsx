@@ -20,10 +20,10 @@ function DashboardOverview({ clients, payments }) {
       <div className="max-w-[1600px] mx-auto px-6 py-6 sm:py-10 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
           <div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-white tracking-tighter truncate">
+            <h1 className="page-heading truncate">
               Client Roster <span className="text-primary/50">Analytics</span>
             </h1>
-            <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-1 opacity-60 leading-none tracking-widest flex items-center gap-2">
+            <p className="page-subheading mt-1 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Strategic portfolio monitoring in real-time
             </p>
@@ -203,3 +203,4 @@ export default function ClientRoster() {
     </div>
   )
 }
+

@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
 import { useData } from '../context/DataContext'
 import { formatDate, cn } from '../lib/utils'
-import { Plus, Edit2, Filter, Search, Target, Move, Image as ImageIcon, Trash2, Calendar as CalendarIcon, MoreVertical, ArrowLeft, Menu, X, FileText, Eye } from 'lucide-react'
 import { Modal, FormField, SearchBar, StatusSelect, CustomSelect } from '../components/ui/index'
+import { Star, CheckCircle2, Bookmark, ArrowLeft } from 'lucide-react'
 
 // FullCalendar imports
 import FullCalendar from '@fullcalendar/react'
@@ -248,12 +248,13 @@ function CoverHeader({ title, onExpandSidebar, isSidebarCollapsed }) {
   )
 }
 
-function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, statusFilter, setStatusFilter, activeFilter, setActiveFilter, onViewDateWise }) {
+function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, statusFilter, setStatusFilter, activeFilter, setActiveFilter, onIncentiveClick }) {
   const stats = useMemo(() => ({
     total: tasks.length,
     done: tasks.filter(t => t.status === 'Done').length,
     progress: tasks.filter(t => t.status === 'In Progress').length,
-    workDone: tasks.filter(t => t.contentCheck).length
+    workDone: tasks.filter(t => t.contentCheck).length,
+    incentives: tasks.filter(t => t.incentiveCheck).length
   }), [tasks])
 
   const [mobileView, setMobileView] = useState(window.innerWidth < 768)
@@ -294,6 +295,10 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
             <p className="text-[10px] text-emerald-400/60 font-medium tracking-tighter">Work Done</p>
             <p className="text-sm font-medium text-emerald-400 leading-none mt-1">{stats.workDone}</p>
           </div>
+          <div className="bg-blue-500/5 rounded-lg p-2 text-center border border-blue-500/10">
+            <p className="text-[10px] text-blue-400/60 font-medium tracking-tighter">Incentives</p>
+            <p className="text-sm font-medium text-blue-400 leading-none mt-1">{stats.incentives}</p>
+          </div>
         </div>
       </div>
 
@@ -303,7 +308,7 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
             <SearchBar value={search} onChange={setSearch} placeholder="Search tasks..." />
           </div>
           <div className="flex items-center gap-2">
-             <select
+            <select
               value={activeFilter}
               onChange={(e) => setActiveFilter(e.target.value)}
               className="bg-sidebar border border-white/10 rounded-md py-2 px-3 text-xs font-medium text-white outline-none focus:border-primary/40 transition-all h-[38px] appearance-none"
@@ -311,14 +316,9 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
             >
               <option value="All">All Projects</option>
               <option value="WorkDone">Work Done</option>
+              <option value="Incentive">Incentive</option>
             </select>
 
-            <button 
-              onClick={onViewDateWise}
-              className="btn-ghost py-1.5 px-3 text-xs sm:text-sm whitespace-nowrap border border-white/10 hover:border-white/30 text-secondary h-[38px] flex items-center gap-2 transition-all"
-            >
-              <Eye size={12} /> Date Wise
-            </button>
           </div>
         </div>
         <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
@@ -534,6 +534,162 @@ function TaskTable({ tasks, onAdd, onUpdateTask, deleteTask, search, setSearch, 
   )
 }
 
+function IncentiveModal({ isOpen, onClose, onSave, task }) {
+  const [scores, setScores] = useState({
+    speed: '',
+    quality: '',
+    creativity: '',
+    deadline: ''
+  })
+  const [note, setNote] = useState('')
+
+  useEffect(() => {
+    if (task) {
+      setScores({
+        speed: (task.evaluationScores?.speed || '').toString(),
+        quality: (task.evaluationScores?.quality || '').toString(),
+        creativity: (task.evaluationScores?.creativity || '').toString(),
+        deadline: (task.evaluationScores?.deadline || '').toString()
+      })
+      setNote(task.performanceNote || '')
+    } else {
+      setScores({ speed: '', quality: '', creativity: '', deadline: '' })
+      setNote('')
+    }
+  }, [task, isOpen])
+
+  const totalMark = useMemo(() => {
+    return Object.values(scores).reduce((acc, val) => acc + (parseInt(val) || 0), 0)
+  }, [scores])
+
+  const performanceCategory = useMemo(() => {
+    if (totalMark >= 90) return { label: 'Top Performer', color: 'text-emerald-400', bg: 'bg-emerald-400/10', bonus: 'Full BonusEligible' }
+    if (totalMark >= 75) return { label: 'Good', color: 'text-blue-400', bg: 'bg-blue-400/10', bonus: 'Partial Bonus' }
+    if (totalMark >= 60) return { label: 'Needs Improvement', color: 'text-orange-400', bg: 'bg-orange-400/10', bonus: 'No Bonus' }
+    return { label: 'Poor Performance', color: 'text-red-400', bg: 'bg-red-400/10', bonus: 'No Bonus' }
+  }, [totalMark])
+
+  const autoStars = Math.min(5, Math.ceil(totalMark / 20))
+
+  const handleSave = () => {
+    onSave({
+      ...task,
+      performanceRating: autoStars,
+      incentivePoints: totalMark,
+      performanceNote: note,
+      incentiveCheck: true,
+      contentCheck: false,
+      evaluationScores: {
+        speed: parseInt(scores.speed) || 0,
+        quality: parseInt(scores.quality) || 0,
+        creativity: parseInt(scores.creativity) || 0,
+        deadline: parseInt(scores.deadline) || 0
+      },
+      updatedDate: new Date().toISOString().split('T')[0]
+    })
+    onClose()
+  }
+
+  const handleScoreChange = (key, value, max) => {
+    const val = parseInt(value)
+    if (value === '' || (val >= 0 && val <= max)) {
+      setScores(prev => ({ ...prev, [key]: value }))
+    }
+  }
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title="Developer Performance Evaluation" size="md">
+      <div className="space-y-6 mt-4">
+        <div className="bg-[#050505] p-3.5 rounded-xl border border-white/5 flex items-center justify-between">
+          <div className="min-w-0">
+            <p className="text-[9px] text-muted uppercase tracking-widest font-bold mb-0.5 opacity-50">Target Sprint/Project</p>
+            <p className="text-sm font-semibold text-white truncate">{task?.clientName}</p>
+          </div>
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold uppercase">Software</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-2">
+          <div className="flex items-center justify-between text-[10px] text-muted uppercase tracking-widest mb-1 px-1">
+            <span>Criteria Question</span>
+            <span>Marks / Max</span>
+          </div>
+
+          <div className="space-y-2">
+            {[
+              { id: 'speed', label: 'Feature Delivery & Execution', max: 25 },
+              { id: 'quality', label: 'Code Quality (Bug-Free)', max: 25 },
+              { id: 'creativity', label: 'Architecture & Scalability', max: 25 },
+              { id: 'deadline', label: 'Sprint Discipline (On Time)', max: 25 }
+            ].map((c) => (
+              <div key={c.id} className="flex items-center gap-4 bg-sidebar/30 p-3 rounded-lg border border-white/[0.03]">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-white/90">{c.label}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    className="w-16 h-[34px] bg-[#0a0a0a] border border-white/10 rounded-md text-center text-sm font-bold text-blue-400 focus:border-blue-500/50 outline-none transition-all"
+                    placeholder="0"
+                    value={scores[c.id]}
+                    onChange={(e) => handleScoreChange(c.id, e.target.value, c.max)}
+                  />
+                  <span className="text-[10px] text-muted font-bold w-6">/{c.max}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-[#050505] p-5 rounded-2xl border border-white/5 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-2 h-full bg-blue-500/20" />
+
+          <div className="grid grid-cols-2 gap-8 items-center">
+            <div className="text-center sm:text-left">
+              <p className="text-[10px] text-muted font-bold uppercase tracking-widest mb-1 opacity-50">Total Performance Score</p>
+              <div className="flex items-end gap-1 justify-center sm:justify-start">
+                <span className="text-4xl font-bold text-white leading-none">{totalMark}</span>
+                <span className="text-sm font-bold text-muted mb-1">/ 100</span>
+              </div>
+            </div>
+
+            <div className={`p-4 rounded-xl ${performanceCategory.bg} border border-white/5 text-center`}>
+              <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${performanceCategory.color}`}>{performanceCategory.label}</p>
+              <p className="text-xs font-bold text-white">{performanceCategory.bonus}</p>
+              <div className="flex justify-center mt-2.5 gap-0.5">
+                {[1, 2, 3, 4, 5].map(s => (
+                  <Star key={s} size={10} fill={s <= autoStars ? "currentColor" : "none"} className={s <= autoStars ? performanceCategory.color : "text-white/10"} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <FormField label="Internal Performance Review Note (Optional)">
+          <textarea
+            className="input min-h-[80px] py-3 h-auto resize-none bg-[#0a0a0a]/50 text-xs"
+            placeholder="Document any technical challenges or wins..."
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </FormField>
+
+        <div className="pt-2">
+          <button
+            disabled={totalMark === 0}
+            onClick={handleSave}
+            className="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-3 active:scale-95"
+          >
+            <CheckCircle2 size={16} />
+            Finalize Evaluation
+          </button>
+        </div>
+      </div>
+    </Modal>
+  )
+}
+
 function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
   const [form, setForm] = useState({
     takenDate: new Date().toISOString().split('T')[0],
@@ -644,44 +800,6 @@ function AddTaskModal({ isOpen, onClose, onSave, clients, editTask }) {
   )
 }
 
-function DateWiseTaskModal({ isOpen, onClose, tasksByDate }) {
-  const sortedDates = useMemo(() => Object.keys(tasksByDate).sort((a, b) => b.localeCompare(a)), [tasksByDate])
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Date Wise Task Overview" size="lg">
-      <div className="space-y-6 mt-4 max-h-[70vh] overflow-y-auto px-1 pr-2 scrollbar-thin scrollbar-thumb-white/10">
-        {sortedDates.map(date => (
-          <div key={date} className="space-y-3">
-            <div className="flex items-center gap-3 sticky top-0 bg-[#0a0a0a] py-2 z-10">
-              <div className="h-px flex-1 bg-border/50" />
-              <span className="text-[11px] font-medium text-primary tracking-[0.2em]">{formatDate(date)}</span>
-              <div className="h-px flex-1 bg-border/50" />
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              {tasksByDate[date].map(t => (
-                <div key={t.id} className="p-3 bg-sidebar border border-border rounded-lg flex items-center justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[10px] font-medium text-white bg-white/5 px-2 py-0.5 rounded border border-white/10">{t.clientName}</span>
-                      {t.contentCheck && <span className="text-[8px] font-medium text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20">Work Done</span>}
-                    </div>
-                    <p className="text-xs text-muted truncate">{t.task}</p>
-                  </div>
-                  <span className={cn(
-                    "text-[8px] font-medium px-2 py-1 rounded border",
-                    t.status === 'Done' ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" :
-                    t.status === 'In Progress' ? "text-blue-400 bg-blue-400/10 border-blue-400/20" :
-                    "text-white/40 bg-white/5 border-white/10"
-                  )}>{t.status}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-        {sortedDates.length === 0 && <div className="text-center py-20 text-muted">No date-wise data available</div>}
-      </div>
-    </Modal>
-  )
-}
 
 function CalendarView({ tasks, deleteTask }) {
   const { desktopCollapsed } = useData()
@@ -882,7 +1000,7 @@ function SoftwareDeveloperListView({ tasks, onSelect }) {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 border-b border-border pb-4 gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-medium text-white tracking-tight">Software Developer Management</h1>
+            <h1 className="page-heading-lg">Software Developer Management</h1>
             <p className="text-xs sm:text-sm text-muted mt-1">Select a developer to view their roadmap and projects</p>
           </div>
           <div className="bg-primary/10 border border-primary/20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md">
@@ -971,9 +1089,8 @@ export default function SoftwareDeveloperPage() {
   const [editTask, setEditTask] = useState(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
-  const [activeFilter, setActiveFilter] = useState('All') // 'All', 'WorkDone', 'Incentive'
-  const [showDateWiseModal, setShowDateWiseModal] = useState(false)
-  const [tasksByDate, setTasksByDate] = useState({})
+  const [activeFilter, setActiveFilter] = useState('All')
+  const [incentiveTask, setIncentiveTask] = useState(null) // 'All', 'WorkDone', 'Incentive'
 
   useEffect(() => {
     setHideHeader(!!selectedDeveloper)
@@ -990,24 +1107,11 @@ export default function SoftwareDeveloperPage() {
 
     const matchesStatus = statusFilter === 'All' || t.status === statusFilter
 
-    const matchesFilter = activeFilter === 'All' || 
+    const matchesFilter = activeFilter === 'All' ||
       (activeFilter === 'WorkDone' && t.contentCheck)
 
     return matchesSearch && matchesStatus && matchesFilter
   }), [tasks, selectedDeveloper, search, statusFilter, activeFilter])
-
-  // Prepare date-wise tasks for modal
-  useEffect(() => {
-    const grouped = developerTasks.reduce((acc, task) => {
-      const date = task.takenDate
-      if (date) {
-        if (!acc[date]) acc[date] = []
-        acc[date].push(task)
-      }
-      return acc
-    }, {})
-    setTasksByDate(grouped)
-  }, [developerTasks])
 
   const handleAddTask = (form) => {
     if (form.id) {
@@ -1059,7 +1163,6 @@ export default function SoftwareDeveloperPage() {
                 setStatusFilter={setStatusFilter}
                 activeFilter={activeFilter}
                 setActiveFilter={setActiveFilter}
-                onViewDateWise={() => setShowDateWiseModal(true)}
               />
             </div>
           </div>
@@ -1095,11 +1198,14 @@ export default function SoftwareDeveloperPage() {
         editTask={editTask}
       />
 
-      <DateWiseTaskModal
-        isOpen={showDateWiseModal}
-        onClose={() => setShowDateWiseModal(false)}
-        tasksByDate={tasksByDate}
+      <IncentiveModal
+        isOpen={!!incentiveTask}
+        onClose={() => setIncentiveTask(null)}
+        onSave={updateTask}
+        task={incentiveTask}
       />
+
     </div>
   )
 }
+

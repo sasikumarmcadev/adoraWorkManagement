@@ -135,7 +135,7 @@ function DashboardOverview({ title, tasks, onExpandSidebar, isSidebarCollapsed, 
                   <span className="text-[10px] font-medium tracking-widest">Back</span>
                 </button>
               )}
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-medium text-white tracking-tighter truncate w-full px-2 lg:px-0 leading-none">{title}</h1>
+              <h1 className="page-heading truncate w-full px-2 lg:px-0">{title}</h1>
               <p className="text-[10px] sm:text-[12px] text-muted font-medium mt-2 opacity-60 tracking-widest">Strategic Intelligence Suite</p>
             </div>
 
@@ -790,7 +790,7 @@ function ClientListView({ tasks, clients, onSelect }) {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between mb-8 sm:mb-12 border-b border-white/5 pb-8 gap-6 text-center md:text-left">
           <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-white tracking-tight">Intelligence Workspace</h1>
+            <h1 className="page-heading-xl">Intelligence Workspace</h1>
             <p className="text-[10px] sm:text-xs text-muted mt-2 font-medium opacity-50 tracking-widest font-mono">Select a strategic partner identity to initiate deep-dive analysis</p>
           </div>
           <div className="bg-[#0a0a0a] border border-white/10 px-6 py-3 rounded-2xl flex items-center gap-4 shadow-2xl">
@@ -1090,3 +1090,4 @@ export default function ClientWorks() {
     </div>
   )
 }
+

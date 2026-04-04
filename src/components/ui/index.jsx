@@ -317,7 +317,7 @@ export function CustomSelect({ value, options, onChange, getStatusColor, isFilte
           }}
           className={cn(
             "w-full font-medium rounded-lg text-center border flex items-center justify-center gap-2",
-            isFilter ? "min-h-[44px] bg-sidebar/40 border-white/5 px-4 text-xs text-white justify-between" : "px-2.5 py-1.5 text-[10px] shadow-2xl tracking-normal min-w-[80px]",
+            isFilter ? "h-[38px] bg-sidebar/40 border-white/5 px-4 text-xs text-white justify-between" : "px-2.5 py-1.5 text-[10px] shadow-2xl tracking-normal min-w-[80px]",
             !isFilter && getStatusColor ? getStatusColor(value) : (isFilter ? "" : "bg-[#111] text-white border-white/10")
           )}
         >
